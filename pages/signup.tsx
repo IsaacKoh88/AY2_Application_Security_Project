@@ -13,8 +13,10 @@ const Signup: NextPage = () => {
 
             <div className='flex flex-col justify-start items-center h-screen w-screen text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900'>
                 <Navbar />
+
                 <div className='container flex justify-center items-center flex-grow'>
                     <div className='flex flex-row justify-start items-start h-fit w-[500px] bg-slate-400 dark:bg-white rounded-2xl p-5 mb-8'>
+
                         <form className='flex flex-col flex-grow' action='/api/signup' method='post'>
                             <label className='text-lg text-slate-900 ml-0.5 mb-1' htmlFor='email'>Email:</label>
                             <input 
@@ -45,8 +47,10 @@ const Signup: NextPage = () => {
                             />
                             <button className='text-white bg-blue-600 rounded-md p-2' type='submit'>Sign Up</button>
                         </form>
+
                     </div>
                 </div>
+
             </div>
         </Fragment>
     );

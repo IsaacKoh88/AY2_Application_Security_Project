@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import jwt from 'jsonwebtoken'
-import { OkPacket, QueryError } from 'mysql2';
-import connection from '../../db/db'
+import executeQuery from '../../db/db';
 
 const KEY = 'qwertyuiop'
 
@@ -9,7 +8,7 @@ type Data = {
     token: string
 }
 
-export default function LoginHandler(
+export default async function LoginHandler(
     req: NextApiRequest,
     res: NextApiResponse<Data>
 ) {
@@ -19,20 +18,27 @@ export default function LoginHandler(
         const { email, password } = req.body;
 
         /** connects to mysql database and queries it */
-        const sql = 'SELECT email FROM account WHERE email="' + email + '" AND password="' + password + '"'
-        connection.execute(sql, function (error: QueryError, result: OkPacket) {
-            if (error) throw error;
-            console.log(result)
-            /** NOTE: DOES NOT VALIDATE IF USER CREDENTIALS ARE CORRECT BUT STILL GIVES A TOKEN */
-            res.status(200).json({
-                token: jwt.sign({
-                    email,
-                    password
-                }, KEY)
-            })
-        })
-
-        res.json
+        try {
+            const result = await executeQuery({
+                query: 'SELECT email FROM account WHERE email=? AND password=?',
+                values: [email, password],
+            });
+            if (result[0] !== undefined) {
+                res.status(200).json({
+                    token: jwt.sign({
+                        email
+                    }, KEY)
+                })
+            }
+            else {
+                res.statusCode = 405;
+                res.end('Error');
+                return
+            }
+        } 
+        catch ( error ) {
+            console.log( error );
+        }
     }
     /** rejeccts requests that are not POST */
     else if (req.method != 'POST') {
