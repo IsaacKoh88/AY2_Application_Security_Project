@@ -1,19 +1,19 @@
 -- @block
-CREATE TABLE Accounts(
-    id INT PRIMARY KEY AUTO_INCREMENT ,
+CREATE TABLE account(
+    id INT PRIMARY KEY AUTO_INCREMENT UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
-    passwords VARCHAR (255) NOT NULL
+    password VARCHAR (255) NOT NULL
 );
 
 -- @block
-INSERT INTO Accounts (email, passwords)
+INSERT INTO account (email, password)
 VALUES (
     'leroytan@mymail.com',
     '123456789'
 )
 
 -- @block
-INSERT INTO Accounts (email, passwords)
+INSERT INTO account (email, password)
 VALUES
     ('Hongda@mymail.com', '696912340'),
     ('Isaackoh@yourmail.com', '0987654321'),
@@ -21,4 +21,4 @@ VALUES
 
 
 -- @block
-SELECT * FROM Accounts;
+SELECT * FROM account;
