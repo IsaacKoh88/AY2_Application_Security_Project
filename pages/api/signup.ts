@@ -17,7 +17,7 @@ export default async function SignupHandler(
         /** connects to mysql database and queries it */
         try {
             const result = await executeQuery({
-                query: 'INSERT INTO account (email, password) VALUES(?, ?)',
+                query: 'CALL insertdata(?, ?)',
                 values: [email, password],
             });
             res.status(200).json({ message: 'success'})
