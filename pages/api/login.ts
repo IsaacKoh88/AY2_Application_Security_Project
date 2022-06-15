@@ -2,6 +2,9 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import jwt from 'jsonwebtoken'
 import executeQuery from '../../db/db';
 
+
+
+
 const KEY = 'qwertyuiop'
 
 type Data = {
