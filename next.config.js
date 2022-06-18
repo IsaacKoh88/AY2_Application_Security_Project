@@ -34,16 +34,18 @@ module.exports = () => {
                     key: 'X-Content-Type-Options',
                     value: 'nosniff'
                   },
-                  
+
+                  {
+                    "key": "Content-Security-Policy",
+                    "value": "default-src 'self'; script-src 'self' 'unsafe-eval'; img-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self';"
+                  }
               ]
           }
       ]
   }
-
 
   return {
       nextConfig,
       headers,
   }
 }
-
