@@ -12,7 +12,7 @@ const app = nextjs()
 
 const jwtsecret = "12345678910"
 
-app.use(express.static("public"))
+app.use(nextjs.static("public"))
 app.set("view engine", "ejs") //EJS is a template engine for javascript
 app.set("views", path.join(__dirname, "views")) //__dirname is an env var that tells the absolute path of the directory containing the file being executed
 
