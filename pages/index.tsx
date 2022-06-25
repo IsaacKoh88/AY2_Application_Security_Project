@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import { Fragment } from 'react'
 import Head from 'next/head'
 import Navbar from '../components/navbar'
+import cookie from "cookie"
 
 const Home: NextPage = () => {
     return (
@@ -21,6 +22,5 @@ const Home: NextPage = () => {
 };
 
 export default Home
-
 
 

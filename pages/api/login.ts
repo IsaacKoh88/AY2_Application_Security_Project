@@ -1,11 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import jwt from 'jsonwebtoken'
 import executeQuery from '../../db/db';
-
-
+import { useCookies } from "react-cookie"
 
 
 const KEY = 'qwertyuiop'
+
 
 type Data = {
     token: string
