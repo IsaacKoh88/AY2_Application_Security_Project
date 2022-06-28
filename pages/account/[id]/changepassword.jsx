@@ -1,7 +1,7 @@
 import { Fragment } from 'react'
 import Head from 'next/head'
 import Navbar from '../../../components/navbar'
-import executeQuery from '../../../db/db'
+import executeQuery from '../../../utils/db'
 import { useState } from 'react'
 
 export const getStaticProps = async (context) => {

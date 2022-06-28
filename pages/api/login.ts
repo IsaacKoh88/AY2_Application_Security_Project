@@ -1,20 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import jwt from 'jsonwebtoken'
-import executeQuery from '../../db/db';
-import { useCookies } from "react-cookie"
+import executeQuery from '../../utils/db';
+import generateToken from '../../utils/generate-token';
+import setCookie from '../../utils/set-cookie';
 
-
-const KEY = 'qwertyuiop'
-
-
-type Data = {
-    token: string
-}
-
-export default async function LoginHandler(
+const LoginHandler = async (
     req: NextApiRequest,
-    res: NextApiResponse<Data>
-) {
+    res: NextApiResponse
+) => {
     /** accepts only POST requests and non-empty requests */
     if ((req.method == 'POST') && (req.body)) {
         /** deconstructs request body */
@@ -27,11 +19,10 @@ export default async function LoginHandler(
                 values: [email, password],
             });
             if (result[0] !== undefined) {
-                res.status(200).json({
-                    token: jwt.sign({
-                        email
-                    }, KEY)
-                })
+                res.status(200);
+                // Calling our pure function using the `res` object, it will add the `set-cookie` header
+                setCookie(res, 'token', generateToken(email))
+                res.end('OK');
             }
             else {
                 res.statusCode = 405;
@@ -54,5 +45,7 @@ export default async function LoginHandler(
         res.statusCode = 405;
         res.end('Error');
         return
-    }
-}
+    };
+};
+
+export default LoginHandler;

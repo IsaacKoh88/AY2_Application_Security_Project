@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import executeQuery from '../../db/db'
+import executeQuery from '../../utils/db'
 
 type Data = {
     message: string
