@@ -3,7 +3,6 @@ import Head from 'next/head'
 import Navbar from '../../../components/navbar'
 import executeQuery from '../../../utils/db'
 import Link from 'next/link'
-import ChangePassword from './changepassword'
 
 export const getStaticProps = async (context) => {
     try {

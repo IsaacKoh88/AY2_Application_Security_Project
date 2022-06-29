@@ -1,0 +1,140 @@
+/* Align Left Icon CSS */
+
+.gg-align-left {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    height: 12px;
+    width: 12px;
+    border-left: 2px solid;
+    transform: scale(var(--ggs,1));
+    margin-left: -4px
+}
+
+.gg-align-left::after,
+.gg-align-left::before {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    height: 4px;
+    width: 12px;
+    background: currentColor;
+    left: 2px;
+    top: 1px
+}
+
+.gg-align-left::after {
+    width: 6px;
+    top: 7px;
+    opacity: .5
+} 
+
+/* Calendar Dates Icon CSS */
+
+.gg-calendar-dates {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    transform: scale(var(--ggs,1));
+    width: 18px;
+    height: 18px;
+    border: 2px solid;
+    border-radius: 3px
+}
+
+.gg-calendar-dates::after,
+.gg-calendar-dates::before {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    border-radius: 3px;
+    height: 2px;
+    left: 2px
+}
+
+.gg-calendar-dates::before {
+    background: currentColor;
+    width: 2px;
+    box-shadow:
+    4px 0 0,8px 0 0,0 4px 0,
+    4px 4px 0,8px 4px 0;
+    top: 6px
+}
+
+.gg-calendar-dates::after {
+    width: 10px;
+    top: -4px;
+    box-shadow: 0 6px 0 0
+} 
+
+/* Credit Card Icon CSS */
+
+.gg-credit-card {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    transform: scale(var(--ggs,1));
+    width: 18px;
+    height: 13.5px;
+    border: 2px solid;
+    border-radius: 3px
+}
+
+.gg-credit-card::after,
+.gg-credit-card::before {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    border-radius: 2.25px;
+    width: 18px;
+    left: -2px;
+    height: 1.5px;
+    background: currentColor;
+    top: 6px
+}
+
+.gg-credit-card::before {
+    width: 4.5px;
+    left: 1.5px;
+    top: 2.25px
+} 
+
+/* Album Icon CSS */
+
+.gg-album {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    width: 14px;
+    height: 14px;
+    transform: scale(var(--ggs,1));
+    border-left: 4px solid transparent;
+    border-right: 3px solid transparent;
+    border-bottom: 6px solid transparent;
+    box-shadow: 0 0 0 2px,
+    inset 6px 4px 0 -4px,
+    inset -6px 4px 0 -4px;
+    border-radius: 3px
+}
+
+.gg-album::after,
+.gg-album::before {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    width: 1.9px;
+    height: 4.5px;
+    background: currentColor;
+    transform: rotate(46deg);
+    top: 4.8px;
+    right: 3.6px
+}
+
+.gg-album::after {
+    transform: rotate(-46deg);
+    right: 1.4px
+} 
