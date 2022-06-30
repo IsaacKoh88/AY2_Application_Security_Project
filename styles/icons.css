@@ -138,3 +138,110 @@
     transform: rotate(-46deg);
     right: 1.4px
 } 
+
+/* Notification Icon CSS */
+
+.gg-notification,
+.gg-notification::before {
+    border-top-left-radius: 100px;
+    border-top-right-radius: 100px
+}
+
+.gg-notification {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    transform: scale(var(--ggs,1));
+    border: 2px solid;
+    border-bottom: 0;
+    width: 14px;
+    height: 12px;
+    transform: translateY(-1.5px)
+}
+
+.gg-notification::after,
+.gg-notification::before {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute
+}
+
+.gg-notification::before {
+    background: currentColor;
+    width: 4px;
+    height: 4px;
+    top: -4px;
+    left: 3px
+}
+
+.gg-notification::after {
+    border-radius: 3px;
+    width: 16px;
+    height: 10px;
+    border: 6px solid transparent;
+    border-top: 1px solid transparent;
+    box-shadow:
+    inset 0 0 0 4px,
+    0 -2px 0 0;
+    top: 12px;
+    left: -3px;
+    border-bottom-left-radius: 100px;
+    border-bottom-right-radius: 100px
+} 
+
+/* Search Icon CSS */
+
+.gg-search {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    transform: scale(var(--ggs,1));
+    width: 14px;
+    height: 14px;
+    border: 2px solid;
+    border-radius: 100%;
+    margin-left: -4px;
+    margin-top: -4px
+}
+
+.gg-search::after {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    border-radius: 3px;
+    width: 2px;
+    height: 8px;
+    background: currentColor;
+    transform: rotate(-45deg);
+    top: 8.5px;
+    left: 11px
+} 
+
+/* Chevron Down Icon CSS */
+
+.gg-chevron-down {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    transform: scale(var(--ggs,1));
+    width: 22px;
+    height: 22px;
+    border: 2px solid transparent;
+    border-radius: 100px
+}
+
+.gg-chevron-down::after {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-bottom: 2px solid;
+    border-right: 2px solid;
+    transform: rotate(45deg);
+    left: 4px;
+    top: 2px
+} 
