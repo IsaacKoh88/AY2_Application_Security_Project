@@ -17,6 +17,8 @@ const setCookie = (
         options.expires = new Date(Date.now() + options.maxAge * 1000)
     }
 
+    options.path = '/'
+
     res.setHeader('Set-Cookie', serialize(name, stringValue, options))
 }
 
