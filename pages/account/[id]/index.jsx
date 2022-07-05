@@ -3,49 +3,51 @@ import Head from 'next/head'
 import Navbar from '../../../components/navbar'
 import executeQuery from '../../../utils/db'
 import Link from 'next/link'
+import * as jose from 'jose'
 
-export const getStaticProps = async (context) => {
+
+export async function getServerSideProps(context) {
+    const JWTtoken = context.req.cookies['token'];
+    const id = context.params.id
+
     try {
-        {/** Query database for user data by user id in parameter */}
+        /** check if JWT token is valid */ 
+        const email = await jose.jwtVerify(JWTtoken, new TextEncoder()
+                    .encode(`qwertyuiop`))
+                    .then(value => {return(value['payload']['email'])});
+
+        /** check if email is the same as the one in the id of URL */
         const result = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'SELECT id, email FROM account WHERE id=?',
-            values: [context.params.id],
+            query: 'SELECT email FROM account WHERE id=?',
+            values: [id],
         })));
-
-        {/** Returns user data */}
-        return {
-            props: result[0]
-        };
-    } 
-    catch ( error ) {
-        console.log( error );
-    }
-}
-
-export const getStaticPaths = async () => {
-    try {
-        {/** Query database for all user ids and convert to JSON */}
-        const result = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'SELECT id FROM account',
-            values: [],
-        })));
-
-        {/** Generates path parameters from query result */}
-        const paths = result.map((result) => {
+        if (result[0]['email'] === email) {
             return {
-                params: {id: result.id.toString()},
+                props: {
+                        id: id,
+                        email: email
+                }
             }
-        })
-
-        {/** Returns static paths */}
-        return {
-            paths,
-            fallback: true,
-        };
+        }
+        /** reject if email is not the same */
+        else {
+            return {
+                redirect: {
+                    destination: '/401',
+                    permanent: false,
+                },
+            }
+        }
     } 
-    catch ( error ) {
-        console.log( error );
-    }
+    /** reject if JWT token is invalid */
+    catch (error) {
+        return {
+            redirect: {
+                destination: '/401',
+                permanent: false,
+            },
+        }
+    }    
 }
 
 const Account = ({ id, email }) => {
