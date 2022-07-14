@@ -1,13 +1,16 @@
 import NavItem from "../nav-items";
+import Link from "next/link";
 
 const Layout = ({ children }) => {
     return (
-        <div className='flex flex-row h-screen w-screen text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900'>
+        <div className='flex flex-row h-screen w-screen text-slate-400 bg-slate-900'>
 
             {/** left navigation column */}
             <div className='flex flex-col justify-start items-center h-full w-20 border-r-2 border-slate-800'>
                 <div className='relative flex justify-center items-center h-20 w-20 mb-4 before:absolute before:bottom-0 before:h-px before:w-1/2 before:border-b-2 before:border-slate-800'>
-                    <div className='cursor-pointer h-10 w-10 rounded-lg bg-slate-800'></div>
+                    <Link href='/' >
+                        <div className='cursor-pointer h-10 w-10 rounded-lg bg-slate-800'></div>
+                    </Link>
                 </div>
                 <NavItem href='/dashboard' img='gg-align-left' />
                 <NavItem href='/calendar' img='gg-calendar-dates' />
