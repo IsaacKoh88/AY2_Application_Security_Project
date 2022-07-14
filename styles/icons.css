@@ -245,3 +245,30 @@
     left: 4px;
     top: 2px
 } 
+
+/* Plus Icon CSS */
+
+.gg-plus,
+.gg-plus::after {
+    display: block;
+    box-sizing: border-box;
+    background: currentColor;
+    border-radius: 10px
+}
+
+.gg-plus {
+    margin-top: 0px;
+    position: relative;
+    transform: scale(var(--ggs,1));
+    width: 16px;
+    height: 2px
+}
+
+.gg-plus::after {
+    content: "";
+    position: absolute;
+    width: 2px;
+    height: 16px;
+    top: -7px;
+    left: 7px
+} 

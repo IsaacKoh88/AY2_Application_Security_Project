@@ -1,8 +1,14 @@
 import React from 'react';
 
-const Category = () => {
+const Category = ({ category }) => {
+    const getCategoryColor = () => {
+
+    };
+
     return (
-        <div className=''></div>
+        <div className='cursor-pointer flex flex-row justify-between items-center w-full bg-slate-800 px-3 py-2 my-2 rounded-lg'>
+            <p className=''>{category['Name']}</p>
+        </div>
     )
 };
 
