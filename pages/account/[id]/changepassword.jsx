@@ -8,17 +8,35 @@ import * as jose from 'jose'
 export async function getServerSideProps(context) {
     const JWTtoken = context.req.cookies['token'];
     const id = context.params.id
+    
+    return {
+        props: {
+                id: id,
+        }
+    }
+
+    {/* if JWT does not exist */}
+    if (JWTtoken == undefined){
+        return {
+            redirect: {
+                destination: '/401',
+                permanent: false,
+            },
+        }
+    }
+
     try {
-        /** check if JWT token is valid */ 
+        {/* check if JWT token is valid */}
         const email = await jose.jwtVerify(JWTtoken, new TextEncoder()
                     .encode(`qwertyuiop`))
                     .then(value => {return(value['payload']['email'])});
 
-        /** check if email is the same as the one in the id of URL */
+        {/* check if email is the same as the one in the id of URL */}
         const result = JSON.parse(JSON.stringify(await executeQuery({
             query: 'SELECT email FROM account WHERE id=?',
             values: [id],
         })));
+
         if (result[0]['email'] === email) {
             return {
                 props: {
@@ -26,8 +44,9 @@ export async function getServerSideProps(context) {
                 }
             }
         }
-        /** reject if email is not the same */
+        
         else {
+            {/* reject if email is not the same */}
             return {
                 redirect: {
                     destination: '/401',
@@ -36,8 +55,9 @@ export async function getServerSideProps(context) {
             }
         }
     } 
-    /** reject if JWT token is invalid */
+    
     catch (error) {
+        {/* reject if JWT token is invalid */}
         return {
             redirect: {
                 destination: '/401',
