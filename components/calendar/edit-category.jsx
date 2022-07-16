@@ -28,12 +28,12 @@ const EditCategory = ({ category, close }) => {
                         <div className='flex flex-row justify-center items-center w-full mt-4 mb-1 '>
                             <input 
                                 type='submit'
-                                value='Edit Category'
+                                value='Confim Changes'
                                 className='cursor-pointer bg-blue-600 text-slate-200 hover:text-white px-4 py-2 mr-2 rounded-md duration-150 ease-in-out'
                             />
                             <input 
                                 type='button'
-                                value='Delete Category'
+                                value='Delete'
                                 className='cursor-pointer bg-red-600 text-slate-200 hover:text-white px-4 py-2 ml-2 rounded-md duration-150 ease-in-out'
                             />
                         </div>

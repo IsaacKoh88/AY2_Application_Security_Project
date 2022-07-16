@@ -6,6 +6,7 @@ import Event from '../../components/calendar/event';
 import Todo from '../../components/calendar/todo';
 import Category from '../../components/calendar/category';
 import CreateEvent from '../../components/calendar/create-event';
+import EditEvent from '../../components/calendar/edit-event';
 import CreateTodo from '../../components/calendar/create-todo';
 import CreateCategory from '../../components/calendar/create-category';
 import EditCategory from '../../components/calendar/edit-category';
@@ -41,8 +42,9 @@ const Calendar: NextPageWithLayout = () => {
         {
             ID : 'd0baf99a-62f8-41a0-818f-d997ab10a2d3',
             Name : 'Event 1',
-            StartTime : '0800',
-            EndTime : '0900',
+            Date : '2022-07-17',
+            StartTime : '08:00:00',
+            EndTime : '09:00:00',
             Description : 'Blah Blah Blah',
             Category : 'Category 1'
         },
@@ -58,11 +60,13 @@ const Calendar: NextPageWithLayout = () => {
     ])
     /** State to control create event popup */
     const [createEvent, setCreateEvent] = useState(false)
+    /** State to control edit event popup */
+    const [editEvent, setEditEvent] = useState('')
     /** State to control create todo popup */
     const [createTodo, setCreateTodo] = useState(false)
     /** State to control create category popup */
     const [createCategory, setCreateCateogory] = useState(false)
-    /** State to control create category popup */
+    /** State to control edit category popup */
     const [editCategory, setEditCateogory] = useState('')
 
     /** Handles category status check change */
@@ -111,6 +115,14 @@ const Calendar: NextPageWithLayout = () => {
     /** Closes create new event popup */
     const handleCreateEventPopupDisappear = () => {
         setCreateEvent(false);
+    };
+    /** Opens edit category popup */
+    const handleEditEventPopupAppear = (index: string) => {
+        setEditEvent(index);
+    };
+    /** Closes edit category popup */
+    const handleEditEventPopupDisappear = () => {
+        setEditEvent('');
     };
     /** Opens create new todo popup */
     const handleCreateTodoPopupAppear = () => {
@@ -207,7 +219,7 @@ const Calendar: NextPageWithLayout = () => {
                             {/** display a card for each event */}
                             {events.map((event, index) => 
                                 categories.find(e => e['Name'] === event['Category'])?.['Activated'] === true ?
-                                <Event event={event} categories={categories} key={index} />
+                                <Event event={event} categories={categories} editEvent={handleEditEventPopupAppear} key={index} />
                                 :
                                 <></>
                             )}
@@ -249,6 +261,13 @@ const Calendar: NextPageWithLayout = () => {
             {/** create event form */}
             {createEvent ?
                 <CreateEvent close={handleCreateEventPopupDisappear} />
+                :
+                <></>
+            }
+
+            {/** edit event form */}
+            {editEvent !== '' ? 
+                <EditEvent event={events.find(e => e['ID'] === editEvent)} close={handleEditCategoryPopupDisappear} />
                 :
                 <></>
             }

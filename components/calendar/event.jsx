@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Event = ({ event, categories }) => {
+const Event = ({ event, categories, editEvent }) => {
     const [expand, setExpand] = useState(false);
 
     const getCategoryColor = Color => {
@@ -61,7 +61,7 @@ const Event = ({ event, categories }) => {
             <div className={`flex flex-row justify-end items-center w-full mt-2 mb-1 ${expand ? '' : 'hidden'}`}>
                 <div 
                     className='cursor-pointer bg-slate-200 px-3 py-2 mr-2 rounded-md'
-                    onClick={() => {/** Edit Event */}}
+                    onClick={() => editEvent(event['ID'])}
                 >
                     <p className='text-blue-500 font-semibold duration-150 ease-in-out'>Edit Event</p>
                 </div>
