@@ -6,6 +6,7 @@ import Event from '../../components/calendar/event';
 import Todo from '../../components/calendar/todo';
 import Category from '../../components/calendar/category';
 import CreateEvent from '../../components/calendar/create-event';
+import CreateTodo from '../../components/calendar/create-todo';
 import Layout from '../../components/layouts/authenticated-layout';
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -49,11 +50,18 @@ const Calendar: NextPageWithLayout = () => {
         {
             ID : 'd6f7cdaf-d9f3-42b0-ab1a-a9bf42ee1585',
             Name : 'Todo 1',
+            Date : '17/07/2022',
             Checked : false,
         },
     ])
     /** State to control create event popup */
     const [createEvent, setCreateEvent] = useState(false)
+    /** State to control create todo popup */
+    const [createTodo, setCreateTodo] = useState(false)
+    /** State to control create category popup */
+    const [createCategory, setCreateCateogory] = useState(false)
+    /** State to control create category popup */
+    const [editCategory, setEditCateogory] = useState(false)
 
     /** Handles category status check change */
     const handleCategoryStatus = (id: string, checked: boolean) => {
@@ -102,6 +110,30 @@ const Calendar: NextPageWithLayout = () => {
     const handleCreateEventPopupDisappear = () => {
         setCreateEvent(false);
     };
+    /** Opens create new todo popup */
+    const handleCreateTodoPopupAppear = () => {
+        setCreateTodo(true);
+    };
+    /** Closes create new todo popup */
+    const handleCreateTodoPopupDisappear = () => {
+        setCreateTodo(false);
+    };
+    /** Opens create new category popup */
+    const handleCreateCategoryPopupAppear = () => {
+        setCreateCateogory(true);
+    };
+    /** Closes create new category popup */
+    const handleCreateCategoryPopupDisappear = () => {
+        setCreateCateogory(false);
+    };
+    /** Opens edit category popup */
+    const handleEditCategoryPopupAppear = () => {
+        setEditCateogory(true);
+    };
+    /** Closes edit category popup */
+    const handleEditCategoryPopupDisappear = () => {
+        setEditCateogory(false);
+    };
 
     /** Call API to get user calendar events, categories */
 
@@ -123,10 +155,10 @@ const Calendar: NextPageWithLayout = () => {
                 <div className='flex flex-col grow justify-start items-start w-full mt-6'>
                     <div className='flex flex-row justify-center items-center w-full mb-2'>
                         <div className='flex grow justify-center items-center ml-10'>
-                            <p className='text-lg font-bold'>Categories</p>
+                            <p className='text-lg text-slate-200 font-bold'>Categories</p>
                         </div>
-                        <div className='cursor-pointer flex justify-center items-center hover:bg-slate-800 w-10 h-10 rounded-lg duration-150 ease-in-out'>
-                            <i className='gg-plus'></i>
+                        <div className='group cursor-pointer flex justify-center items-center hover:bg-slate-800 w-10 h-10 rounded-lg duration-150 ease-in-out'>
+                            <i className='gg-plus group-hover:text-white duration-150 ease-in-out'></i>
                         </div>
                     </div>
                     {(categories.length === 0) ? 
@@ -138,7 +170,7 @@ const Calendar: NextPageWithLayout = () => {
                         <div className='flex flex-col grow justify-start items-center w-full overflow-y-scroll'>
                             {/** display a card for each category */}
                             {categories.map((category, index) => (
-                                <Category category={category} changeStatus={handleCategoryStatus} key={index} />
+                                <Category category={category} changeStatus={handleCategoryStatus} editCategory={handleEditCategoryPopupAppear} key={index} />
                             ))}
                         </div>
                     }
@@ -151,13 +183,13 @@ const Calendar: NextPageWithLayout = () => {
                 <div className='flex flex-col justify-start items-center h-full w-3/5 px-6 mt-4'>
                     <div className='flex flex-row justify-center items-center w-full mb-2'>
                         <div className='flex grow justify-center items-center ml-10'>
-                            <p className='text-xl font-bold'>Events for {selectedDate.format('DD/MM/YYYY')}</p>
+                            <p className='text-xl text-slate-200 font-bold'>Events for {selectedDate.format('DD/MM/YYYY')}</p>
                         </div>
                         <div 
-                            className='cursor-pointer flex justify-center items-center hover:bg-slate-800 w-10 h-10 rounded-lg duration-150 ease-in-out'
+                            className='group cursor-pointer flex justify-center items-center hover:bg-slate-800 w-10 h-10 rounded-lg duration-150 ease-in-out'
                             onClick={() => handleCreateEventPopupAppear()}
                         >
-                            <i className='gg-plus'></i>
+                            <i className='gg-plus group-hover:text-white'></i>
                         </div>
                     </div>
                     {(events.length === 0) ? 
@@ -183,10 +215,13 @@ const Calendar: NextPageWithLayout = () => {
                 <div className='flex flex-col justify-start items-center h-full w-2/5 px-6 mt-4'>
                     <div className='flex flex-row justify-center items-center w-full mb-2'>
                         <div className='flex grow justify-center items-center ml-10'>
-                            <p className='text-xl font-bold'>To-do list</p>
+                            <p className='text-xl text-slate-200 font-bold'>To-do list</p>
                         </div>
-                        <div className='cursor-pointer flex justify-center items-center hover:bg-slate-800 w-10 h-10 rounded-lg duration-150 ease-in-out'>
-                            <i className='gg-plus'></i>
+                        <div 
+                            className='group cursor-pointer flex justify-center items-center hover:bg-slate-800 w-10 h-10 rounded-lg duration-150 ease-in-out'
+                            onClick={() => handleCreateTodoPopupAppear()}
+                        >
+                            <i className='gg-plus group-hover:text-white'></i>
                         </div>
                     </div>
                     {(todos.length === 0) ? 
@@ -209,6 +244,11 @@ const Calendar: NextPageWithLayout = () => {
             {/** create event form */}
             <div className={`fixed z-10 inset-0 ${createEvent ? '' : 'hidden'}`}>
                 <CreateEvent close={handleCreateEventPopupDisappear} />
+            </div>
+
+            {/** create todo form */}
+            <div className={`fixed z-10 inset-0 ${createTodo ? '' : 'hidden'}`}>
+                <CreateTodo close={handleCreateTodoPopupDisappear} />
             </div>
         </Fragment>
     );
