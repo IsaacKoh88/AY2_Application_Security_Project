@@ -20,15 +20,23 @@ const EditCategory = ({ category, close }) => {
                             id='categoryName'
                             name='categoryName'
                             className='bg-transparent w-2/3 text-white text-xl font-semibold placeholder:text-slate-400 focus:outline-none'
+                            placeholder='Category Name'
                             value={ name }
                             onChange={e => setName(e.target.value)}
                             required
                         />
-                        <input 
-                            type='submit'
-                            value='Edit Category'
-                            className='cursor-pointer self-center bg-blue-600 text-slate-200 hover:text-white px-4 py-2 mt-4 mb-1 rounded-md duration-150 ease-in-out'
-                        />
+                        <div className='flex flex-row justify-center items-center w-full mt-4 mb-1 '>
+                            <input 
+                                type='submit'
+                                value='Edit Category'
+                                className='cursor-pointer bg-blue-600 text-slate-200 hover:text-white px-4 py-2 mr-2 rounded-md duration-150 ease-in-out'
+                            />
+                            <input 
+                                type='button'
+                                value='Delete Category'
+                                className='cursor-pointer bg-red-600 text-slate-200 hover:text-white px-4 py-2 ml-2 rounded-md duration-150 ease-in-out'
+                            />
+                        </div>
                     </form>
                 </div>
             </div>
