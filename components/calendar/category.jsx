@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Category = ({ category, changeStatus }) => {
+const Category = ({ category, changeStatus, editCategory }) => {
     const getCategoryColor = color => {
         if (color === 'rose') {
             return 'checked:bg-rose-600';
@@ -42,21 +42,29 @@ const Category = ({ category, changeStatus }) => {
     };
 
     return (
-        <div className='group cursor-pointer flex flex-row justify-start items-center w-full px-3 my-2'>
-            <input 
-                type="checkbox" 
-                id={ category['ID'] } 
-                name={ category['Name'] } 
-                className={`appearance-none bg-slate-400 h-4 w-4 rounded ${getCategoryColor(category['Color'])}`} 
-                onChange={e => changeStatus(e.target.id, e.target.checked)} 
-                checked={ category['Activated'] } 
-            />
-            <label 
-                htmlFor={ category['ID'] } 
-                className='group-hover:text-white ml-3 grow'
+        <div className='cursor-pointer flex flex-row justify-between items-center w-full px-2.5 my-2'>
+            <div className='group flex flex-row justify-start items-center h-full grow'>
+                <input 
+                    type="checkbox" 
+                    id={ category['ID'] } 
+                    name={ category['Name'] } 
+                    className={`appearance-none bg-slate-400 h-4 w-4 rounded ${getCategoryColor(category['Color'])}`} 
+                    onChange={e => changeStatus(e.target.id, e.target.checked)} 
+                    checked={ category['Activated'] } 
+                />
+                <label 
+                    htmlFor={ category['ID'] } 
+                    className='group-hover:text-white ml-3 grow'
+                >
+                    { category['Name'] }
+                </label>
+            </div>
+            <div 
+                className='group'
+                onClick={() => editCategory(category['ID'])}
             >
-                { category['Name'] }
-            </label>
+                <i className='gg-close group-hover:text-white duration-150 ease-in-out'></i>
+            </div>
         </div>
     )
 };

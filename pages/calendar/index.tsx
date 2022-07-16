@@ -7,6 +7,7 @@ import Todo from '../../components/calendar/todo';
 import Category from '../../components/calendar/category';
 import CreateEvent from '../../components/calendar/create-event';
 import CreateTodo from '../../components/calendar/create-todo';
+import EditCategory from '../../components/calendar/edit-category';
 import Layout from '../../components/layouts/authenticated-layout';
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -61,7 +62,7 @@ const Calendar: NextPageWithLayout = () => {
     /** State to control create category popup */
     const [createCategory, setCreateCateogory] = useState(false)
     /** State to control create category popup */
-    const [editCategory, setEditCateogory] = useState(false)
+    const [editCategory, setEditCateogory] = useState('')
 
     /** Handles category status check change */
     const handleCategoryStatus = (id: string, checked: boolean) => {
@@ -127,12 +128,12 @@ const Calendar: NextPageWithLayout = () => {
         setCreateCateogory(false);
     };
     /** Opens edit category popup */
-    const handleEditCategoryPopupAppear = () => {
-        setEditCateogory(true);
+    const handleEditCategoryPopupAppear = (index: string) => {
+        setEditCateogory(index);
     };
     /** Closes edit category popup */
     const handleEditCategoryPopupDisappear = () => {
-        setEditCateogory(false);
+        setEditCateogory('');
     };
 
     /** Call API to get user calendar events, categories */
@@ -242,14 +243,25 @@ const Calendar: NextPageWithLayout = () => {
             </div>
 
             {/** create event form */}
-            <div className={`fixed z-10 inset-0 ${createEvent ? '' : 'hidden'}`}>
+            {createEvent ?
                 <CreateEvent close={handleCreateEventPopupDisappear} />
-            </div>
+                :
+                <></>
+            }
 
             {/** create todo form */}
-            <div className={`fixed z-10 inset-0 ${createTodo ? '' : 'hidden'}`}>
+            {createTodo ? 
                 <CreateTodo close={handleCreateTodoPopupDisappear} />
-            </div>
+                :
+                <></>
+            }
+
+            {/** edit category form */}
+            {editCategory !== '' ? 
+                <EditCategory category={categories.find(e => e['ID'] === editCategory)} close={handleEditCategoryPopupDisappear} />
+                :
+                <></>
+            }
         </Fragment>
     );
 };
