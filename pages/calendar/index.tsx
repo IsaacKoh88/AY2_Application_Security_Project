@@ -7,6 +7,7 @@ import Todo from '../../components/calendar/todo';
 import Category from '../../components/calendar/category';
 import CreateEvent from '../../components/calendar/create-event';
 import CreateTodo from '../../components/calendar/create-todo';
+import CreateCategory from '../../components/calendar/create-category';
 import EditCategory from '../../components/calendar/edit-category';
 import Layout from '../../components/layouts/authenticated-layout';
 import dayjs, { Dayjs } from 'dayjs';
@@ -158,7 +159,10 @@ const Calendar: NextPageWithLayout = () => {
                         <div className='flex grow justify-center items-center ml-10'>
                             <p className='text-lg text-slate-200 font-bold'>Categories</p>
                         </div>
-                        <div className='group cursor-pointer flex justify-center items-center hover:bg-slate-800 w-10 h-10 rounded-lg duration-150 ease-in-out'>
+                        <div 
+                            className='group cursor-pointer flex justify-center items-center hover:bg-slate-800 w-10 h-10 rounded-lg duration-150 ease-in-out'
+                            onClick={() => handleCreateCategoryPopupAppear()}
+                        >
                             <i className='gg-plus group-hover:text-white duration-150 ease-in-out'></i>
                         </div>
                     </div>
@@ -252,6 +256,13 @@ const Calendar: NextPageWithLayout = () => {
             {/** create todo form */}
             {createTodo ? 
                 <CreateTodo close={handleCreateTodoPopupDisappear} />
+                :
+                <></>
+            }
+
+            {/** create category form */}
+            {createCategory ? 
+                <CreateCategory close={handleCreateCategoryPopupDisappear} />
                 :
                 <></>
             }
