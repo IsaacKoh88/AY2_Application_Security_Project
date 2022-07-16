@@ -1,10 +1,11 @@
 import { NextPageWithLayout } from '../_app';
-import React, { Fragment, ReactElement, useState } from 'react'
+import React, { Fragment, ReactElement, useState, useEffect } from 'react'
 import Head from 'next/head'
 import SmallCalendar from '../../components/calendar/month'
 import Event from '../../components/calendar/event';
 import Todo from '../../components/calendar/todo';
 import Category from '../../components/calendar/category';
+import CreateEvent from '../../components/calendar/create-event';
 import Layout from '../../components/layouts/authenticated-layout';
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -51,6 +52,8 @@ const Calendar: NextPageWithLayout = () => {
             Checked : false,
         },
     ])
+    /** State to control create event popup */
+    const [createEvent, setCreateEvent] = useState(false)
 
     /** Handles category status check change */
     const handleCategoryStatus = (id: string, checked: boolean) => {
@@ -69,12 +72,6 @@ const Calendar: NextPageWithLayout = () => {
         });
     };
 
-    /** Handles date selection action */
-    const handleSelectDate = (index: Dayjs) => {
-        setSelectedDate(index);
-        /** Call API to get user calendar events, categories and to-do */
-    };
-
     /** Handle to-do checked */
     const handleTodoCheck = (id: string, checked: boolean) => {
         setTodos(prevState => {
@@ -90,8 +87,25 @@ const Calendar: NextPageWithLayout = () => {
 
             return newState;
         });
-        /** Calls API to check to-do item as completed */
     };
+
+    /** Handles date selection action */
+    const handleSelectDate = (index: Dayjs) => {
+        setSelectedDate(index);
+    };
+
+    /** Opens create new event popup */
+    const handleCreateEventPopupAppear = () => {
+        setCreateEvent(true);
+    };
+    /** Closes create new event popup */
+    const handleCreateEventPopupDisappear = () => {
+        setCreateEvent(false);
+    };
+
+    /** Call API to get user calendar events, categories */
+
+    /** Calls API to check to-do item as completed */
 
     return (
         <Fragment>
@@ -139,7 +153,10 @@ const Calendar: NextPageWithLayout = () => {
                         <div className='flex grow justify-center items-center ml-10'>
                             <p className='text-xl font-bold'>Events for {selectedDate.format('DD/MM/YYYY')}</p>
                         </div>
-                        <div className='cursor-pointer flex justify-center items-center hover:bg-slate-800 w-10 h-10 rounded-lg duration-150 ease-in-out'>
+                        <div 
+                            className='cursor-pointer flex justify-center items-center hover:bg-slate-800 w-10 h-10 rounded-lg duration-150 ease-in-out'
+                            onClick={() => handleCreateEventPopupAppear()}
+                        >
                             <i className='gg-plus'></i>
                         </div>
                     </div>
@@ -187,6 +204,11 @@ const Calendar: NextPageWithLayout = () => {
                     }
                     <div className='flex flex-col justify-start items-center'></div>
                 </div>
+            </div>
+
+            {/** create event form */}
+            <div className={`fixed z-10 inset-0 ${createEvent ? '' : 'hidden'}`}>
+                <CreateEvent close={handleCreateEventPopupDisappear} />
             </div>
         </Fragment>
     );
