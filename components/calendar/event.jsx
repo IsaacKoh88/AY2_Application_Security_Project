@@ -42,9 +42,9 @@ const Event = ({ event, categories }) => {
     };
 
     return (
-        <div className={`cursor-pointer flex flex-row justify-between items-center w-full px-3 py-2 my-2 rounded-lg ${getCategoryColor(categories.find(e => e['Name'] === event['Category'])['Color'])}`}>
-            <p className='text-slate-200'>{event['Name']}</p>
-            <p className='text-slate-200'>{event['StartTime']} - {event['EndTime']}</p>
+        <div className={`group cursor-pointer flex flex-row justify-between items-center w-full px-3 py-2 my-2 rounded-lg ${getCategoryColor(categories.find(e => e['Name'] === event['Category'])['Color'])}`}>
+            <p className='text-slate-200 group-hover:text-white duration-150 ease-in-out'>{ event['Name'] }</p>
+            <p className='text-slate-200 group-hover:text-white duration-150 ease-in-out'>{ event['StartTime'] } - { event['EndTime'] }</p>
         </div>
     );
 };

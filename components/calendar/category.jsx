@@ -1,40 +1,40 @@
 import React from 'react';
 
 const Category = ({ category, changeStatus }) => {
-    const getCategoryColor = Color => {
-        if (Color === 'rose') {
+    const getCategoryColor = color => {
+        if (color === 'rose') {
             return 'checked:bg-rose-600';
-        } else if (Color === 'pink') {
+        } else if (color === 'pink') {
             return 'checked:bg-pink-600';
-        } else if (Color === 'fuchsia') {
+        } else if (color === 'fuchsia') {
             return 'checked:bg-fuchsia-600';
-        } else if (Color === 'purple') {
+        } else if (color === 'purple') {
             return 'checked:bg-purple-600';
-        } else if (Color === 'violet') {
+        } else if (color === 'violet') {
             return 'checked:bg-violet-600';
-        } else if (Color === 'indigo') {
+        } else if (color === 'indigo') {
             return 'checked:bg-indigo-600';
-        } else if (Color === 'blue') {
+        } else if (color === 'blue') {
             return 'checked:bg-blue-600';
-        } else if (Color === 'sky') {
+        } else if (color === 'sky') {
             return 'checked:bg-sky-600';
-        } else if (Color === 'cyan') {
+        } else if (color === 'cyan') {
             return 'checked:bg-cyan-600';
-        } else if (Color === 'teal') {
+        } else if (color === 'teal') {
             return 'checked:bg-teal-600';
-        } else if (Color === 'emerald') {
+        } else if (color === 'emerald') {
             return 'checked:bg-emerald-600';
-        } else if (Color === 'green') {
+        } else if (color === 'green') {
             return 'checked:bg-green-600';
-        } else if (Color === 'lime') {
+        } else if (color === 'lime') {
             return 'checked:bg-lime-600';
-        } else if (Color === 'yellow') {
+        } else if (color === 'yellow') {
             return 'checked:bg-yellow-600';
-        } else if (Color === 'amber') {
+        } else if (color === 'amber') {
             return 'checked:bg-amber-600';
-        } else if (Color === 'orange') {
+        } else if (color === 'orange') {
             return 'checked:bg-orange-600';
-        } else if (Color === 'red') {
+        } else if (color === 'red') {
             return 'checked:bg-red-600';
         } else {
             return 'checked:bg-neutral-600';
@@ -42,16 +42,22 @@ const Category = ({ category, changeStatus }) => {
     };
 
     return (
-        <form className='group cursor-pointer flex flex-row justify-start items-center w-full px-3 my-2'>
+        <div className='group cursor-pointer flex flex-row justify-start items-center w-full px-3 my-2'>
             <input 
                 type="checkbox" 
-                id={ category['Name'] } 
+                id={ category['ID'] } 
                 name={ category['Name'] } 
                 className={`appearance-none bg-slate-400 h-4 w-4 rounded ${getCategoryColor(category['Color'])}`} 
-                onChange={e => changeStatus(e.target.id, e.target.checked)} checked={category['Activated']} 
+                onChange={e => changeStatus(e.target.id, e.target.checked)} 
+                checked={ category['Activated'] } 
             />
-            <label htmlFor={ category['Name'] } className='group-hover:text-white ml-3 grow'>{category['Name']}</label>
-        </form>
+            <label 
+                htmlFor={ category['ID'] } 
+                className='group-hover:text-white ml-3 grow'
+            >
+                { category['Name'] }
+            </label>
+        </div>
     )
 };
 

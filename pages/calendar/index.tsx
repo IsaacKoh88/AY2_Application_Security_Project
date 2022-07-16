@@ -14,8 +14,21 @@ const Calendar: NextPageWithLayout = () => {
     /** State to store categories */
     const [categories, setCategories] = useState([
         {
+            ID : 'a953b8bb-c4d0-44cb-bfee-5538647f02b4',
             Name : 'Category 1',
             Color : 'indigo',
+            Activated : true,
+        },
+        {
+            ID : 'debc60a8-4c34-4131-bb30-bba07da0a2a5',
+            Name : 'Category 2',
+            Color : 'violet',
+            Activated : true,
+        },
+        {
+            ID : '16c19385-29ef-4bb0-b88d-d6f88216f159',
+            Name : 'Category 3',
+            Color : 'red',
             Activated : true,
         },
     ])
@@ -35,6 +48,7 @@ const Calendar: NextPageWithLayout = () => {
         {
             ID : 'd6f7cdaf-d9f3-42b0-ab1a-a9bf42ee1585',
             Name : 'Todo 1',
+            Checked : false,
         },
     ])
 
@@ -42,12 +56,12 @@ const Calendar: NextPageWithLayout = () => {
     const handleCategoryStatus = (id: string, checked: boolean) => {
         setCategories(prevState => {
             const newState = prevState.map(category => {
-                if (category['Name'] === id) {
-                    /** if category name is id return category with changed Activiated property */
+                if (category['ID'] === id) {
+                    /** if category id in state is id of changed category return category with changed Activiated property */
                     return {...category, Activated: checked};
                 } else {
                     /** else return category unchanged */
-                    return category
+                    return category;
                 };
             });
 
@@ -62,7 +76,20 @@ const Calendar: NextPageWithLayout = () => {
     };
 
     /** Handle to-do checked */
-    const handleTodoCheck = (id: number) => {
+    const handleTodoCheck = (id: string, checked: boolean) => {
+        setTodos(prevState => {
+            const newState = prevState.map(todo => {
+                if (todo['ID'] === id) {
+                    /** if todo id in state is id of changed todo return category with changed Checked property */
+                    return {...todo, Checked: checked};
+                } else {
+                    /** else return todo unchanged */
+                    return todo;
+                };
+            });
+
+            return newState;
+        });
         /** Calls API to check to-do item as completed */
     };
 
@@ -154,7 +181,7 @@ const Calendar: NextPageWithLayout = () => {
                         <div className='flex flex-col grow justify-start items-center w-full overflow-y-scroll'>
                             {/** display a card for each to-do */}
                             {todos.map((todo, index) => (
-                                <Todo todo={todo} checked={handleTodoCheck} key={index} />
+                                <Todo todo={todo} changeStatus={handleTodoCheck} key={index} />
                             ))}
                         </div>
                     }
