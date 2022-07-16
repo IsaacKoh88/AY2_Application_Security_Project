@@ -11,27 +11,49 @@ import dayjs, { Dayjs } from 'dayjs';
 const Calendar: NextPageWithLayout = () => {
     /** State to store selected date */
     const [selectedDate, setSelectedDate] = useState(dayjs());
+    /** State to store categories */
+    const [categories, setCategories] = useState([
+        {
+            Name : 'Category 1',
+            Color : 'indigo',
+            Activated : true,
+        },
+    ])
+    /** State to store events */
+    const [events, setEvents] = useState([
+        {
+            ID : 'd0baf99a-62f8-41a0-818f-d997ab10a2d3',
+            Name : 'Event 1',
+            StartTime : '0800',
+            EndTime : '0900',
+            Description : 'Blah Blah Blah',
+            Category : 'Category 1'
+        },
+    ]);
+    /** State to store todos */
+    const [todos, setTodos] = useState([
+        {
+            ID : 'd6f7cdaf-d9f3-42b0-ab1a-a9bf42ee1585',
+            Name : 'Todo 1',
+        },
+    ])
 
-    /** Dummy data */
-    const categories = [
-        {
-            'Name' : 'Category 1'
-        },
-    ];
-    const events = [
-        {
-            'Name' : 'Event 1',
-            'StartTime' : '0800',
-            'EndTime' : '0900',
-            'Description' : 'Blah Blah Blah',
-        },
-    ];
-    const todos = [
-        {
-            'ID' : 'd6f7cdaf-d9f3-42b0-ab1a-a9bf42ee1585',
-            'Name' : 'Todo 1',
-        },
-    ];
+    /** Handles category status check change */
+    const handleCategoryStatus = (id: string, checked: boolean) => {
+        setCategories(prevState => {
+            const newState = prevState.map(category => {
+                if (category['Name'] === id) {
+                    /** if category name is id return category with changed Activiated property */
+                    return {...category, Activated: checked};
+                } else {
+                    /** else return category unchanged */
+                    return category
+                };
+            });
+
+            return newState;
+        });
+    };
 
     /** Handles date selection action */
     const handleSelectDate = (index: Dayjs) => {
@@ -75,7 +97,7 @@ const Calendar: NextPageWithLayout = () => {
                         <div className='flex flex-col grow justify-start items-center w-full overflow-y-scroll'>
                             {/** display a card for each category */}
                             {categories.map((category, index) => (
-                                <Category category={category} key={index} />
+                                <Category category={category} changeStatus={handleCategoryStatus} key={index} />
                             ))}
                         </div>
                     }
@@ -102,9 +124,12 @@ const Calendar: NextPageWithLayout = () => {
                         :
                         <div className='flex flex-col grow justify-start items-center w-full overflow-y-scroll'>
                             {/** display a card for each event */}
-                            {events.map((event, index) => (
-                                <Event event={event} key={index} />
-                            ))}
+                            {events.map((event, index) => 
+                                categories.find(e => e['Name'] === event['Category'])?.['Activated'] === true ?
+                                <Event event={event} categories={categories} key={index} />
+                                :
+                                <></>
+                            )}
                         </div>
                     }
                     <div className='flex flex-col justify-start items-center'></div>
