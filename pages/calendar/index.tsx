@@ -8,6 +8,7 @@ import Category from '../../components/calendar/category';
 import CreateEvent from '../../components/calendar/create-event';
 import EditEvent from '../../components/calendar/edit-event';
 import CreateTodo from '../../components/calendar/create-todo';
+import EditTodo from '../../components/calendar/edit-todo';
 import CreateCategory from '../../components/calendar/create-category';
 import EditCategory from '../../components/calendar/edit-category';
 import Layout from '../../components/layouts/authenticated-layout';
@@ -54,7 +55,7 @@ const Calendar: NextPageWithLayout = () => {
         {
             ID : 'd6f7cdaf-d9f3-42b0-ab1a-a9bf42ee1585',
             Name : 'Todo 1',
-            Date : '17/07/2022',
+            Date : '2022-07-10',
             Checked : false,
         },
     ])
@@ -64,6 +65,8 @@ const Calendar: NextPageWithLayout = () => {
     const [editEvent, setEditEvent] = useState('')
     /** State to control create todo popup */
     const [createTodo, setCreateTodo] = useState(false)
+    /** State to control edit todo popup */
+    const [editTodo, setEditTodo] = useState('')
     /** State to control create category popup */
     const [createCategory, setCreateCateogory] = useState(false)
     /** State to control edit category popup */
@@ -131,6 +134,14 @@ const Calendar: NextPageWithLayout = () => {
     /** Closes create new todo popup */
     const handleCreateTodoPopupDisappear = () => {
         setCreateTodo(false);
+    };
+    /** Opens edit todo popup */
+    const handleEditTodoPopupAppear = (index: string) => {
+        setEditTodo(index);
+    };
+    /** Closes edit todo popup */
+    const handleEditTodoPopupDisappear = () => {
+        setEditTodo('');
     };
     /** Opens create new category popup */
     const handleCreateCategoryPopupAppear = () => {
@@ -250,7 +261,7 @@ const Calendar: NextPageWithLayout = () => {
                         <div className='flex flex-col grow justify-start items-center w-full overflow-y-scroll'>
                             {/** display a card for each to-do */}
                             {todos.map((todo, index) => (
-                                <Todo todo={todo} changeStatus={handleTodoCheck} key={index} />
+                                <Todo todo={todo} changeStatus={handleTodoCheck} editTodo={handleEditTodoPopupAppear} key={index} />
                             ))}
                         </div>
                     }
@@ -275,6 +286,13 @@ const Calendar: NextPageWithLayout = () => {
             {/** create todo form */}
             {createTodo ? 
                 <CreateTodo close={handleCreateTodoPopupDisappear} />
+                :
+                <></>
+            }
+
+            {/** edit todo form */}
+            {editTodo !== '' ? 
+                <EditTodo todo={todos.find(e => e['ID'] === editTodo)} close={handleEditTodoPopupDisappear} />
                 :
                 <></>
             }
