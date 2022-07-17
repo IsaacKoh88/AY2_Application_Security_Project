@@ -1,4 +1,5 @@
 import React from 'react';
+import dayjs from 'dayjs';
 
 const Todo = ({ todo, changeStatus, editTodo }) => {
     const getTodoTextColor = checked => {
@@ -26,7 +27,7 @@ const Todo = ({ todo, changeStatus, editTodo }) => {
                 >
                     <div className='flex flex-row grow justify-between items-center'>
                         <p>{ todo['Name'] }</p>
-                        <p>{ todo['Date'] }</p>
+                        <p className={`duration-150 ease-in-out ${(!dayjs().isBefore(dayjs(todo.Date)) && todo.Checked === false) ? 'text-red-600 group-hover:text-red-500' : ''}`}>{ todo['Date'] }</p>
                     </div>
                 </label>
             </div>
