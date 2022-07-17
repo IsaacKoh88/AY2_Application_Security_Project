@@ -278,7 +278,7 @@ const Calendar: NextPageWithLayout = () => {
 
             {/** edit event form */}
             {editEvent !== '' ? 
-                <EditEvent event={events.find(e => e['ID'] === editEvent)} close={handleEditCategoryPopupDisappear} />
+                <EditEvent event={events.find(e => e['ID'] === editEvent)} close={handleEditEventPopupDisappear} />
                 :
                 <></>
             }
