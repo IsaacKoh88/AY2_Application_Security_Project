@@ -27,7 +27,7 @@ const Todo = ({ todo, changeStatus, editTodo }) => {
                 >
                     <div className='flex flex-row grow justify-between items-center'>
                         <p className='duration-150 ease-in-out'>{ todo['Name'] }</p>
-                        <p className={`duration-150 ease-in-out ${(!dayjs().isBefore(dayjs(todo.Date)) && todo.Checked === false) ? 'text-red-600 group-hover:text-red-500' : ''}`}>{ todo['Date'] }</p>
+                        <p className={`duration-150 ease-in-out ${(!dayjs().isBefore(dayjs(todo.Date)) && todo.Checked === false) ? 'text-rose-600 group-hover:text-rose-500' : ''}`}>{ todo['Date'] }</p>
                     </div>
                 </label>
             </div>

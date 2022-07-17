@@ -29,10 +29,10 @@ const SmallCalendar = ({ selectedDate, handleSelectDate }) => {
         const selectedDay = selectedDate.format(format);
         if (indexDay === currentDay) {
             /** when date tile is the current date */
-            return "bg-blue-500 rounded-full text-white";
+            return "bg-indigo-600 rounded-full text-white font-semibold";
         } else if (indexDay == selectedDay) {
             /** when date tile is the selected date */
-            return "bg-blue-100 rounded-full text-blue-600 font-bold";
+            return "bg-rose-600 rounded-full text-white font-semibold";
         } else if (day.isBefore(dayjs())) {
             /** when the date tile is before current date */
             return "text-slate-600";
@@ -45,24 +45,22 @@ const SmallCalendar = ({ selectedDate, handleSelectDate }) => {
         <div className="mt-9">
 
             {/** Calendar header */}
-            <header className="flex justify-between">
-                <p className="text-gray-500 font-bold">
+            <header className="flex justify-between mb-2">
+                <button onClick={handlePrevMonth}>
+                    <span className="material-icons-outlined cursor-pointer text-gray-600 mx-2">
+                        chevron_left
+                    </span>
+                </button>
+                <p className="cursor-default text-lg text-slate-200 font-bold">
                     {dayjs(new Date(dayjs().year(), currentMonthIdx)).format(
                     "MMMM YYYY"
                     )}
                 </p>
-                <div>
-                    <button onClick={handlePrevMonth}>
-                        <span className="material-icons-outlined cursor-pointer text-gray-600 mx-2">
-                            chevron_left
-                        </span>
-                    </button>
-                    <button onClick={handleNextMonth}>
-                        <span className="material-icons-outlined cursor-pointer text-gray-600 mx-2">
-                            chevron_right
-                        </span>
-                    </button>
-                </div>
+                <button onClick={handleNextMonth}>
+                    <span className="material-icons-outlined cursor-pointer text-gray-600 mx-2">
+                        chevron_right
+                    </span>
+                </button>
             </header>
 
             {/** Calendar dates */}
@@ -70,7 +68,7 @@ const SmallCalendar = ({ selectedDate, handleSelectDate }) => {
 
                 {/** Days */}
                 {currentMonth[0].map((day, i) => (
-                    <span key={i} className="text-sm py-1 text-center">
+                    <span key={i} className="cursor-default flex justify-center items-center text-sm text-slate-200 font-semibold h-8 w-8 m-1 text-center">
                         {day.format("dd").charAt(0)}
                     </span>
                 ))}
@@ -82,7 +80,7 @@ const SmallCalendar = ({ selectedDate, handleSelectDate }) => {
                             <button
                                 key={idx}
                                 onClick={() => handleSelectDate(day)}
-                                className={`py-1 w-full ${getDayClass(day)}`}
+                                className={`flex justify-center items-center h-8 w-8 m-1 ${getDayClass(day)}`}
                             >
                                 <span className="text-sm">{day.format("D")}</span>
                             </button>

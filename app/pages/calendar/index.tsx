@@ -180,7 +180,7 @@ const Calendar: NextPageWithLayout = () => {
                 <div className='flex flex-col grow justify-start items-start w-full mt-6'>
                     <div className='flex flex-row justify-center items-center w-full mb-2'>
                         <div className='flex grow justify-center items-center ml-10'>
-                            <p className='text-lg text-slate-200 font-bold'>Categories</p>
+                            <p className='cursor-default text-lg text-slate-200 font-bold'>Categories</p>
                         </div>
                         <div 
                             className='group cursor-pointer flex justify-center items-center hover:bg-slate-800 w-10 h-10 rounded-lg duration-150 ease-in-out'
@@ -211,7 +211,7 @@ const Calendar: NextPageWithLayout = () => {
                 <div className='flex flex-col justify-start items-center h-full w-3/5 px-6 mt-4'>
                     <div className='flex flex-row justify-center items-center w-full mb-2'>
                         <div className='flex grow justify-center items-center ml-10'>
-                            <p className='text-xl text-slate-200 font-bold'>Events for {selectedDate.format('DD/MM/YYYY')}</p>
+                            <p className='cursor-default text-xl text-slate-200 font-bold'>Events for {selectedDate.format('DD/MM/YYYY')}</p>
                         </div>
                         <div 
                             className='group cursor-pointer flex justify-center items-center hover:bg-slate-800 w-10 h-10 rounded-lg duration-150 ease-in-out'
@@ -243,7 +243,7 @@ const Calendar: NextPageWithLayout = () => {
                 <div className='flex flex-col justify-start items-center h-full w-2/5 px-6 mt-4'>
                     <div className='flex flex-row justify-center items-center w-full mb-2'>
                         <div className='flex grow justify-center items-center ml-10'>
-                            <p className='text-xl text-slate-200 font-bold'>To-do list</p>
+                            <p className='cursor-default text-xl text-slate-200 font-bold'>To-do list</p>
                         </div>
                         <div 
                             className='group cursor-pointer flex justify-center items-center hover:bg-slate-800 w-10 h-10 rounded-lg duration-150 ease-in-out'
