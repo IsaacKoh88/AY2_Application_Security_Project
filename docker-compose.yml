@@ -3,6 +3,15 @@ services:
   app: 
     build: 
       context: ./app
-      dockerfile: ./app/Dockerfile
+      dockerfile: Dockerfile
     ports:
       - 3000:3000
+    depends_on:
+      - mysql-server
+  mysql-server:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: appsecdb
+      MYSQL_USER: app
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
