@@ -23,10 +23,10 @@ const Todo = ({ todo, changeStatus, editTodo }) => {
                 />
                 <label 
                     htmlFor={ todo['ID'] } 
-                    className={`cursor-pointer grow group-hover:text-white ml-3 duration-150 ease-in-out ${getTodoTextColor(todo['Checked'])}`}
+                    className={`cursor-pointer grow group-hover:text-white ml-3 ${getTodoTextColor(todo['Checked'])}`}
                 >
                     <div className='flex flex-row grow justify-between items-center'>
-                        <p>{ todo['Name'] }</p>
+                        <p className='duration-150 ease-in-out'>{ todo['Name'] }</p>
                         <p className={`duration-150 ease-in-out ${(!dayjs().isBefore(dayjs(todo.Date)) && todo.Checked === false) ? 'text-red-600 group-hover:text-red-500' : ''}`}>{ todo['Date'] }</p>
                     </div>
                 </label>
