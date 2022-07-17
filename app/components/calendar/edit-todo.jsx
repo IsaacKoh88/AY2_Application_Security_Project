@@ -1,5 +1,4 @@
 import React, { Fragment, useState } from 'react';
-import dayjs from 'dayjs';
 
 const EditTodo = ({ todo, close }) => {
     const [name, setName] = useState(todo['Name']);
@@ -11,7 +10,7 @@ const EditTodo = ({ todo, close }) => {
                 className='absolute h-full w-full bg-black/40 inset-0' 
                 onClick={() => close()} 
             />
-            <div className='absolute bg-slate-900 h-44 w-1/4 inset-0 px-3 py-3 m-auto rounded-xl'>
+            <div className='absolute bg-slate-900 h-44 w-2/5 inset-0 px-3 py-3 m-auto rounded-xl'>
                 <form className='flex flex-col justify-start items-start w-full'>
                     <input 
                         type='text'
