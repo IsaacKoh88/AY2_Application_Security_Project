@@ -271,14 +271,14 @@ const Calendar: NextPageWithLayout = () => {
 
             {/** create event form */}
             {createEvent ?
-                <CreateEvent close={handleCreateEventPopupDisappear} />
+                <CreateEvent categories={categories} close={handleCreateEventPopupDisappear} />
                 :
                 <></>
             }
 
             {/** edit event form */}
             {editEvent !== '' ? 
-                <EditEvent event={events.find(e => e['ID'] === editEvent)} close={handleEditEventPopupDisappear} />
+                <EditEvent event={events.find(e => e['ID'] === editEvent)} categories={categories} close={handleEditEventPopupDisappear} />
                 :
                 <></>
             }
