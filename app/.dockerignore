@@ -1,0 +1,3 @@
+# directories to be ignored when copying to container file system
+node_modules
+.next/
