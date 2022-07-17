@@ -208,8 +208,8 @@ const Calendar: NextPageWithLayout = () => {
             <div className='flex flex-row grow h-full'>
 
                 {/** calendar date events */}
-                <div className='flex flex-col justify-start items-center h-full w-3/5 px-6 mt-4'>
-                    <div className='flex flex-row justify-center items-center w-full mb-2'>
+                <div className='flex flex-col justify-start items-center h-full w-3/5 px-6'>
+                    <div className='flex flex-row justify-center items-center w-full mt-4 mb-2'>
                         <div className='flex grow justify-center items-center ml-10'>
                             <p className='cursor-default text-xl text-slate-200 font-bold'>Events for {selectedDate.format('DD/MM/YYYY')}</p>
                         </div>
@@ -240,8 +240,8 @@ const Calendar: NextPageWithLayout = () => {
                 </div>
 
                 {/** to-do list */}
-                <div className='flex flex-col justify-start items-center h-full w-2/5 px-6 mt-4'>
-                    <div className='flex flex-row justify-center items-center w-full mb-2'>
+                <div className='flex flex-col justify-start items-center h-full w-2/5 px-6'>
+                    <div className='flex flex-row justify-center items-center w-full mt-4 mb-2'>
                         <div className='flex grow justify-center items-center ml-10'>
                             <p className='cursor-default text-xl text-slate-200 font-bold'>To-do list</p>
                         </div>
