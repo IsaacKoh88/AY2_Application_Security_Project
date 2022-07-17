@@ -23,4 +23,4 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     return getLayout(<Component {...pageProps} />)
 }
 
-export default MyApp
+export default MyApp;

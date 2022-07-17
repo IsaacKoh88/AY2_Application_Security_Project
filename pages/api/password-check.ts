@@ -16,7 +16,7 @@ export class PasswordChecker {
     }
 
     //Regex to check for a common password string - all based on 5+ length passwords
-    private commonPasswords = /passw.*|12345.*|09876.*|qwerty.*|password.*|iloveyou.*|admin.*|root.*|toor.*/;
+    private commonPasswords = /passw.*|12345.*|09876.*|qwert.*|asdfg.*|zxcvb.*|footb.*|baseb.*|drago.*/;
 
 
     //Checks if the given password matches a set of common passwords

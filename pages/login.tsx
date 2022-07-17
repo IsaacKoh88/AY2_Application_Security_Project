@@ -1,5 +1,6 @@
 import type { NextPage } from 'next'
 import { Fragment } from 'react'
+import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Navbar from '../components/navbar'
 
