@@ -8,12 +8,6 @@ import * as jose from 'jose'
 export async function getServerSideProps(context) {
     const JWTtoken = context.req.cookies['token'];
     const id = context.params.id
-    
-    return {
-        props: {
-                id: id,
-        }
-    }
 
     {/* if JWT does not exist */}
     if (JWTtoken == undefined){

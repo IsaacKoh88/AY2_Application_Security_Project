@@ -1,6 +1,7 @@
 import React from 'react'
 import '../styles/globals.css'
 import '../styles/icons.css'
+import '../styles/custom.css'
 import type { ReactElement, ReactNode } from 'react'
 import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
