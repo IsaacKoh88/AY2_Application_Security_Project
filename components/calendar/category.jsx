@@ -42,28 +42,28 @@ const Category = ({ category, changeStatus, editCategory }) => {
     };
 
     return (
-        <div className='cursor-pointer flex flex-row justify-between items-center w-full px-2.5 my-2'>
-            <div className='group flex flex-row justify-start items-center h-full grow'>
+        <div className='cursor-pointer flex flex-row justify-between items-center w-full px-2 my-2'>
+            <div className='cursor-pointer group flex flex-row justify-start items-center h-full grow'>
                 <input 
                     type="checkbox" 
                     id={ category['ID'] } 
                     name={ category['Name'] } 
-                    className={`appearance-none bg-slate-400 h-4 w-4 rounded ${getCategoryColor(category['Color'])}`} 
+                    className={`appearance-none cursor-pointer bg-slate-400 h-4 w-4 rounded ${getCategoryColor(category['Color'])}`} 
                     onChange={e => changeStatus(e.target.id, e.target.checked)} 
                     checked={ category['Activated'] } 
                 />
                 <label 
                     htmlFor={ category['ID'] } 
-                    className='group-hover:text-white ml-3 grow'
+                    className='cursor-pointer group-hover:text-white ml-3 grow'
                 >
                     { category['Name'] }
                 </label>
             </div>
             <div 
-                className='group'
+                className='group flex justify-center items-center h-6 w-6'
                 onClick={() => editCategory(category['ID'])}
             >
-                <i className='gg-close group-hover:text-white duration-150 ease-in-out'></i>
+                <i className='gg-more group-hover:text-white duration-150 ease-in-out'></i>
             </div>
         </div>
     )

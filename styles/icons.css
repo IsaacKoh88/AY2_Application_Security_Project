@@ -304,3 +304,36 @@
 .gg-close::after {
     transform: rotate(-45deg)
 } 
+
+/* More Icon CSS */
+
+.gg-more {
+    transform: scale(var(--ggs,1))
+}
+
+.gg-more,
+.gg-more::after,
+.gg-more::before {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    width: 4px;
+    height: 4px;
+    background: currentColor;
+    border-radius: 100%
+}
+
+.gg-more::after,
+.gg-more::before {
+    content: "";
+    position: absolute;
+    top: 0
+}
+
+.gg-more::after {
+    left: -6px
+}
+
+.gg-more::before {
+    right: -6px
+} 

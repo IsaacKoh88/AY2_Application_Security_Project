@@ -4,3 +4,7 @@
     border-radius: 3px;
     padding: 3px;
 }
+
+.transition-max-h {
+    transition: max-height 0.50s;
+}
