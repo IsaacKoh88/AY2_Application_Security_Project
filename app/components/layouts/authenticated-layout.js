@@ -14,7 +14,7 @@ const Layout = ({ children }) => {
                 </div>
                 <NavItem href='/dashboard' img='gg-align-left' />
                 <NavItem href='/calendar' img='gg-calendar-dates' />
-                <NavItem href='/' img='gg-album' />
+                <NavItem href='/notes' img='gg-album' />
                 <NavItem href='/budget' img='gg-credit-card' />
             </div>
             <div className='flex flex-col grow'>
