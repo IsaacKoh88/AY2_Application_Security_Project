@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npm update && node server.js",
+    "dev": "npm update && next dev",
     "lint": "next lint"
   },
   "dependencies": {
