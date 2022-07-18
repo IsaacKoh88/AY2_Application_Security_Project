@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import executeQuery from '../../utils/db'
+import * as argon2 from 'argon2';
 
 type Data = {
     message: string
@@ -16,9 +17,10 @@ export default async function SignupHandler(
 
         /** connects to mysql database and queries it */
         try {
+            const hashedPassword = await argon2.hash(password)
             const result = await executeQuery({
                 query: 'CALL insertdata(?, ?)',
-                values: [email, password],
+                values: [email, hashedPassword],
             });
             res.status(200).json({ message: 'success'})
         } 

@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import executeQuery from '../../utils/db'
-import * as jose from 'jose'
+import * as jose from 'jose';
+import * as argon2 from 'argon2';
 
 type Data = {
     message: string
@@ -30,11 +31,14 @@ export default async function ChangePasswordHandler(
             const email = await jose.jwtVerify(JWTtoken, new TextEncoder()
                         .encode(`qwertyuiop`))
                         .then(value => {return value['payload']['email']});
-                        
+
+            /* Hashes password */
+            const hashedPassword = await argon2.hash(password);
+
             /* connects to mysql database and queries it */ 
             const result = await executeQuery({
                 query: 'UPDATE account SET password=? WHERE id=? AND email=?',
-                values: [password, id, email],
+                values: [hashedPassword, id, email],
             });
             res.status(200).json({ message: 'success'})
         } 
