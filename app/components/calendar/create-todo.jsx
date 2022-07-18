@@ -15,7 +15,7 @@ const CreateTodo = ({ close }) => {
             body: JSON.stringify(
                 {
                     todoName: todoName, 
-                    date: date
+                    todoDate: todoDate
                 }
             )
         })

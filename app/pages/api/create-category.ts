@@ -12,7 +12,7 @@ export default async function CreateCategoryHandler(
 ) {
     /* accepts only POST requests and non-empty requests */
     if ((req.method == 'POST') && (req.body)) {
-        const { categoryName, color } = req.body;
+        const { categoryName, categoryColor } = req.body;
 
         const JWTtoken:string = req.cookies['token']!;
 
@@ -37,8 +37,8 @@ export default async function CreateCategoryHandler(
 
             /* insert data into category table */
             const result = await executeQuery({
-                query: 'CALL insertcategorydata(?, ?, ?)',
-                values: [resultID[0]['id'], categoryName, color],
+                query: 'CALL insertCategoryData(?, ?, ?)',
+                values: [resultID[0]['id'], categoryName, categoryColor],
             });
 
             res.status(200).json({ message: 'success'})

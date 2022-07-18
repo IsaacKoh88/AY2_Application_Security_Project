@@ -3,7 +3,7 @@ import colors from '../../utils/colors';
 
 const CreateCategory = ({ close }) => {
     const [categoryName, setCategoryName] = useState('');
-    const [categoryColor, setCategoryColor] = useState('rose');
+    const [categoryColor, setCategoryColor] = useState('red');
 
     const FormSubmitHandler = async () => {
         const res = await fetch('/api/create-category', {
@@ -14,7 +14,7 @@ const CreateCategory = ({ close }) => {
             body: JSON.stringify(
                 {
                     categoryName: categoryName, 
-                    color: color
+                    categoryColor: categoryColor
                 }
             )
         })

@@ -37,7 +37,7 @@ export default async function CreateEventHandler(
 
             /* insert data into calendar table */ 
             const result = await executeQuery({
-                query: 'CALL insertcalendardata(?, ?, ?, ?, ?, ?, ?)',
+                query: 'CALL insertCalendarData(?, ?, ?, ?, ?, ?, ?)',
                 values: [resultID[0]['id'], date, startTime, endTime, eventName, description, categoryId],
             });
             res.status(200).json({ message: 'success'})
