@@ -13,9 +13,67 @@ import CreateCategory from '../../components/calendar/create-category';
 import EditCategory from '../../components/calendar/edit-category';
 import Layout from '../../components/layouts/authenticated-layout';
 import dayjs, { Dayjs } from 'dayjs';
+import executeQuery from '../../utils/db';
+import * as jose from 'jose';
 
-const Calendar: NextPageWithLayout = () => {
-    /** State to store selected date */
+export async function getServerSideProps(context:any) {
+    const JWTtoken = context.req.cookies['token'];
+
+    {/* if JWT does not exist */}
+    if (JWTtoken == undefined){
+        return {
+            redirect: {
+                destination: '/401',
+                permanent: false,
+            },
+        }
+    }
+
+    try {
+        {/* check if JWT token is valid */}
+        const email = await jose.jwtVerify(JWTtoken, new TextEncoder()
+                    .encode(`qwertyuiop`))
+                    .then(value => {return(value['payload']['email'])});
+
+        {/* get the id of user using email */}
+        const resultID = await executeQuery({
+            query: 'select id from account where email = ?',
+            values: [email],
+        });
+
+
+        const resultTodo = JSON.parse(JSON.stringify(await executeQuery({
+            query: 'SELECT acct_id ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date FROM todo WHERE acct_id=?',
+            values: [resultID[0]['id']],
+        })));
+
+
+        for (let i = 0; i < resultTodo.length; i++) {
+            var dict = resultTodo[i]
+            dict['Checked'] = false
+        }
+
+        return{
+            props: {
+                todo: resultTodo,
+            }
+        }
+    } 
+    
+    catch (error) {
+        {/* reject if JWT token is invalid */}
+        return {
+            redirect: {
+                destination: '/403',
+                permanent: false,
+            },
+        }
+    }    
+
+    
+}
+
+const Calendar: NextPageWithLayout = (props) => {
     const [selectedDate, setSelectedDate] = useState(dayjs());
     /** State to store categories */
     const [categories, setCategories] = useState([
@@ -39,7 +97,7 @@ const Calendar: NextPageWithLayout = () => {
         },
     ])
     /** State to store events */
-    const [events, setEvents] = useState([
+    const [events, setEvents] = useState([        
         {
             ID : 'd0baf99a-62f8-41a0-818f-d997ab10a2d3',
             Name : 'Event 1',
@@ -50,15 +108,30 @@ const Calendar: NextPageWithLayout = () => {
             Category : 'Category 1'
         },
     ]);
+
     /** State to store todos */
-    const [todos, setTodos] = useState([
-        {
-            ID : 'd6f7cdaf-d9f3-42b0-ab1a-a9bf42ee1585',
-            Name : 'Todo 1',
-            Date : '2022-07-10',
-            Checked : false,
-        },
-    ])
+    const [todos, setTodos] = useState(
+        
+            JSON.parse(JSON.stringify(props))['todo']
+        
+    )
+    console.log(todos)
+    // [
+    //     {
+    //       ID: 'f0286ef3-9e88-4d9b-9749-d67e1135c843',
+    //       Name: 'test',
+    //       Date: '2022-07-19',
+    //       Checked: false
+    //     },
+    //     {
+    //       ID: 'f0286ef3-9e88-4d9b-9749-d67e1135c843',
+    //       Name: 'test',
+    //       Date: '2022-07-28',
+    //       Checked: false
+    //     },
+    //   ])
+        
+    //     )
     /** State to control create event popup */
     const [createEvent, setCreateEvent] = useState(false)
     /** State to control edit event popup */
@@ -260,6 +333,8 @@ const Calendar: NextPageWithLayout = () => {
                         :
                         <div className='flex flex-col grow justify-start items-center w-full overflow-y-scroll'>
                             {/** display a card for each to-do */}
+
+
                             {todos.map((todo, index) => (
                                 <Todo todo={todo} changeStatus={handleTodoCheck} editTodo={handleEditTodoPopupAppear} key={index} />
                             ))}
@@ -289,7 +364,7 @@ const Calendar: NextPageWithLayout = () => {
                 :
                 <></>
             }
-
+            
             {/** edit todo form */}
             {editTodo !== '' ? 
                 <EditTodo todo={todos.find(e => e['ID'] === editTodo)} close={handleEditTodoPopupDisappear} />
