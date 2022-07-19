@@ -54,6 +54,7 @@ const CreateEvent = ({ categories, close }) => {
                             className='bg-slate-800 focus:bg-slate-900 text-white placeholder:text-slate-400 border-2 border-slate-800 focus:border-blue-600 outline-none focus:outline-none px-3 py-2 rounded-md duration-150 ease-in-out'
                             onChange={e => setCategoryId(e.target.value)}
                         >
+                            <option value = ''>None</option>
                             {categories.map((category, index) => (
                                 <option
                                     value={ category['ID'] }
