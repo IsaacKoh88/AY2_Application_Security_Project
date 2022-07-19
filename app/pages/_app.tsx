@@ -5,7 +5,7 @@ import '../styles/custom.css'
 import type { ReactElement, ReactNode } from 'react'
 import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
-//import { cookiesProvider } from "react-cookie"
+
 
 {/** Allows pages to use layouts */}
 export type NextPageWithLayout = NextPage & {

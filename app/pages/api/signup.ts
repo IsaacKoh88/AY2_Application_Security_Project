@@ -19,7 +19,7 @@ export default async function SignupHandler(
         try {
             const hashedPassword = await argon2.hash(password)
             const result = await executeQuery({
-                query: 'CALL insertdata(?, ?)',
+                query: 'CALL insertAccountData(?, ?)',
                 values: [email, hashedPassword],
             });
             res.status(200).json({ message: 'success'})

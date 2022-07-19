@@ -12,7 +12,7 @@ export default async function CreateTodoHandler(
 ) {
     /* accepts only POST requests and non-empty requests */
     if ((req.method == 'POST') && (req.body)) {
-        const { todoName, date } = req.body;
+        const { todoName, todoDate } = req.body;
 
         const JWTtoken:string = req.cookies['token']!;
 
@@ -37,8 +37,8 @@ export default async function CreateTodoHandler(
 
             /* insert data into todo table */
             const result = await executeQuery({
-                query: 'insert into todo values(?, ?, ?)',
-                values: [resultID[0]['id'], todoName, date],
+                query: 'call insertTodoData(?, ?, ?)',
+                values: [resultID[0]['id'], todoName, todoDate],
             });
 
             res.status(200).json({ message: 'success'})
