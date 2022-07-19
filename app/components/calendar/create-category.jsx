@@ -48,7 +48,7 @@ const CreateCategory = ({ close }) => {
                         >
                             {colors.map((color, index) => (
                                 <option
-                                    value={ color }
+                                    value={ color['Name'] }
                                     key={ index }
                                 >
                                     { color['Name'] }

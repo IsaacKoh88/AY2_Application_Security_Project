@@ -8,7 +8,7 @@ const CreateEvent = ({ categories, close }) => {
     const [startTime, setStartTime] = useState('09:00:00');
     const [endTime, setEndTime] = useState('10:00:00');
     const [description, setDescription] = useState('');
-    const [categoryId, setCategoryId] = useState('Category 1');
+    const [categoryId, setCategoryId] = useState('');
 
     const FormSubmitHandler = async () => {
         const res = await fetch('/api/create-event', {
@@ -52,10 +52,11 @@ const CreateEvent = ({ categories, close }) => {
                             id='eventCategory'
                             name='eventCategory'
                             className='bg-slate-800 focus:bg-slate-900 text-white placeholder:text-slate-400 border-2 border-slate-800 focus:border-blue-600 outline-none focus:outline-none px-3 py-2 rounded-md duration-150 ease-in-out'
+                            onChange={e => setCategoryId(e.target.value)}
                         >
                             {categories.map((category, index) => (
                                 <option
-                                    value={ category }
+                                    value={ category['ID'] }
                                     key={ index }
                                 >
                                     { category['Name'] }
