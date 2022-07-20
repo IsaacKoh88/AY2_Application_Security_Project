@@ -22,9 +22,9 @@ const CreateCategory = ({ id, success, close }) => {
         );
 
         if (response.status === 201) {
-            const data = await response.json();
+            const { ID, Name, Color } = await response.json();
 
-            success(data.ID, data.Name, data.Color);
+            success(ID, Name, Color);
         }
     }
 
