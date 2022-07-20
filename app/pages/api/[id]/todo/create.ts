@@ -1,19 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import executeQuery from '../../../utils/db';
-import authorisedValidator from '../../../utils/authorised-validator';
+import executeQuery from '../../../../utils/db';
+import authorisedValidator from '../../../../utils/authorised-validator';
 import { v4 as uuidv4 } from 'uuid';
 
 type Data = {
-    ID: string,
-    Name: string,
-    Date: string,
-    StartTime: string,
-    EndTime: string,
-    Description: string,
-    CategoryID: string,
+    message: string
 }
 
-export default async function CreateEventHandler(
+export default async function CreateTodo(
     req: NextApiRequest,
     res: NextApiResponse<Data>
 ) {
@@ -23,18 +17,18 @@ export default async function CreateEventHandler(
         await authorisedValidator(req, res); 
 
         /** deconstruct body data */
-        const { eventName, date, startTime, endTime, description, categoryId} = req.body;
+        const { todoName, date } = req.body;
 
         /** generate uuidv4 */
         const id = uuidv4();
 
         /* insert data into calendar table */ 
         const result = await executeQuery({
-            query: 'INSERT INTO events VALUES(?, ?, ?, ?, ?, ?, ?, ?)',
-            values: [req.query.id, id, eventName, date, startTime, endTime, description, categoryId],
+            query: 'INSERT INTO todo VALUES(?, ?, ?, ?, ?)',
+            values: [req.query.id, id, todoName, date, 0],
         });
 
-        res.status(201).json({ ID: id, Name: eventName, Date: date, StartTime: startTime, EndTime: endTime, Description: description, CategoryID: categoryId})
+        res.status(201).json({ message: 'success' })
         res.end();
         return
     }

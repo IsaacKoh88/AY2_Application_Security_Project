@@ -11,7 +11,7 @@ const CreateEvent = ({ id, categories, success, close }) => {
     const [categoryId, setCategoryId] = useState('');
 
     const FormSubmitHandler = async () => {
-        const response = await fetch('/api/create-event/'+id, {
+        const response = await fetch('/api/'+id+'/event/create', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -29,9 +29,7 @@ const CreateEvent = ({ id, categories, success, close }) => {
         });
 
         if (response.status === 201) {
-            const { ID, Name, Date, StartTime, EndTime, Description, CategoryID } = await response.json();
-
-            success(ID, Name, Date, StartTime, EndTime, Description, CategoryID)
+            success()
         }
     }
 
@@ -63,10 +61,10 @@ const CreateEvent = ({ id, categories, success, close }) => {
                             <option value = ''>None</option>
                             {categories.map((category, index) => (
                                 <option
-                                    value={ category['ID'] }
+                                    value={ category.ID }
                                     key={ index }
                                 >
-                                    { category['Name'] }
+                                    { category.Name }
                                 </option>
                             ))}
                         </select>

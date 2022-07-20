@@ -2,23 +2,29 @@ import React, { Fragment } from 'react';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 
-const CreateTodo = ({ close }) => {
+const CreateTodo = ({ id, success, close }) => {
     const [todoName, setTodoName] = useState('');
-    const [todoDate, setTodoDate] = useState(dayjs().format('YYYY-MM-DD'));
+    const [date, setDate] = useState(dayjs().format('YYYY-MM-DD'));
 
     const FormSubmitHandler = async () => {
-        const res = await fetch('/api/create-todo', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(
-                {
-                    todoName: todoName, 
-                    todoDate: todoDate
-                }
-            )
-        })
+        const response = await fetch('/api/'+id+'/todo/create', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        todoName: todoName, 
+                        date: date
+                    }
+                )
+            }
+        );
+
+        if (response.status === 201) {
+            success();
+        }
     }
     return (
         <Fragment>
@@ -43,12 +49,12 @@ const CreateTodo = ({ close }) => {
                         id='newEventDate'
                         name='newEventDate'
                         className='bg-slate-800 w-full text-white focus:outline-none px-3 py-2 my-2 rounded-md'
-                        value={ todoDate }
-                        onChange={e => setTodoDate(e.target.value)}
+                        value={ date }
+                        onChange={e => setDate(e.target.value)}
                         required
                     />
                     <input 
-                        type='submit'
+                        type='button'
                         value='Create To-do'
                         className='cursor-pointer self-center bg-blue-600 text-slate-200 hover:text-white px-4 py-2 mt-2.5 rounded-md duration-150 ease-in-out'
                         onClick={() => FormSubmitHandler()}

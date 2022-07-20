@@ -1,15 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import executeQuery from '../../../utils/db'
-import authorisedValidator from '../../../utils/authorised-validator';
-import { v4 as uuidv4 } from 'uuid';
+import executeQuery from '../../../../utils/db'
+import authorisedValidator from '../../../../utils/authorised-validator';
 
 type Data = {
-    ID: string,
-    Name: string,
-    Color: string,
+    message: string
 }
 
-export default async function CreateCategory(
+export default async function EditCategory(
     req: NextApiRequest,
     res: NextApiResponse<Data>
 ) {
@@ -19,18 +16,15 @@ export default async function CreateCategory(
         await authorisedValidator(req, res);
 
         /** deconstruct body data */
-        const { categoryName, categoryColor } = req.body;
-
-        /** generate uuidv4 */
-        const id = uuidv4();
+        const { categoryID, categoryName, categoryColor } = req.body;
 
         /* insert data into category table */
         const result = await executeQuery({
-            query: 'INSERT INTO category VALUES(?, ?, ?, ?)',
-            values: [req.query.id, id, categoryName, categoryColor],
+            query: 'UPDATE category SET Name=?, Color=? WHERE AccountID=? AND ID=?',
+            values: [categoryName, categoryColor, req.query.id, categoryID],
         });
 
-        res.status(201).json({ ID: id, Name: categoryName, Color: categoryColor})
+        res.status(201).json({ message: 'success' })
         res.end();
         return
     }

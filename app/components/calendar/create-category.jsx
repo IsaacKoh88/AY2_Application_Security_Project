@@ -6,7 +6,7 @@ const CreateCategory = ({ id, success, close }) => {
     const [categoryColor, setCategoryColor] = useState('red');
 
     const FormSubmitHandler = async () => {
-        const response = await fetch('/api/create-category/'+id, 
+        const response = await fetch('/api/'+id+'/category/create', 
             {
                 method: 'POST',
                 headers: {
@@ -22,9 +22,7 @@ const CreateCategory = ({ id, success, close }) => {
         );
 
         if (response.status === 201) {
-            const { ID, Name, Color } = await response.json();
-
-            success(ID, Name, Color);
+            success();
         }
     }
 

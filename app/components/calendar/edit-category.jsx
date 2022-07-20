@@ -6,7 +6,7 @@ const EditCategory = ({ id, category, success, close }) => {
     const [categoryColor, setCategoryColor] = useState(category.Color);
 
     const FormSubmitHandler = async () => {
-        const response = await fetch('/api/edit-category/'+id, 
+        const response = await fetch('/api/'+id+'/category/edit', 
             {
                 method: 'POST',
                 headers: {
@@ -23,11 +23,30 @@ const EditCategory = ({ id, category, success, close }) => {
         );
 
         if (response.status === 201) {
-            const data = await response.json();
+            success();
+        };
+    };
 
-            success(data.ID, data.Name, data.Color);
-        }
-    }
+    const DeleteHandler = async () => {
+        console.log('ok')
+        const response = await fetch('/api/'+id+'/category/delete', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body : JSON.stringify(
+                    {
+                        categoryID: category.ID,
+                    }
+                )
+            }
+        );
+
+        if (response.status === 200) {
+            success();
+        };
+    };
 
     return (
         <Fragment>
@@ -76,6 +95,7 @@ const EditCategory = ({ id, category, success, close }) => {
                             type='button'
                             value='Delete'
                             className='cursor-pointer bg-red-600 text-slate-200 hover:text-white px-4 py-2 ml-2 rounded-md duration-150 ease-in-out'
+                            onClick={() => DeleteHandler()}
                         />
                     </div>
                 </form>

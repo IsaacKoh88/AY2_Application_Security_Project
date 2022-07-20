@@ -1,14 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import executeQuery from '../../../utils/db'
-import authorisedValidator from '../../../utils/authorised-validator';
+import executeQuery from '../../../../utils/db'
+import authorisedValidator from '../../../../utils/authorised-validator';
 
 type Data = {
-    ID: string,
-    Name: string,
-    Color: string,
+    message: string
 }
 
-export default async function EditCategory(
+export default async function DeleteTodo(
     req: NextApiRequest,
     res: NextApiResponse<Data>
 ) {
@@ -18,16 +16,16 @@ export default async function EditCategory(
         await authorisedValidator(req, res);
 
         /** deconstruct body data */
-        const { categoryID, categoryName, categoryColor } = req.body;
+        const { todoID } = req.body;
 
         /* insert data into category table */
         const result = await executeQuery({
-            query: 'UPDATE category SET Name=?, Color=? WHERE AccountID=? AND ID=?',
-            values: [categoryName, categoryColor, req.query.id, categoryID],
+            query: 'DELETE FROM todo WHERE AccountID=? AND ID=?',
+            values: [req.query.id, todoID],
         });
 
-        res.status(201).json({ ID: categoryID, Name: categoryName, Color: categoryColor})
-        res.end();
+        res.status(200).json({ message: 'success' })
+        res.end('OK');
         return
     }
     /* rejects requests that are empty */
