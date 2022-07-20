@@ -150,12 +150,12 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
     const [editCategory, setEditCateogory] = useState('')
 
     /** Handles category status check change */
-    const handleCategoryStatus = (id: string, checked: boolean) => {
+    const handleCategoryStatus = (ID: string, Checked: boolean) => {
         setCategories(prevState => {
             const newState = prevState.map(category => {
-                if (category['ID'] === id) {
+                if (category.ID === ID) {
                     /** if category id in state is id of changed category return category with changed Activiated property */
-                    return {...category, Activated: checked};
+                    return {...category, Activated: Checked};
                 } else {
                     /** else return category unchanged */
                     return category;
@@ -166,11 +166,20 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
         });
     };
 
+    /** Handles create new category success */
+    const handleCreateCategorySuccess = (ID: string, Name: string, Color: string) => {
+        setCategories(prevState => {
+            return [...prevState, { ID: ID, Name: Name, Color: Color, Activated: true}]
+        });
+
+        handleCreateCategoryPopupDisappear();
+    };
+
     /** Handle to-do checked */
     const handleTodoCheck = (id: string, checked: number) => {
         setTodos(prevState => {
             const newState = prevState.map(todo => {
-                if (todo['ID'] === id) {
+                if (todo.ID === id) {
                     /** if todo id in state is id of changed todo return category with changed Checked property */
                     return {...todo, Checked: checked};
                 } else {
@@ -378,7 +387,7 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
 
             {/** create category form */}
             {createCategory ? 
-                <CreateCategory id={id} close={handleCreateCategoryPopupDisappear} />
+                <CreateCategory id={id} success={handleCreateCategorySuccess} close={handleCreateCategoryPopupDisappear} />
                 :
                 <></>
             }

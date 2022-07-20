@@ -1,23 +1,31 @@
 import React, { Fragment, useState } from 'react';
 import colors from '../../utils/colors';
 
-const CreateCategory = ({ id, close }) => {
+const CreateCategory = ({ id, success, close }) => {
     const [categoryName, setCategoryName] = useState('');
     const [categoryColor, setCategoryColor] = useState('red');
 
     const FormSubmitHandler = async () => {
-        const res = await fetch('/api/create-category/'+id, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(
-                {
-                    categoryName: categoryName, 
-                    categoryColor: categoryColor
-                }
-            )
-        })
+        const response = await fetch('/api/create-category/'+id, 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        categoryName: categoryName, 
+                        categoryColor: categoryColor
+                    }
+                )
+            }
+        );
+
+        if (response.status === 201) {
+            const data = await response.json();
+
+            success(data.ID, data.Name, data.Color);
+        }
     }
 
     return (
