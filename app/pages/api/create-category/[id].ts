@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import executeQuery from '../../utils/db'
+import executeQuery from '../../../utils/db'
 import * as jose from 'jose'
+import { uuid } from 'uuidv4'
 
 type Data = {
     message: string
@@ -11,17 +12,8 @@ export default async function CreateCategoryHandler(
     res: NextApiResponse<Data>
 ) {
     /* accepts only POST requests and non-empty requests */
-    if ((req.method == 'POST') && (req.body)) {
-        const { categoryName, categoryColor } = req.body;
-
+    if ((req.method == 'POST') && (req.body) && (req.cookies['token'])) {
         const JWTtoken:string = req.cookies['token']!;
-
-         /* if JWT does not exist */
-        if (JWTtoken == undefined) {
-            res.statusCode = 401;
-            res.end('Error');
-            return
-        }
 
         try {
             /* check if JWT token is valid, then get the email */
@@ -35,13 +27,21 @@ export default async function CreateCategoryHandler(
                 values: [email],
             });
 
-            /* insert data into category table */
-            const result = await executeQuery({
-                query: 'CALL insertCategoryData(?, ?, ?)',
-                values: [resultID[0]['id'], categoryName, categoryColor],
-            });
+            if (resultID[0].id === req.query.id) {
+                /** deconstruct body data */
+                const { categoryName, categoryColor } = req.body;
 
-            res.status(200).json({ message: 'success'})
+                /** generate uuidv4 */
+                const id = uuid();
+
+                /* insert data into category table */
+                const result = await executeQuery({
+                    query: 'INSERT INTO category VALUES(?, ?, ?, ?)',
+                    values: [resultID[0].id, id, categoryName, categoryColor],
+                });
+
+                res.status(201).json({ message: 'New category created'})
+            }
         } 
         /* reject if JWT token is invalid */
         catch (error) {

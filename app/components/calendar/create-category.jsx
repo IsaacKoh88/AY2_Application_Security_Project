@@ -1,12 +1,12 @@
 import React, { Fragment, useState } from 'react';
 import colors from '../../utils/colors';
 
-const CreateCategory = ({ close }) => {
+const CreateCategory = ({ id, close }) => {
     const [categoryName, setCategoryName] = useState('');
     const [categoryColor, setCategoryColor] = useState('red');
 
     const FormSubmitHandler = async () => {
-        const res = await fetch('/api/create-category', {
+        const res = await fetch('/api/create-category/'+id, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -58,15 +58,10 @@ const CreateCategory = ({ close }) => {
                     </div>
                     <div className='flex flex-row justify-center items-center w-full mt-4 mb-1 '>
                         <input 
-                            type='submit'
+                            type='button'
                             value='Create Category'
                             className='cursor-pointer bg-blue-600 text-slate-200 hover:text-white px-4 py-2 mr-2 rounded-md duration-150 ease-in-out'
                             onClick={() => FormSubmitHandler()}
-                        />
-                        <input 
-                            type='button'
-                            value='Delete'
-                            className='cursor-pointer bg-red-600 text-slate-200 hover:text-white px-4 py-2 ml-2 rounded-md duration-150 ease-in-out'
                         />
                     </div>
                 </form>

@@ -378,7 +378,7 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
 
             {/** create category form */}
             {createCategory ? 
-                <CreateCategory close={handleCreateCategoryPopupDisappear} />
+                <CreateCategory id={id} close={handleCreateCategoryPopupDisappear} />
                 :
                 <></>
             }
