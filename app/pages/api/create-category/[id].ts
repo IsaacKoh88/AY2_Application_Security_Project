@@ -1,10 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import executeQuery from '../../../utils/db'
 import * as jose from 'jose'
-import { uuid } from 'uuidv4'
+import { v4 as uuidv4 } from 'uuid';
 
 type Data = {
-    message: string
+    ID: string,
+    Name: string,
+    Color: string,
 }
 
 export default async function CreateCategoryHandler(
@@ -32,7 +34,7 @@ export default async function CreateCategoryHandler(
                 const { categoryName, categoryColor } = req.body;
 
                 /** generate uuidv4 */
-                const id = uuid();
+                const id = uuidv4();
 
                 /* insert data into category table */
                 const result = await executeQuery({
@@ -40,7 +42,9 @@ export default async function CreateCategoryHandler(
                     values: [resultID[0].id, id, categoryName, categoryColor],
                 });
 
-                res.status(201).json({ message: 'New category created'})
+                res.status(201).json({ ID: id, Name: categoryName, Color: categoryColor})
+                res.end();
+                return
             }
         } 
         /* reject if JWT token is invalid */
