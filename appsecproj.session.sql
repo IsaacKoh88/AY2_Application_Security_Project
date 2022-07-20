@@ -7,28 +7,28 @@ CREATE TABLE account(
     password VARCHAR (255) NOT NULL
 );
 
-CREATE TABLE calendar(
-    acct_id     VARCHAR(36) NOT NULL,
+CREATE TABLE events(
+    account_id     VARCHAR(36) NOT NULL,
     event_id    VARCHAR(36) NOT NULL,
     date        DATE NOT NULL,
     start_time 	TIME NOT NULL,
 	end_time	TIME NOT NULL,
     name        VARCHAR(255) NOT NULL,
-    description VARCHAR(255) NULL,
+    description TEXT NULL,
     category_id VARCHAR(36) NOT NULL
 );
 
 CREATE TABLE category(
-    acct_id     VARCHAR(36) NOT NULL,
+    account_id     VARCHAR(36) NOT NULL,
     category_id VARCHAR(36) NOT NULL,
     name        VARCHAR(255) NOT NULL,
     color       VARCHAR(7) NOT NULL
 );
 
 CREATE TABLE todo(
-    acct_id     VARCHAR(36) NOT NULL,
+    acctount_id     VARCHAR(36) NOT NULL,
     todo_id     VARCHAR(36) NOT NULL,
-    name        VARCHAR(36) NOT NULL,
+    name        VARCHAR(255) NOT NULL,
     date        DATE NOT NULL
 );
 
