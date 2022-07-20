@@ -194,6 +194,15 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
         handleEditCategoryPopupDisappear();
     };
 
+    /** Handles create new eventsuccess */
+    const handleCreateEventSuccess = (ID: string, Name: string, Date: string, StartTime: string, EndTime: string, Description: string, CategoryID: string,) => {
+        setEvents(prevState => {
+            return [...prevState, { ID: ID, Name: Name, Date: Date, StartTime: StartTime, EndTime: EndTime, Description: Description, CategoryID: CategoryID}]
+        });
+
+        handleCreateEventPopupDisappear();
+    };
+
     /** Handle to-do checked */
     const handleTodoCheck = (id: string, checked: number) => {
         setTodos(prevState => {
@@ -334,7 +343,7 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
                         <div className='flex flex-col grow justify-start items-center w-full overflow-y-scroll'>
                             {/** display a card for each event */}
                             {events.map((event, index) => 
-                                categories.find(e => e['Name'] === event['CategoryID'])?.['Activated'] === true ?
+                                categories.find(e => e.ID === event.CategoryID)?.['Activated'] === true ?
                                 <Event event={event} categories={categories} editEvent={handleEditEventPopupAppear} key={index} />
                                 :
                                 <></>
@@ -378,7 +387,7 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
 
             {/** create event form */}
             {createEvent ?
-                <CreateEvent categories={categories} close={handleCreateEventPopupDisappear} />
+                <CreateEvent id={id} categories={categories} success={handleCreateEventSuccess} close={handleCreateEventPopupDisappear} />
                 :
                 <></>
             }
