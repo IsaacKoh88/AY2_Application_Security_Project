@@ -13,6 +13,7 @@ type PasswordStrength =
     | "Strong"
     | "Very Strong";
 
+
 const Signup: NextPage = () => {
     // The password
     const [password, setPassword] = useState<string>("");
@@ -65,11 +66,6 @@ const Signup: NextPage = () => {
         }
     }, [password]);
 
-        // Button handler function
-        const buttonHandler = () => {
-            alert("You have entered a strong password.");
-            // Do other things here
-        };
 
         //styling
         const styles = {
@@ -91,9 +87,9 @@ const Signup: NextPage = () => {
                 outline: "none",
             },
             statusBar: {
-                width: 450,
-                height: 12,
-                marginTop: 20,
+                width: 460,
+                height: 13,
+                marginTop: 10,
                 background: "#fff",
                 border: "1px solid #444",
                 borderRadius: "5px",
@@ -115,10 +111,10 @@ const Signup: NextPage = () => {
                 opacity: 0.3,
             },
             changePasswordColor: {
-                    width: `${num}%`,
-                    background: funcProgressColor(),
-                    height: '10px',
-                    maxWidth: "100%",
+                width: `${num}%`,
+                background: funcProgressColor(),
+                height: '10px',
+                maxWidth: "100%",
             }
         } as const; 
 
@@ -182,7 +178,6 @@ const Signup: NextPage = () => {
                                         : styles.button
                                     }
                                     disabled={isButtonDisabled}
-                                    onClick={buttonHandler}
                                 >
                                     CONTINUE
                             </button>
