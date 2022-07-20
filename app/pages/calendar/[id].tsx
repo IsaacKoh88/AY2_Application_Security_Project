@@ -175,6 +175,25 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
         handleCreateCategoryPopupDisappear();
     };
 
+    /** Handles edit category success */
+    const handleEditCategorySuccess = (ID: string, Name: string, Color: string) => {
+        setCategories(prevState => {
+            const newState = prevState.map(category => {
+                if (category.ID === ID) {
+                    /** if category id in state is id of changed category return category with changed Activiated property */
+                    return {ID: ID, Name: Name, Color: Color, Activated: category.Activated};
+                } else {
+                    /** else return category unchanged */
+                    return category;
+                };
+            });
+
+            return newState;
+        });
+
+        handleEditCategoryPopupDisappear();
+    };
+
     /** Handle to-do checked */
     const handleTodoCheck = (id: string, checked: number) => {
         setTodos(prevState => {
@@ -394,7 +413,7 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
 
             {/** edit category form */}
             {editCategory !== '' ? 
-                <EditCategory category={categories.find(e => e['ID'] === editCategory)} close={handleEditCategoryPopupDisappear} />
+                <EditCategory id={id} category={categories.find(e => e['ID'] === editCategory)} success={handleEditCategorySuccess} close={handleEditCategoryPopupDisappear} />
                 :
                 <></>
             }

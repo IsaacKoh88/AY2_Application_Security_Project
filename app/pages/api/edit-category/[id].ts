@@ -9,7 +9,7 @@ type Data = {
     Color: string,
 }
 
-export default async function CreateCategory(
+export default async function EditCategory(
     req: NextApiRequest,
     res: NextApiResponse<Data>
 ) {
@@ -31,18 +31,16 @@ export default async function CreateCategory(
 
             if (resultID[0].id === req.query.id) {
                 /** deconstruct body data */
-                const { categoryName, categoryColor } = req.body;
-
-                /** generate uuidv4 */
-                const id = uuidv4();
+                const { categoryID, categoryName, categoryColor } = req.body;
 
                 /* insert data into category table */
                 const result = await executeQuery({
-                    query: 'INSERT INTO category VALUES(?, ?, ?, ?)',
-                    values: [resultID[0].id, id, categoryName, categoryColor],
+                    query: 'UPDATE category SET Name=?, Color=? WHERE AccountID=? AND ID=?',
+                    values: [categoryName, categoryColor, resultID[0].id, categoryID],
                 });
+                console.log(result)
 
-                res.status(201).json({ ID: id, Name: categoryName, Color: categoryColor})
+                res.status(201).json({ ID: categoryID, Name: categoryName, Color: categoryColor})
                 res.end();
                 return
             }

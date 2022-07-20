@@ -1,8 +1,33 @@
 import React, { Fragment, useState } from 'react';
 import colors from '../../utils/colors';
 
-const EditCategory = ({ category, close }) => {
-    const [name, setName] = useState(category['Name'])
+const EditCategory = ({ id, category, success, close }) => {
+    const [categoryName, setCategoryName] = useState(category.Name);
+    const [categoryColor, setCategoryColor] = useState(category.Color);
+
+    const FormSubmitHandler = async () => {
+        const response = await fetch('/api/edit-category/'+id, 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        categoryID: category.ID,
+                        categoryName: categoryName, 
+                        categoryColor: categoryColor
+                    }
+                )
+            }
+        );
+
+        if (response.status === 201) {
+            const data = await response.json();
+
+            success(data.ID, data.Name, data.Color);
+        }
+    }
 
     return (
         <Fragment>
@@ -19,30 +44,33 @@ const EditCategory = ({ category, close }) => {
                             name='categoryName'
                             className='grow bg-slate-800 focus:bg-slate-900 text-white placeholder:text-slate-400 border-2 border-slate-800 focus:border-blue-600 outline-none focus:outline-none px-3 py-2 mr-2 rounded-md duration-150 ease-in-out'
                             placeholder='Category Name'
-                            value={ name }
-                            onChange={e => setName(e.target.value)}
+                            value={ categoryName }
+                            onChange={e => setCategoryName(e.target.value)}
                             required
                         />
                         <select
                             id='eventCategory'
                             name='eventCategory'
+                            value={ categoryColor }
+                            onChange={e => setCategoryColor(e.target.value)}
                             className='bg-slate-800 focus:bg-slate-900 text-white placeholder:text-slate-400 border-2 border-slate-800 focus:border-blue-600 outline-none focus:outline-none px-3 py-2 rounded-md duration-150 ease-in-out'
                         >
                             {colors.map((color, index) => (
                                 <option
-                                    value={ color }
+                                    value={ color.Name }
                                     key={ index }
                                 >
-                                    { color['Name'] }
+                                    { color.Name }
                                 </option>
                             ))}
                         </select>
                     </div>
                     <div className='flex flex-row justify-center items-center w-full mt-4 mb-1 '>
                         <input 
-                            type='submit'
+                            type='button'
                             value='Confim Changes'
                             className='cursor-pointer bg-blue-600 text-slate-200 hover:text-white px-4 py-2 mr-2 rounded-md duration-150 ease-in-out'
+                            onClick={() => FormSubmitHandler()}
                         />
                         <input 
                             type='button'

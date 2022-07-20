@@ -56,10 +56,10 @@ const CreateCategory = ({ id, success, close }) => {
                         >
                             {colors.map((color, index) => (
                                 <option
-                                    value={ color['Name'] }
+                                    value={ color.Name }
                                     key={ index }
                                 >
-                                    { color['Name'] }
+                                    { color.Name }
                                 </option>
                             ))}
                         </select>
