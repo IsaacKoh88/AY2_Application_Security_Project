@@ -8,7 +8,7 @@ import type { AppProps } from 'next/app'
 
 
 {/** Allows pages to use layouts */}
-export type NextPageWithLayout = NextPage & {
+export type NextPageWithLayout<P = {}> = NextPage<P> & {
     getLayout?: (page: ReactElement) => ReactNode
 }
 
