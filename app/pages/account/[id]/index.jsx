@@ -14,7 +14,7 @@ export async function getServerSideProps(context) {
     if (JWTtoken == undefined){
         return {
             redirect: {
-                destination: '/401',
+                destination: '/login',
                 permanent: false,
             },
         }
