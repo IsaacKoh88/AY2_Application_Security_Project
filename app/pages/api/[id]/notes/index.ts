@@ -17,7 +17,7 @@ export default async function GetEvent(
         /** check user authorisation */
         await authorisedValidator(req, res);
 
-        /* insert data into category table */
+        /* insert data into todo table */
         const result = JSON.parse(JSON.stringify(await executeQuery({
             query: 'SELECT ID, Name, Checked FROM todo WHERE AccountID=?',
             values: [req.query.id],

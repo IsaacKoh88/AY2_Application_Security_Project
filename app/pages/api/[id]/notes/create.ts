@@ -17,10 +17,17 @@ export default async function CreateNotes(
         await authorisedValidator(req, res); 
 
         /** deconstruct body data */
-        const { todoName, date } = req.body;
+        const { notesName, description} = req.body;
 
         /** generate uuidv4 */
         const id = uuidv4();
+
+        /* insert data into notes table */
+        const result = await executeQuery({
+            query: 'INSERT INTO category VALUES(?, ?, ?, ?)',
+            values: [req.query.id, id, notesName, description],
+        });
+
 
         res.status(201).json({ message: 'success' })
         res.end();
