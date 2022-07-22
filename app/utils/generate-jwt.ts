@@ -5,7 +5,7 @@ const generateJWT = async (email: string) => {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setIssuer('application-security-project')
-    .setExpirationTime('30d')
+    .setExpirationTime('1h')
     .sign(new TextEncoder().encode(`qwertyuiop`));
 };
 

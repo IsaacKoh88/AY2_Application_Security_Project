@@ -68,6 +68,7 @@ DROP PROCEDURE IF EXISTS insertAccountData;
 DROP PROCEDURE IF EXISTS insertCalendarData;
 DROP PROCEDURE IF EXISTS insertCategoryData;
 DROP PROCEDURE IF EXISTS insertTodoData;
+DROP PROCEDURE IF EXISTS insertBudget;
 
 CREATE PROCEDURE insertAccountData (IN email VARCHAR(255), IN password VARCHAR(255))
 BEGIN
@@ -172,6 +173,30 @@ BEGIN
     DEALLOCATE PREPARE stmt;
 END
 
+-- @block
+-- Consists of stored procedure that select data
+DROP PROCEDURE IF EXISTS selectEmail_Id;
+DROP PROCEDURE IF EXISTS selectId_Email;
+
+CREATE PROCEDURE selectEmail_Id (IN id VARCHAR(36))
+BEGIN
+    SET @id = id;
+
+    PREPARE stmt FROM 'SELECT email FROM account WHERE id=?';
+    EXECUTE stmt USING @id;
+    DEALLOCATE PREPARE stmt;
+END;
+
+CREATE PROCEDURE selectId_Email (IN email VARCHAR(36))
+BEGIN
+    SET @email = email;
+
+    PREPARE stmt FROM 'SELECT id FROM account WHERE email=?';
+    EXECUTE stmt USING @email;
+    DEALLOCATE PREPARE stmt;
+END;
+
+
 
 -- @block
 -- Got error, but it does insert data into the tables
@@ -191,4 +216,3 @@ select * from category;
 
 -- @block
 select * from todo;
-

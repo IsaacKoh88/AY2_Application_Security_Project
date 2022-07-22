@@ -28,11 +28,11 @@ export async function getServerSideProps(context) {
 
         /** check if email is the same as the one in the id of URL */
         const result = await executeQuery({
-            query: 'SELECT email FROM account WHERE id=?',
+            query: 'CALL selectEmail_Id(?)',
             values: [id],
         });
 
-        if (result[0].email === email) {
+        if (result[0][0].email === email) {
             return {
                 props: {
                         id: id,
