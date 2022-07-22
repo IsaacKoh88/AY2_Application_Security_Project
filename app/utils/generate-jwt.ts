@@ -1,4 +1,7 @@
+import { generateKeyPair } from 'crypto';
 import * as jose from 'jose';
+
+
 
 const generateJWT = async (email: string) => {
     return await new jose.SignJWT({ email: email })

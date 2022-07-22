@@ -15,6 +15,7 @@ type PasswordStrength =
 
 
 const Signup: NextPage = () => {
+    
     // The password
     const [password, setPassword] = useState<string>("");
     const [passwordStrength, setPasswordStrength] =

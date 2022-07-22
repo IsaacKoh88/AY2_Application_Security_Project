@@ -19,7 +19,7 @@ export default async function GetEvent(
 
         /* insert data into category table */
         const result = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'SELECT ID, Name, Date, Checked FROM notes WHERE AccountID=?',
+            query: 'SELECT ID, Name, Checked FROM todo WHERE AccountID=?',
             values: [req.query.id],
         })));
 
