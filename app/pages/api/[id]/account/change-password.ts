@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import executeQuery from '../../utils/db'
+import executeQuery from '../../../../utils/db'
 import * as jose from 'jose';
 import * as argon2 from 'argon2';
 
