@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Event = ({ event, categories, editEvent }) => {
+const Event = ({ id, event, categories, editEvent, success }) => {
     const [expand, setExpand] = useState(false);
 
     const getCategoryColor = Color => {
@@ -48,26 +48,46 @@ const Event = ({ event, categories, editEvent }) => {
         setExpand(!expand);
     };
 
+    const DeleteHandler = async () => {
+        const response = await fetch('/api/'+id+'/event/delete', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body : JSON.stringify(
+                    {
+                        eventID: event.ID,
+                    }
+                )
+            }
+        );
+
+        if (response.status === 200) {
+            success();
+        };
+    }
+
     return (
         <div 
-            className={`group cursor-pointer flex flex-col justify-start items-center w-full px-3 py-2 my-2 rounded-lg transition-max-h duration-300 ease-in-out overflow-hidden ${expand ? 'max-h-screen' : 'max-h-10'} ${getCategoryColor(categories.find(e => e['Name'] === event['Category'])['Color'])}`}
+            className={`group cursor-pointer flex flex-col justify-start items-center w-full px-3 py-2 my-2 rounded-lg transition-max-h duration-300 ease-in-out overflow-hidden ${expand ? 'max-h-screen' : 'max-h-10'} ${getCategoryColor(categories.find(e => e.ID === event.CategoryID).Color)}`}
             onClick={() => handleClickDetails()}
         >
             <div className='flex flex-row justify-between items-center w-full'>
-                <p className={`font-semibold duration-300 ease-linear ${expand ? 'text-white' : 'text-slate-200 group-hover:text-white'}`}>{ event['Name'] }</p>
-                <p className={`font-semibold duration-300 ease-linear ${expand ? 'text-white' : 'text-slate-200 group-hover:text-white'}`}>{ event['StartTime'] } - { event['EndTime'] }</p>
+                <p className={`font-semibold duration-300 ease-linear ${expand ? 'text-white' : 'text-slate-200 group-hover:text-white'}`}>{ event.Name }</p>
+                <p className={`font-semibold duration-300 ease-linear ${expand ? 'text-white' : 'text-slate-200 group-hover:text-white'}`}>{ event.StartTime } - { event.EndTime }</p>
             </div>
             <p className={`flex justify-start items-start text-white w-full mt-1`}>{ event['Description'] }</p>
             <div className={`flex flex-row justify-end items-center w-full mt-2 mb-1`}>
                 <div 
                     className='cursor-pointer bg-slate-200 px-3 py-2 mr-2 rounded-md'
-                    onClick={() => editEvent(event['ID'])}
+                    onClick={() => editEvent(event.ID)}
                 >
                     <p className='text-blue-500 font-semibold duration-150 ease-in-out'>Edit Event</p>
                 </div>
                 <div 
                     className='group cursor-pointer bg-slate-200 px-3 py-2 ml-2 rounded-md'
-                    onClick={() => {/** Delete Event */}}
+                    onClick={() => DeleteHandler()}
                 >
                     <p className='text-red-500 font-semibold duration-150 ease-in-out'>Delete Event</p>
                 </div>

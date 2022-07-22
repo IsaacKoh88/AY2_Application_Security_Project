@@ -6,8 +6,6 @@ import Navbar from '../components/navbar'
 import zxcvbn from 'zxcvbn';
 
 
-
-
 const Login: NextPage = () => {
 
     //

@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import dayjs from 'dayjs';
 import { useState } from 'react'
 
-const CreateEvent = ({ categories, close }) => {
+const CreateEvent = ({ id, categories, success, close }) => {
     const [eventName, setEventName] = useState('');
     const [date, setDate] = useState(dayjs().format('YYYY-MM-DD'));
     const [startTime, setStartTime] = useState('09:00:00');
@@ -11,7 +11,7 @@ const CreateEvent = ({ categories, close }) => {
     const [categoryId, setCategoryId] = useState('');
 
     const FormSubmitHandler = async () => {
-        const res = await fetch('/api/create-event', {
+        const response = await fetch('/api/'+id+'/event/create', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -26,7 +26,11 @@ const CreateEvent = ({ categories, close }) => {
                     categoryId: categoryId
                 }
             )
-        })
+        });
+
+        if (response.status === 201) {
+            success()
+        }
     }
 
     return (
@@ -57,10 +61,10 @@ const CreateEvent = ({ categories, close }) => {
                             <option value = ''>None</option>
                             {categories.map((category, index) => (
                                 <option
-                                    value={ category['ID'] }
+                                    value={ category.ID }
                                     key={ index }
                                 >
-                                    { category['Name'] }
+                                    { category.Name }
                                 </option>
                             ))}
                         </select>
@@ -105,7 +109,7 @@ const CreateEvent = ({ categories, close }) => {
                         onChange={e => setDescription(e.target.value)}
                     />
                     <input 
-                        type='submit'
+                        type='button'
                         value='Create Event'
                         className='cursor-pointer self-end bg-blue-600 text-slate-200 hover:text-white px-4 py-2 mt-5 rounded-md duration-150 ease-in-out'
                         onClick={() => FormSubmitHandler()}

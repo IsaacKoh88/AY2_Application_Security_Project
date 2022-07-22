@@ -24,7 +24,6 @@ type TodoProps = {
     Checked: number,
 }[]
 
-
 type EventsProps = {
     ID: string,
     Name: string,
@@ -39,7 +38,6 @@ type CategoriesProps = {
     ID: string,
     Name: string,
     Color: string,
-    Activated: boolean
 }[]
 
 type CalendarProps = {
@@ -86,21 +84,19 @@ export async function getServerSideProps(context:any) {
 
         try {
             const resultTodo = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, Checked FROM todo WHERE AccountID=?',
+                query: 'SELECT ID, Name, Date, Checked FROM todo WHERE AccountID=?',
                 values: [id],
             })));
 
             const resultEvents = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, StartTime, EndTime, Description, CategoryID FROM events WHERE AccountID=?',
+                query: 'SELECT ID, Name, Date, StartTime, EndTime, Description, CategoryID FROM events WHERE AccountID=?',
                 values: [id],
             })));
 
-            const resultCategories = (JSON.parse(JSON.stringify(await executeQuery({
+            const resultCategories = JSON.parse(JSON.stringify(await executeQuery({
                 query: 'SELECT ID, Name, Color FROM category WHERE AccountID=?',
                 values: [id],
-            })))).map((category: {ID: string, Name: string, Color: string}) => {
-                return {...category, Activated: true};
-            });
+            })));
 
             return{
                 props: {
@@ -111,6 +107,7 @@ export async function getServerSideProps(context:any) {
             }
         } 
         catch (error) {
+            console.log(error)
         }  
     } 
     
@@ -149,38 +146,91 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
     /** State to control edit category popup */
     const [editCategory, setEditCateogory] = useState('')
 
-    /** Handles category status check change */
-    const handleCategoryStatus = (id: string, checked: boolean) => {
-        setCategories(prevState => {
-            const newState = prevState.map(category => {
-                if (category['ID'] === id) {
-                    /** if category id in state is id of changed category return category with changed Activiated property */
-                    return {...category, Activated: checked};
-                } else {
-                    /** else return category unchanged */
-                    return category;
-                };
-            });
+    /** Handles create new category success */
+    const handleCreateCategorySuccess = async () => {
+        fetch('/api/'+id+'/category')
+        .then(response => response.json())
+        .then(data => setCategories(data));
 
-            return newState;
-        });
+        handleCreateCategoryPopupDisappear();
+    };
+
+    /** Handles edit category success */
+    const handleEditCategorySuccess = () => {
+        fetch('/api/'+id+'/category')
+        .then(response => response.json())
+        .then(data => setCategories(data));
+
+        handleEditCategoryPopupDisappear();
+    };
+
+    /** Handles create new event success */
+    const handleCreateEventSuccess = () => {
+        fetch('/api/'+id+'/event')
+        .then(response => response.json())
+        .then(data => setEvents(data));
+
+        handleCreateEventPopupDisappear();
+    };
+
+    /** Handles edit category success */
+    const handleEditEventSuccess = () => {
+        fetch('/api/'+id+'/event')
+        .then(response => response.json())
+        .then(data => setEvents(data));
+
+        handleEditEventPopupDisappear();
+    };
+
+    /** Handles edit category success */
+    const handleDeleteEventSuccess = () => {
+        fetch('/api/'+id+'/event')
+        .then(response => response.json())
+        .then(data => setEvents(data));
+    };
+
+    /** Handles create new todo success */
+    const handleCreateTodoSuccess = () => {
+        fetch('/api/'+id+'/todo')
+        .then(response => response.json())
+        .then(data => setTodos(data));
+
+        handleCreateTodoPopupDisappear();
+    };
+
+    /** Handles edit category success */
+    const handleEditTodoSuccess = () => {
+        fetch('/api/'+id+'/todo')
+        .then(response => response.json())
+        .then(data => setTodos(data));
+
+        handleEditTodoPopupDisappear();
     };
 
     /** Handle to-do checked */
-    const handleTodoCheck = (id: string, checked: number) => {
-        setTodos(prevState => {
-            const newState = prevState.map(todo => {
-                if (todo['ID'] === id) {
-                    /** if todo id in state is id of changed todo return category with changed Checked property */
-                    return {...todo, Checked: checked};
-                } else {
-                    /** else return todo unchanged */
-                    return todo;
-                };
-            });
+    const handleTodoCheck = async (todoID: string, checked: boolean) => {
+        const checkedNumber = checked ? 1 : 0
+        const response = await fetch('/api/'+id+'/todo/check', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body : JSON.stringify(
+                    {
+                        todoID: todoID,
+                        checked: checkedNumber,
+                    }
+                )
+            }
+        );
 
-            return newState;
-        });
+        if (response.status === 201) {
+            console.log('ok')
+            fetch('/api/'+id+'/todo')
+            .then(response => response.json())
+            .then(data => setTodos(data));
+        };
     };
 
     /** Handles date selection action */
@@ -275,7 +325,7 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
                         <div className='flex flex-col grow justify-start items-center w-full overflow-y-scroll'>
                             {/** display a card for each category */}
                             {categories.map((category, index) => (
-                                <Category category={category} changeStatus={handleCategoryStatus} editCategory={handleEditCategoryPopupAppear} key={index} />
+                                <Category category={category} editCategory={handleEditCategoryPopupAppear} key={index} />
                             ))}
                         </div>
                     }
@@ -306,10 +356,7 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
                         <div className='flex flex-col grow justify-start items-center w-full overflow-y-scroll'>
                             {/** display a card for each event */}
                             {events.map((event, index) => 
-                                categories.find(e => e['Name'] === event['CategoryID'])?.['Activated'] === true ?
-                                <Event event={event} categories={categories} editEvent={handleEditEventPopupAppear} key={index} />
-                                :
-                                <></>
+                                <Event id={id} event={event} categories={categories} editEvent={handleEditEventPopupAppear} success={handleDeleteEventSuccess} key={index} />
                             )}
                         </div>
                     }
@@ -350,42 +397,42 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
 
             {/** create event form */}
             {createEvent ?
-                <CreateEvent categories={categories} close={handleCreateEventPopupDisappear} />
+                <CreateEvent id={id} categories={categories} success={handleCreateEventSuccess} close={handleCreateEventPopupDisappear} />
                 :
                 <></>
             }
 
             {/** edit event form */}
             {editEvent !== '' ? 
-                <EditEvent event={events.find(e => e['ID'] === editEvent)} categories={categories} close={handleEditEventPopupDisappear} />
+                <EditEvent id={id} event={events.find(e => e.ID === editEvent)} categories={categories} success={handleEditEventSuccess} close={handleEditEventPopupDisappear} />
                 :
                 <></>
             }
 
             {/** create todo form */}
             {createTodo ? 
-                <CreateTodo close={handleCreateTodoPopupDisappear} />
+                <CreateTodo id={id} success={handleCreateTodoSuccess} close={handleCreateTodoPopupDisappear} />
                 :
                 <></>
             }
             
             {/** edit todo form */}
             {editTodo !== '' ? 
-                <EditTodo todo={todos.find(e => e['ID'] === editTodo)} close={handleEditTodoPopupDisappear} />
+                <EditTodo id={id} todo={todos.find(e => e.ID === editTodo)} success={handleEditTodoSuccess} close={handleEditTodoPopupDisappear} />
                 :
                 <></>
             }
 
             {/** create category form */}
             {createCategory ? 
-                <CreateCategory id={id} close={handleCreateCategoryPopupDisappear} />
+                <CreateCategory id={id} success={handleCreateCategorySuccess} close={handleCreateCategoryPopupDisappear} />
                 :
                 <></>
             }
 
             {/** edit category form */}
             {editCategory !== '' ? 
-                <EditCategory category={categories.find(e => e['ID'] === editCategory)} close={handleEditCategoryPopupDisappear} />
+                <EditCategory id={id} category={categories.find(e => e.ID === editCategory)} success={handleEditCategorySuccess} close={handleEditCategoryPopupDisappear} />
                 :
                 <></>
             }
