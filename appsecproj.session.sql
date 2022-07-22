@@ -8,28 +8,29 @@ CREATE TABLE account(
 );
 
 CREATE TABLE events(
-    account_id     VARCHAR(36) NOT NULL,
-    event_id    VARCHAR(36) NOT NULL,
-    date        DATE NOT NULL,
-    start_time 	TIME NOT NULL,
-	end_time	TIME NOT NULL,
-    name        VARCHAR(255) NOT NULL,
-    description TEXT NULL,
-    category_id VARCHAR(36) NOT NULL
+    AccountID   VARCHAR(36) NOT NULL,
+    ID          VARCHAR(36) NOT NULL,
+    Date        DATE NOT NULL,
+    StartTime 	TIME NOT NULL,
+	EndTime	    TIME NOT NULL,
+    Name        VARCHAR(255) NOT NULL,
+    Description TEXT NULL,
+    CategoryID  VARCHAR(36) NOT NULL
 );
 
 CREATE TABLE category(
-    account_id     VARCHAR(36) NOT NULL,
-    category_id VARCHAR(36) NOT NULL,
-    name        VARCHAR(255) NOT NULL,
-    color       VARCHAR(7) NOT NULL
+    AccountID   VARCHAR(36) NOT NULL,
+    ID          VARCHAR(36) NOT NULL,
+    Name        VARCHAR(255) NOT NULL,
+    Color       VARCHAR(7) NOT NULL
 );
 
 CREATE TABLE todo(
-    acctount_id     VARCHAR(36) NOT NULL,
-    todo_id     VARCHAR(36) NOT NULL,
-    name        VARCHAR(255) NOT NULL,
-    date        DATE NOT NULL
+    AccountID    VARCHAR(36) NOT NULL,
+    ID     VARCHAR(36) NOT NULL,
+    Name        VARCHAR(255) NOT NULL,
+    Date        DATE NOT NULL,
+    Checked     TINYINT(4) NOT NULL
 );
 
 
