@@ -66,7 +66,7 @@ const ChangePassword = ({ id }) => {
 
     {/** Calls API on form submit */}
     const FormSubmitHandler = async () => {
-        const res = await fetch('/api/changepassword', {
+        const res = await fetch('/api/' +id+ '/account/change-password', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
