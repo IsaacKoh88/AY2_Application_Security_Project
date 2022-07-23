@@ -11,7 +11,7 @@ import * as jose from 'jose';
 import { prototype } from 'events';
 
 type ExpenseProps = {
-    id: string;
+    ID: string;
     name: string;
     amount: number;
     date: string;
@@ -98,6 +98,8 @@ export async function getServerSideProps(context:any) {
 
 const Budget: NextPageWithLayout<BudgetProps> = (props) => {
     const id = props.id;
+    console.log(props.expense)
+    
 
     /** State to store current budget */
     const [budget, setBudget] = useState(0);
@@ -218,7 +220,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
 
             {/** edit expense form */}
             {editExpense !== '' ?
-                <EditExpense expense={expenses.find(e => e['id'] === editExpense)} close={handleEditExpensePopupDisappear} />
+                <EditExpense expense={expenses.find(e => e['ID'] === editExpense)} close={handleEditExpensePopupDisappear} />
                 :
                 <></>
             }
