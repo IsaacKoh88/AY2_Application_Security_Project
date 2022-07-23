@@ -72,6 +72,24 @@ export async function getServerSideProps(context:any) {
 const Budget: NextPageWithLayout = (id) => {
     /** State to store current budget */
     const [budget, setBudget] = useState(0);
+
+    const FormSubmitHandler = async () => {
+        const response = await fetch('/api/'+id+'/budget/edit', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        accountID: id,
+                        budget: budget
+                    }
+                )
+            }
+        );
+    }
+
     /** State to store expense */
     const [expenses, setExpenses] = useState([
         {
@@ -119,16 +137,25 @@ const Budget: NextPageWithLayout = (id) => {
                         </div>
                     </div>
                     <p className='cursor-default text-slate-200 text-2xl font-semibold mb-3'>This Month's Budget:</p>
+                    <form>
                     <input 
                         type='number'
                         id='budget'
                         name='budget'
-                        className='bg-slate-800 focus:bg-slate-900 text-lg text-slate-200 placeholder:text-slate-400 text-center border-2 border-slate-800 focus:border-blue-600 outline-none focus:outline-none w-72 px-3 py-2 rounded-lg duration-150 ease-in-out'
+                        className='bg-slate-800 focus:bg-slate-900 text-lg text-slate-200 placeholder:text-slate-400 text-center border-2 border-slate-800 focus:border-blue-600 outline-none focus:outline-none w-72 px-3 py-2 rounded-t-lg duration-150 ease-in-out'
                         placeholder='Budget'
                         value={ budget }
                         onChange={e => setBudget(Number(e.target.value))}
                         required
                     />
+                    <br />
+                    <input 
+                        type='submit'
+                        value='Submit'
+                        className='cursor-pointer self-center bg-blue-600 text-slate-200 hover:text-white w-72 rounded-b-md duration-150 ease-in-out'
+                        onClick={() => FormSubmitHandler()}
+                    />
+                    </form>
                 </div>
             </div>
 

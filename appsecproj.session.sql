@@ -78,7 +78,7 @@ END
 -- @block
 -- Consists of stored procedure that inserts data
 DROP PROCEDURE IF EXISTS insertAccountData;
-DROP PROCEDURE IF EXISTS insertCalendarData;
+DROP PROCEDURE IF EXISTS insertEventData;
 DROP PROCEDURE IF EXISTS insertCategoryData;
 DROP PROCEDURE IF EXISTS insertTodoData;
 DROP PROCEDURE IF EXISTS insertExpenseData;
@@ -102,21 +102,26 @@ BEGIN
         EXECUTE stmt USING @ID;
         DEALLOCATE PREPARE stmt;
     END WHILE;
+
+    SET @budget = 1000;
+    PREPARE stmt FROM 'INSERT INTO budget VALUES(?, ?)'; 
+    EXECUTE stmt USING @ID, @budget;
+    DEALLOCATE PREPARE stmt;
     
     PREPARE stmt FROM 'INSERT INTO account VALUES (?, ?, ?)';
     EXECUTE stmt USING @ID, @email, @password;
     DEALLOCATE PREPARE stmt;
 END;
 
-CREATE PROCEDURE insertCalendarData (IN AccountID VARCHAR(36), date DATE, startTime TIME, endTime TIME, eventName VARCHAR(255), description VARCHAR(255), category_id VARCHAR(36))
+CREATE PROCEDURE insertEventData (IN AccountID VARCHAR(36), date DATE, startTime TIME, endTime TIME, eventName VARCHAR(255), description VARCHAR(255), CategoryID VARCHAR(36))
 BEGIN
-    SET @AccountID= acct_id;
+    SET @AccountID= AccountID;
     SET @Date = date;
     SET @StartTime = startTIme;
     SET @EndTime = endTime;
     SET @Name = eventName;
     SET @Description = description;
-    set @CategoryID = category_id;
+    set @CategoryID = CategoryID;
 
     SET @ID = uuid_v4s();
 
@@ -132,9 +137,9 @@ BEGIN
         DEALLOCATE PREPARE stmt;
     END WHILE;
 
-    PREPARE stmt FROM 'INSERT INTO events VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-    EXECUTE stmt USING @AccountID, @ID, @Date, @StartTime, @EndTime, @Name, @Description, @CategoryID;
-    DEALLOCATE PREPARE stmt;
+    PREPARE stmt2 FROM 'INSERT INTO events VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+    EXECUTE stmt2 USING @AccountID, @ID, @Date, @StartTime, @EndTime, @Name, @Description, @CategoryID;
+    DEALLOCATE PREPARE stmt2;
 END;
 
 CREATE PROCEDURE insertCategoryData (IN AccountID VARCHAR(36), categoryName VARCHAR(255), categoryColor VARCHAR(8))
@@ -162,28 +167,29 @@ BEGIN
     DEALLOCATE PREPARE stmt;
 END;
 
-CREATE PROCEDURE insertTodoData (IN acct_id VARCHAR(36), todoName VARCHAR(255), todoDate DATE)
+CREATE PROCEDURE insertTodoData (IN AccountID VARCHAR(36), todoName VARCHAR(255), todoDate DATE)
 BEGIN
-    SET @acct_id = acct_id;
-    SET @todoName = todoName;
-    SET @todoDate = todoDate;
+    SET @AccountID = AccountID;
+    SET @Name = todoName;
+    SET @Date = todoDate;
+    SET @Checked = 0;
 
-    SET @todo_id = uuid_v4s();
+    SET @ID = uuid_v4s();
 
-    PREPARE stmt FROM 'SELECT count(*) FROM todo where acct_id = ? and todo_id = ? INTO @count'; 
-    EXECUTE stmt USING @acct_id, @todo_id;
+    PREPARE stmt FROM 'SELECT count(*) FROM todo where AccountID = ? and ID = ? INTO @count'; 
+    EXECUTE stmt USING @AccountID, @ID;
     DEALLOCATE PREPARE stmt;
     
     WHILE (@count = 1)
     DO
-        SET @todo_id = uuid_v4s();
-        PREPARE stmt FROM 'SELECT count(*) FROM todo where acct_id = ? and todo_id = ? INTO @count'; 
-        EXECUTE stmt USING @acct_id, @todo_id;
+        SET @ID = uuid_v4s();
+        PREPARE stmt FROM 'SELECT count(*) FROM todo where AccountID = ? and ID = ? INTO @count'; 
+        EXECUTE stmt USING @AccountID, @ID;
         DEALLOCATE PREPARE stmt;
     END WHILE;
 
-    PREPARE stmt FROM 'INSERT INTO todo VALUES (?, ?, ?, ?)';
-    EXECUTE stmt USING @acct_id, @todo_id, @todoName, @todoDate;
+    PREPARE stmt FROM 'INSERT INTO todo VALUES (?, ?, ?, ?, ?)';
+    EXECUTE stmt USING @AccountID, @ID, @Name, @Date, @Checked;
     DEALLOCATE PREPARE stmt;
 END;
 
@@ -213,6 +219,7 @@ BEGIN
     EXECUTE stmt USING @AccountID, @ID, @Name, @Amount, @Date;
     DEALLOCATE PREPARE stmt;
 END;
+
 -- @block
 -- Consists of stored procedure that select data
 DROP PROCEDURE IF EXISTS selectEmail_Id;
@@ -242,7 +249,9 @@ DROP PROCEDURE IF EXISTS updateAccount;
 DROP PROCEDURE IF EXISTS updateCategory;
 DROP PROCEDURE IF EXISTS updateEvent;
 DROP PROCEDURE IF EXISTS updateTodo;
+DROP PROCEDURE IF EXISTS updateBudget;
 DROP PROCEDURE IF EXISTS updateExpense;
+
 
 CREATE PROCEDURE updateAccount (IN hashedPassword VARCHAR(255), id VARCHAR(36), email VARCHAR(255))
 BEGIN
@@ -279,6 +288,16 @@ BEGIN
     DEALLOCATE PREPARE stmt;
 END;
 
+CREATE PROCEDURE updateBudget (IN AccountID VARCHAR(36), Budget INT)
+BEGIN
+    SET @AccountID = AccountID;
+    SET @Budget = Budget;
+
+    PREPARE stmt FROM 'UPDATE budget SET Budget=? WHERE AccountID=?';
+    EXECUTE stmt using @Budget, @AccountID;
+    DEALLOCATE PREPARE stmt;
+END;
+
 -- @block
 select * from calendar;
 
@@ -296,4 +315,3 @@ select * from budget;
 
 -- @block
 select * from expense;
-
