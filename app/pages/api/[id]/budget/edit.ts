@@ -16,8 +16,17 @@ export default async function EditBudget(
         await authorisedValidator(req, res);
 
         /** deconstruct body data */
-        const { ID, budget } = req.body;
+        const { accountID, budget } = req.body;
 
+        /* update budget table */
+        const result = await executeQuery({
+            query: 'CALL updateBudget(?, ?)',
+            values: [accountID['id'], budget],
+        });
+
+        res.statusCode = 201;
+        res.end('Success');
+        return
     }
     /* rejects requests that are empty */
     else if (!req.body) {
