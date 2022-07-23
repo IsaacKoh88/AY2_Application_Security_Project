@@ -1,5 +1,9 @@
 -- @block
+<<<<<<< HEAD
+DROP TABLE IF EXISTS account, events, category, todo, budget, notes;
+=======
 DROP TABLE IF EXISTS account, events, category, todo, budget, expense;
+>>>>>>> 03b8dfdf43316754638ccb0b65db0d38effa5fcf
 
 CREATE TABLE account(
     id  VARCHAR(36) PRIMARY KEY NOT NULL UNIQUE,
@@ -44,6 +48,14 @@ CREATE TABLE expense(
     Name        VARCHAR(255) NOT NULL,
     Amount      INT NOT NULL,
     Date        DATE NOT NULL
+);
+
+CREATE TABLE notes(
+    AccountID   VARCHAR(36) NOT NULL,
+    ID          VARCHAR(36) NOT NULL,
+    Name        VARCHAR(255) NOT NULL,
+    Date        DATE NOT NULL,
+    Description TEXT NULL
 );
 
 
@@ -193,6 +205,18 @@ BEGIN
     DEALLOCATE PREPARE stmt;
 END;
 
+<<<<<<< HEAD
+CREATE PROCEDURE insertNotesData (IN AccountID VARCHAR(36), notesName VARCHAR(255), notesDate DATE)
+BEGIN
+    SET @AccountID = AccountID;
+    SET @notesName = notesName;
+    SET @notesDate = notesDate;
+
+    SET @notes_id = uuid_v4s();
+
+    PREPARE stmt FROM 'SELECT count(*) FROM notes where AccountID = ? and notes_id = ? INTO @count'; 
+    EXECUTE stmt USING @AccountID, @notes_id;
+=======
 
 CREATE PROCEDURE insertExpenseData (IN AccountID VARCHAR(36), Name VARCHAR(255), Amount INT, Date DATE)
 BEGIN
@@ -205,10 +229,26 @@ BEGIN
 
     PREPARE stmt FROM 'SELECT count(*) FROM expense where AccountID = ? and ID = ? INTO @count'; 
     EXECUTE stmt USING @AccountID, @ID;
+>>>>>>> 03b8dfdf43316754638ccb0b65db0d38effa5fcf
     DEALLOCATE PREPARE stmt;
     
     WHILE (@count = 1)
     DO
+<<<<<<< HEAD
+        SET @notes_id = uuid_v4s();
+        PREPARE stmt FROM 'SELECT count(*) FROM notes where AccountID = ? and notes_id = ? INTO @count'; 
+        EXECUTE stmt USING @AccountID, @notes_id;
+        DEALLOCATE PREPARE stmt;
+    END WHILE;
+
+    PREPARE stmt FROM 'INSERT INTO notes VALUES (?, ?, ?, ?)';
+    EXECUTE stmt USING @AccountID, @notes_id, @notesName, @notesDate;
+    DEALLOCATE PREPARE stmt;
+END;
+
+
+
+=======
         SET @ID = uuid_v4s();
         PREPARE stmt FROM 'SELECT count(*) FROM expense where AccountID = ? and ID = ? INTO @count'; 
         EXECUTE stmt USING @AccountID, @ID;
@@ -220,6 +260,7 @@ BEGIN
     DEALLOCATE PREPARE stmt;
 END;
 
+>>>>>>> 03b8dfdf43316754638ccb0b65db0d38effa5fcf
 -- @block
 -- Consists of stored procedure that select data
 DROP PROCEDURE IF EXISTS selectEmail_Id;
@@ -288,6 +329,19 @@ BEGIN
     DEALLOCATE PREPARE stmt;
 END;
 
+CREATE PROCEDURE updateNotes (IN notesName VARCHAR(255), notesDate DATE, account_id VARCHAR(36), notes_id VARCHAR(36))
+BEGIN
+    SET @notesName = notesName;
+    SET @notesDate = notesDate;
+    SET @account_id = account_id;
+    SET @notes_id = notes_id;
+
+    PREPARE stmt FROM 'UPDATE notes SET name=?, date=? WHERE account_id=? AND notes_id=?';
+    EXECUTE stmt using @notesName, @notesDate, @account_id, @notes_id;
+    DEALLOCATE PREPARE stmt;
+END;
+
+
 CREATE PROCEDURE updateBudget (IN AccountID VARCHAR(36), Budget INT)
 BEGIN
     SET @AccountID = AccountID;
@@ -314,4 +368,9 @@ select * from todo;
 select * from budget;
 
 -- @block
+<<<<<<< HEAD
+select * from notes;
+
+=======
 select * from expense;
+>>>>>>> 03b8dfdf43316754638ccb0b65db0d38effa5fcf
