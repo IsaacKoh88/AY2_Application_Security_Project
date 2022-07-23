@@ -19,6 +19,7 @@ type ExpenseProps = {
 
 type BudgetProps = {
     id: number;
+    budget: number;
     totalExpense: number;
     expense: ExpenseProps;
 }
@@ -65,7 +66,12 @@ export async function getServerSideProps(context:any) {
         })));
 
         const resultExpense = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'select ID, Name, Amount, Date from expense where AccountId = ?',
+            query: 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ?',
+            values: [id],
+        })));
+
+        const resultBudget = JSON.parse(JSON.stringify(await executeQuery({
+            query: 'select Budget from budget where AccountId = ?',
             values: [id],
         })));
 
@@ -74,6 +80,7 @@ export async function getServerSideProps(context:any) {
             return{
                 props: {
                     id: id,
+                    budget: resultBudget[0]['Budget'],
                     totalExpense: resultTotalExpense[0]['TotalExpense'],
                     expense: resultExpense
                 }
@@ -97,9 +104,7 @@ export async function getServerSideProps(context:any) {
 
 
 const Budget: NextPageWithLayout<BudgetProps> = (props) => {
-    const id = props.id;
-    console.log(props.expense)
-    
+    const id = props.id;    
 
     /** State to store current budget */
     const [budget, setBudget] = useState(0);
@@ -168,8 +173,8 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
                         id='budget'
                         name='budget'
                         className='bg-slate-800 focus:bg-slate-900 text-lg text-slate-200 placeholder:text-slate-400 text-center border-2 border-slate-800 focus:border-blue-600 outline-none focus:outline-none w-72 px-3 py-2 rounded-t-lg duration-150 ease-in-out'
-                        placeholder='Budget'
-                        value={ budget }
+                        placeholder={JSON.stringify(props.budget)}
+                        defaultValue={props.budget}
                         onChange={e => setBudget(Number(e.target.value))}
                         required
                     />
@@ -220,7 +225,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
 
             {/** edit expense form */}
             {editExpense !== '' ?
-                <EditExpense expense={expenses.find(e => e['ID'] === editExpense)} close={handleEditExpensePopupDisappear} />
+                <EditExpense expense={expenses.find(e => e['ID'] === editExpense)} close={handleEditExpensePopupDisappear} id={id}/>
                 :
                 <></>
             }

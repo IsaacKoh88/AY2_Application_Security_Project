@@ -235,7 +235,7 @@ BEGIN
     SET @notesName = notesName;
     SET @notesDate = notesDate;
     SET @description = description;
-    
+
     SET @notes_id = uuid_v4s();
 
     PREPARE stmt FROM 'SELECT count(*) FROM notes where AccountID = ? and ID = ? INTO @count'; 
@@ -342,6 +342,19 @@ BEGIN
 
     PREPARE stmt FROM 'UPDATE budget SET Budget=? WHERE AccountID=?';
     EXECUTE stmt using @Budget, @AccountID;
+    DEALLOCATE PREPARE stmt;
+END;
+
+CREATE PROCEDURE updateExpense (IN AccountID VARCHAR(36), ID VARCHAR(36), Name VARCHAR(255), Amount INT, Date DATE)
+BEGIN
+    SET @AccountID = AccountID;
+    SET @ID = ID;
+    SET @Name = Name;
+    SET @Amount = Amount;
+    SET @Date = Date;
+
+    PREPARE stmt FROM 'UPDATE expense SET Name=?, Amount=?, Date=? WHERE AccountID=? and ID=?';
+    EXECUTE stmt using @Name, @Amount, @Date, @AccountID, @ID;
     DEALLOCATE PREPARE stmt;
 END;
 

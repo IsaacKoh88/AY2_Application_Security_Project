@@ -16,8 +16,17 @@ export default async function EditExpense(
         await authorisedValidator(req, res);
 
         /** deconstruct body data */
-        const { expenseId, expenseName, amount, date } = req.body;
+        const { accountID, id, expenseName, amount, date } = req.body;
 
+        /* update data in expense table */
+        const result = await executeQuery({
+            query: 'CALL updateExpense(?, ?, ?, ?, ?)',
+            values: [accountID, id, expenseName, amount, date],
+        });
+
+        res.statusCode = 201;
+        res.end('Success');
+        return
     }
     /* rejects requests that are empty */
     else if (!req.body) {

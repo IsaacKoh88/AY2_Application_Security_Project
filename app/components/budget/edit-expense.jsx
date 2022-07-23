@@ -1,8 +1,30 @@
 import React, { Fragment, useState } from 'react';
 
-const EditExpense = ({ expense, close }) => {
+const EditExpense = ({ expense, close, id }) => {
     const [name, setName] = useState(expense['Name']);
     const [amount, setAmount] = useState(expense['Amount']);
+    const [date, setDate] = useState(expense['Date']);
+
+    const FormSubmitHandler = async () => {
+        const response = await fetch('/api/'+id+'/expense/edit', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        accountID: id,
+                        id: expense['ID'],
+                        expenseName: name,
+                        amount: amount, 
+                        date: date
+                    }
+                )
+            }
+        );
+    }
+
 
     return (
         <Fragment>
@@ -36,6 +58,7 @@ const EditExpense = ({ expense, close }) => {
                         type='submit'
                         value='Confirm Changes'
                         className='cursor-pointer self-center bg-blue-600 text-slate-200 hover:text-white px-4 py-2 mt-2.5 rounded-md duration-150 ease-in-out'
+                        onClick={() => FormSubmitHandler()}
                     />
                 </form>
             </div>
