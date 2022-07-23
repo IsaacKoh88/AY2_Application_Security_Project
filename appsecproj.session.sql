@@ -91,6 +91,7 @@ DROP PROCEDURE IF EXISTS insertCategoryData;
 DROP PROCEDURE IF EXISTS insertTodoData;
 DROP PROCEDURE IF EXISTS insertExpenseData;
 DROP PROCEDURE IF EXISTS insertBudgetData;
+DROP PROCEDURE IF EXISTS inserTNotesData;
 
 CREATE PROCEDURE insertAccountData (IN email VARCHAR(255), IN password VARCHAR(255))
 BEGIN
@@ -228,6 +229,31 @@ BEGIN
     DEALLOCATE PREPARE stmt;
 END;
 
+CREATE PROCEDURE insertNotesData (IN AccountID VARCHAR(36), notesName VARCHAR(255), notesDate DATE, description VARCHAR(255))
+BEGIN
+    SET @AccountID = AccountID;
+    SET @notesName = notesName;
+    SET @notesDate = notesDate;
+    SET @description = description;
+    
+    SET @notes_id = uuid_v4s();
+
+    PREPARE stmt FROM 'SELECT count(*) FROM notes where AccountID = ? and ID = ? INTO @count'; 
+    EXECUTE stmt USING @AccountID, @notes_id;
+    DEALLOCATE PREPARE stmt;
+
+    WHILE (@count = 1)
+    DO
+        SET @notes_id = uuid_v4s();
+        PREPARE stmt FROM 'SELECT count(*) FROM notes where AccountID = ? and ID = ? INTO @count'; 
+        EXECUTE stmt USING @AccountID, @notes_id;
+        DEALLOCATE PREPARE stmt;
+    END WHILE;
+
+    PREPARE stmt FROM 'INSERT INTO notes VALUES (?, ?, ?, ?, ?)';
+    EXECUTE stmt USING @AccountID, @notes_id, @notesName, @notesDate, @description;
+    DEALLOCATE PREPARE stmt;
+END;
 -- @block
 -- Consists of stored procedure that select data
 DROP PROCEDURE IF EXISTS selectEmail_Id;
