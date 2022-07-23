@@ -16,8 +16,17 @@ export default async function CreateExpense(
         await authorisedValidator(req, res);
 
         /** deconstruct body data */
-        const { expenseId, expenseName, amount, date } = req.body;
+        const { accountID, expenseName, amount, date } = req.body;
 
+        /* insert data into expense table */
+        const result = await executeQuery({
+            query: 'CALL insertExpenseData(?, ?, ?, ?)',
+            values: [accountID, expenseName, amount, date],
+        });
+
+        res.statusCode = 201;
+        res.end('Success');
+        return
     }
     /* rejects requests that are empty */
     else if (!req.body) {

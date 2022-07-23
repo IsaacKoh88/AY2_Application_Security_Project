@@ -1,14 +1,12 @@
 import React, { Fragment, useState } from 'react';
-
-
-
+import dayjs from 'dayjs';
 
 const CreateExpense = ({ id, close }) => {
     const [name, setName] = useState('');
     const [amount, setAmount] = useState();
 
     const FormSubmitHandler = async () => {
-        const response = await fetch('/api/'+id+'/budget/create', 
+        const response = await fetch('/api/'+id+'/expense/create', 
             {
                 method: 'POST',
                 headers: {
@@ -16,9 +14,10 @@ const CreateExpense = ({ id, close }) => {
                 },
                 body: JSON.stringify(
                     {
-                        AccountID: id['id'],
-                        Name: name, 
-                        Amount: amount
+                        accountID: id['id'],
+                        expenseName: name, 
+                        amount: amount,
+                        date: dayjs().format('YYYY-MM-DD')
                     }
                 )
             }

@@ -1,5 +1,5 @@
 -- @block
-DROP TABLE IF EXISTS account, events, category, todo, budget;
+DROP TABLE IF EXISTS account, events, category, todo, budget, expense;
 
 CREATE TABLE account(
     id  VARCHAR(36) PRIMARY KEY NOT NULL UNIQUE,
@@ -35,9 +35,15 @@ CREATE TABLE todo(
 
 CREATE TABLE budget(
     AccountID   VARCHAR(36) NOT NULL,
+    Budget      INT NOT NULL
+);
+
+CREATE TABLE expense(
+    AccountID   VARCHAR(36) NOT NULL,
     ID          VARCHAR(36) NOT NULL,
     Name        VARCHAR(255) NOT NULL,
-    Amount      INT NOT NULL
+    Amount      INT NOT NULL,
+    Date        DATE NOT NULL
 );
 
 
@@ -75,6 +81,7 @@ DROP PROCEDURE IF EXISTS insertAccountData;
 DROP PROCEDURE IF EXISTS insertCalendarData;
 DROP PROCEDURE IF EXISTS insertCategoryData;
 DROP PROCEDURE IF EXISTS insertTodoData;
+DROP PROCEDURE IF EXISTS insertExpenseData;
 DROP PROCEDURE IF EXISTS insertBudgetData;
 
 CREATE PROCEDURE insertAccountData (IN email VARCHAR(255), IN password VARCHAR(255))
@@ -181,28 +188,29 @@ BEGIN
 END;
 
 
-CREATE PROCEDURE insertBudgetData (IN AccountID VARCHAR(36), Name VARCHAR(255), Amount INT)
+CREATE PROCEDURE insertExpenseData (IN AccountID VARCHAR(36), Name VARCHAR(255), Amount INT, Date DATE)
 BEGIN
     SET @AccountID = AccountID;
     SET @Name = Name;
     SET @Amount = Amount;
+    SET @Date = Date;
 
     SET @ID = uuid_v4s();
 
-    PREPARE stmt FROM 'SELECT count(*) FROM budget where AccountID = ? and ID = ? INTO @count'; 
+    PREPARE stmt FROM 'SELECT count(*) FROM expense where AccountID = ? and ID = ? INTO @count'; 
     EXECUTE stmt USING @AccountID, @ID;
     DEALLOCATE PREPARE stmt;
     
     WHILE (@count = 1)
     DO
         SET @ID = uuid_v4s();
-        PREPARE stmt FROM 'SELECT count(*) FROM budget where AccountID = ? and ID = ? INTO @count'; 
+        PREPARE stmt FROM 'SELECT count(*) FROM expense where AccountID = ? and ID = ? INTO @count'; 
         EXECUTE stmt USING @AccountID, @ID;
         DEALLOCATE PREPARE stmt;
     END WHILE;
 
-    PREPARE stmt FROM 'INSERT INTO budget VALUES (?, ?, ?, ?)';
-    EXECUTE stmt USING @AccountID, @ID, @Name, @Amount;
+    PREPARE stmt FROM 'INSERT INTO expense VALUES (?, ?, ?, ?, ?)';
+    EXECUTE stmt USING @AccountID, @ID, @Name, @Amount, @Date;
     DEALLOCATE PREPARE stmt;
 END;
 -- @block
@@ -285,4 +293,7 @@ select * from todo;
 
 -- @block
 select * from budget;
+
+-- @block
+select * from expense;
 
