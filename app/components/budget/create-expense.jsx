@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 const CreateExpense = ({ id, close }) => {
     const [name, setName] = useState('');
     const [amount, setAmount] = useState();
-
+    
     const FormSubmitHandler = async () => {
         const response = await fetch('/api/'+id+'/expense/create', 
             {
@@ -14,7 +14,7 @@ const CreateExpense = ({ id, close }) => {
                 },
                 body: JSON.stringify(
                     {
-                        accountID: id['id'],
+                        accountID: id,
                         expenseName: name, 
                         amount: amount,
                         date: dayjs().format('YYYY-MM-DD')

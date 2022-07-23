@@ -21,7 +21,7 @@ export default async function EditBudget(
         /* update budget table */
         const result = await executeQuery({
             query: 'CALL updateBudget(?, ?)',
-            values: [accountID['id'], budget],
+            values: [accountID, budget],
         });
 
         res.statusCode = 201;
