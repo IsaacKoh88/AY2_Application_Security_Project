@@ -359,6 +359,21 @@ BEGIN
 END;
 
 -- @block
+-- Consists of stored procedure that delete data
+DROP PROCEDURE IF EXISTS deleteExpenseData;
+
+CREATE PROCEDURE deleteExpenseData (IN AccountID VARCHAR(36), ID VARCHAR(36))
+BEGIN
+    SET @AccountID = AccountID;
+    SET @ID = ID;
+
+    PREPARE stmt FROM 'DELETE FROM expense WHERE AccountID=? and ID=?';
+    EXECUTE stmt using @AccountID, @ID;
+    DEALLOCATE PREPARE stmt;
+END;
+
+
+-- @block
 select * from calendar;
 
 -- @block

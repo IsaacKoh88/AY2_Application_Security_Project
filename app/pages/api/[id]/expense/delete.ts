@@ -16,8 +16,17 @@ export default async function DeleteExpense(
         await authorisedValidator(req, res);
 
         /** deconstruct body data */
-        const { expenseId } = req.body;
+        const { accountID, id } = req.body;
 
+        /* delete data from expense table */
+        const result = await executeQuery({
+            query: 'CALL deleteExpenseData(?, ?)',
+            values: [accountID, id],
+        });
+
+        res.statusCode = 201;
+        res.end('Success');
+        return
     }
     /* rejects requests that are empty */
     else if (!req.body) {
