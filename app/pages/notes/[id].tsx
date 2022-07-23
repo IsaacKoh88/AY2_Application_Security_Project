@@ -11,6 +11,8 @@ const Notes: NextPageWithLayout = () => {
                 <meta name="viewport" content="initial-scale=1.0, width=device-width" />
             </Head>
 
+            {/*<notes list>*/}
+            {/* <div className="notes-list"> */}
             
         </Fragment>
     );

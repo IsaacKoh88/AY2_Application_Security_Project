@@ -28,7 +28,6 @@ export default async function CreateNotes(
             values: [req.query.id, id, notesName, description],
         });
 
-
         res.status(201).json({ message: 'success' })
         res.end();
         return

@@ -1,5 +1,5 @@
 -- @block
-DROP TABLE IF EXISTS account, events, category, todo, budget;
+DROP TABLE IF EXISTS account, events, category, todo, budget, notes;
 
 CREATE TABLE account(
     id  VARCHAR(36) PRIMARY KEY NOT NULL UNIQUE,
@@ -38,6 +38,14 @@ CREATE TABLE budget(
     ID          VARCHAR(36) NOT NULL,
     Name        VARCHAR(255) NOT NULL,
     Amount      INT NOT NULL
+);
+
+CREATE TABLE notes(
+    AccountID   VARCHAR(36) NOT NULL,
+    ID          VARCHAR(36) NOT NULL,
+    Name        VARCHAR(255) NOT NULL,
+    Date        DATE NOT NULL,
+    Description TEXT NULL
 );
 
 
@@ -205,6 +213,34 @@ BEGIN
     EXECUTE stmt USING @AccountID, @ID, @Name, @Amount;
     DEALLOCATE PREPARE stmt;
 END;
+
+CREATE PROCEDURE insertNotesData (IN AccountID VARCHAR(36), notesName VARCHAR(255), notesDate DATE)
+BEGIN
+    SET @AccountID = AccountID;
+    SET @notesName = notesName;
+    SET @notesDate = notesDate;
+
+    SET @notes_id = uuid_v4s();
+
+    PREPARE stmt FROM 'SELECT count(*) FROM notes where AccountID = ? and notes_id = ? INTO @count'; 
+    EXECUTE stmt USING @AccountID, @notes_id;
+    DEALLOCATE PREPARE stmt;
+    
+    WHILE (@count = 1)
+    DO
+        SET @notes_id = uuid_v4s();
+        PREPARE stmt FROM 'SELECT count(*) FROM notes where AccountID = ? and notes_id = ? INTO @count'; 
+        EXECUTE stmt USING @AccountID, @notes_id;
+        DEALLOCATE PREPARE stmt;
+    END WHILE;
+
+    PREPARE stmt FROM 'INSERT INTO notes VALUES (?, ?, ?, ?)';
+    EXECUTE stmt USING @AccountID, @notes_id, @notesName, @notesDate;
+    DEALLOCATE PREPARE stmt;
+END;
+
+
+
 -- @block
 -- Consists of stored procedure that select data
 DROP PROCEDURE IF EXISTS selectEmail_Id;
@@ -271,6 +307,19 @@ BEGIN
     DEALLOCATE PREPARE stmt;
 END;
 
+CREATE PROCEDURE updateNotes (IN notesName VARCHAR(255), notesDate DATE, account_id VARCHAR(36), notes_id VARCHAR(36))
+BEGIN
+    SET @notesName = notesName;
+    SET @notesDate = notesDate;
+    SET @account_id = account_id;
+    SET @notes_id = notes_id;
+
+    PREPARE stmt FROM 'UPDATE notes SET name=?, date=? WHERE account_id=? AND notes_id=?';
+    EXECUTE stmt using @notesName, @notesDate, @account_id, @notes_id;
+    DEALLOCATE PREPARE stmt;
+END;
+
+
 -- @block
 select * from calendar;
 
@@ -285,4 +334,7 @@ select * from todo;
 
 -- @block
 select * from budget;
+
+-- @block
+select * from notes;
 
