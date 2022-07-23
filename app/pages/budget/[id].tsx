@@ -74,14 +74,18 @@ export async function getServerSideProps(context:any) {
             query: 'select Budget from budget where AccountId = ?',
             values: [id],
         })));
-
+        
+        var totalExpense = 0
+        if (resultTotalExpense[0]['TotalExpense'] !== null) {
+            totalExpense = resultTotalExpense[0]['TotalExpense']
+        }
 
         try {
             return{
                 props: {
                     id: id,
                     budget: resultBudget[0]['Budget'],
-                    totalExpense: resultTotalExpense[0]['TotalExpense'],
+                    totalExpense: totalExpense,
                     expense: resultExpense
                 }
             }
