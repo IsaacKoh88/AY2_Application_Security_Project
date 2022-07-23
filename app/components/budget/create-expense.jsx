@@ -1,8 +1,29 @@
 import React, { Fragment, useState } from 'react';
 
-const CreateExpense = ({ close }) => {
+
+
+
+const CreateExpense = ({ id, close }) => {
     const [name, setName] = useState('');
     const [amount, setAmount] = useState();
+
+    const FormSubmitHandler = async () => {
+        const response = await fetch('/api/'+id+'/budget/create', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        AccountID: id['id'],
+                        Name: name, 
+                        Amount: amount
+                    }
+                )
+            }
+        );
+    }
 
     return (
         <Fragment>
@@ -36,6 +57,7 @@ const CreateExpense = ({ close }) => {
                         type='submit'
                         value='Confirm Changes'
                         className='cursor-pointer self-center bg-blue-600 text-slate-200 hover:text-white px-4 py-2 mt-2.5 rounded-md duration-150 ease-in-out'
+                        onClick={() => FormSubmitHandler()}
                     />
                 </form>
             </div>

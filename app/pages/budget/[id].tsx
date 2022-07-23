@@ -6,8 +6,70 @@ import CreateExpense from '../../components/budget/create-expense';
 import EditExpense from '../../components/budget/edit-expense';
 import Layout from '../../components/layouts/authenticated-layout';
 import dayjs from 'dayjs';
+import executeQuery from '../../utils/db';
+import * as jose from 'jose';
 
-const Budget: NextPageWithLayout = () => {
+export async function getServerSideProps(context:any) {
+    const JWTtoken = context.req.cookies['token'];
+    const id = context.params.id
+
+    /** if JWT does not exist */
+    if (JWTtoken == undefined){
+        return {
+            redirect: {
+                destination: '/401',
+                permanent: false,
+            },
+        }
+    }
+
+    try {
+        /** check if JWT token is valid */
+        const email = await jose.jwtVerify(JWTtoken, new TextEncoder()
+                    .encode(`qwertyuiop`))
+                    .then(value => {return(value['payload']['email'])});
+
+        /** check if email is the same as the one in the id of URL */
+        const result = await executeQuery({
+            query: 'SELECT email FROM account WHERE id=?',
+            values: [id],
+        });
+
+        /** reject if user does not have permission to route */
+        if (result[0].email !== email) {
+            return {
+                redirect: {
+                    destination: '/401',
+                    permanent: false,
+                },
+            };
+        };
+
+        try {
+            return{
+                props: {
+                    id: id
+                }
+            }
+        } 
+        catch (error) {
+            console.log(error)
+        }  
+    } 
+    
+    catch (error) {
+        /** reject if JWT token is invalid */
+        return {
+            redirect: {
+                destination: '/403',
+                permanent: false,
+            },
+        }
+    };  
+};
+
+
+const Budget: NextPageWithLayout = (id) => {
     /** State to store current budget */
     const [budget, setBudget] = useState(0);
     /** State to store expense */
@@ -99,7 +161,7 @@ const Budget: NextPageWithLayout = () => {
 
             {/** create expense form */}
             {createExpense ?
-                <CreateExpense close={handleCreateExpensePopupDisappear} />
+                <CreateExpense close={handleCreateExpensePopupDisappear} id={id}/>
                 :
                 <></>
             }
