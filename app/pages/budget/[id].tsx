@@ -8,6 +8,20 @@ import Layout from '../../components/layouts/authenticated-layout';
 import dayjs from 'dayjs';
 import executeQuery from '../../utils/db';
 import * as jose from 'jose';
+import { prototype } from 'events';
+
+type ExpenseProps = {
+    id: string;
+    name: string;
+    amount: number;
+    date: string;
+}[]
+
+type BudgetProps = {
+    id: number;
+    totalExpense: number;
+    expense: ExpenseProps;
+}
 
 export async function getServerSideProps(context:any) {
     const JWTtoken = context.req.cookies['token'];
@@ -45,10 +59,23 @@ export async function getServerSideProps(context:any) {
             };
         };
 
+        const resultTotalExpense = JSON.parse(JSON.stringify(await executeQuery({
+            query: 'select sum(amount) TotalExpense from expense where AccountId = ?',
+            values: [id],
+        })));
+
+        const resultExpense = JSON.parse(JSON.stringify(await executeQuery({
+            query: 'select ID, Name, Amount, Date from expense where AccountId = ?',
+            values: [id],
+        })));
+
+
         try {
             return{
                 props: {
-                    id: id
+                    id: id,
+                    totalExpense: resultTotalExpense[0]['TotalExpense'],
+                    expense: resultExpense
                 }
             }
         } 
@@ -69,7 +96,9 @@ export async function getServerSideProps(context:any) {
 };
 
 
-const Budget: NextPageWithLayout = (id) => {
+const Budget: NextPageWithLayout<BudgetProps> = (props) => {
+    const id = props.id;
+
     /** State to store current budget */
     const [budget, setBudget] = useState(0);
 
@@ -91,13 +120,7 @@ const Budget: NextPageWithLayout = (id) => {
     }
 
     /** State to store expense */
-    const [expenses, setExpenses] = useState([
-        {
-            ID : 'a953b8bb-c4d0-44cb-bfee-5538647f02b4',
-            Name : 'Expense 1',
-            Amount : 500
-        },
-    ]);
+    const [expenses, setExpenses] = useState(props.expense);
     /** State to control create expense popup */
     const [createExpense, setCreateExpense] = useState(false);
     /** State to control edit expense popup */
@@ -133,7 +156,7 @@ const Budget: NextPageWithLayout = (id) => {
                     <div className='flex justify-center items-center bg-indigo-600 h-96 w-96 m-8 rounded-full'>
                         <div className='flex flex-col justify-center items-center bg-slate-900 h-72 w-72 rounded-full'>
                             <p className='cursor-default text-slate-200 text-2xl font-semibold'>You've spent:</p>
-                            <p className='cursor-default text-slate-200 text-3xl font-normal'>$6,000</p>
+                            <p className='cursor-default text-slate-200 text-3xl font-normal'>${props.totalExpense}</p>
                         </div>
                     </div>
                     <p className='cursor-default text-slate-200 text-2xl font-semibold mb-3'>This Month's Budget:</p>
@@ -195,7 +218,7 @@ const Budget: NextPageWithLayout = (id) => {
 
             {/** edit expense form */}
             {editExpense !== '' ?
-                <EditExpense expense={expenses.find(e => e['ID'] === editExpense)} close={handleEditExpensePopupDisappear} />
+                <EditExpense expense={expenses.find(e => e['id'] === editExpense)} close={handleEditExpensePopupDisappear} />
                 :
                 <></>
             }
