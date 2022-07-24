@@ -12,16 +12,16 @@ import { prototype } from 'events';
 
 type ExpenseProps = {
     ID: string;
-    name: string;
-    amount: number;
-    date: string;
+    Name: string;
+    Amount: number;
+    Date: string;
 }[]
 
 type BudgetProps = {
-    id: number;
-    budget: number;
-    totalExpense: number;
-    expense: ExpenseProps;
+    ID: number;
+    Budget: number;
+    TotalExpense: number;
+    Expense: ExpenseProps;
 }
 
 export async function getServerSideProps(context:any) {
@@ -83,10 +83,10 @@ export async function getServerSideProps(context:any) {
         try {
             return{
                 props: {
-                    id: id,
-                    budget: resultBudget[0]['Budget'],
-                    totalExpense: totalExpense,
-                    expense: resultExpense
+                    ID: id,
+                    Budget: resultBudget[0]['Budget'],
+                    TotalExpense: totalExpense,
+                    Expense: resultExpense
                 }
             }
         } 
@@ -108,10 +108,16 @@ export async function getServerSideProps(context:any) {
 
 
 const Budget: NextPageWithLayout<BudgetProps> = (props) => {
-    const id = props.id;    
+    const id = props.ID;    
 
     /** State to store current budget */
     const [budget, setBudget] = useState(0);
+    /** State to store expense */
+    const [expenses, setExpenses] = useState(props.Expense);
+    /** State to control create expense popup */
+    const [createExpense, setCreateExpense] = useState(false);
+    /** State to control edit expense popup */
+    const [editExpense, setEditExpense] = useState('');
 
     const FormSubmitHandler = async () => {
         console.log('ok')
@@ -147,14 +153,47 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
         .then(response => response.json())
         .then(data => setBudget(data.Budget));
         }
+    };
+
+    const handleCreateExpenseSuccess = () => {
+        fetch('/api/'+id+'/expense', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        date: dayjs().format('YYYY-MM-DD')
+                    }
+                )
+            }
+        )
+        .then(response => response.json())
+        .then(data => setExpenses(data));
+
+        handleCreateExpensePopupDisappear()
     }
 
-    /** State to store expense */
-    const [expenses, setExpenses] = useState(props.expense);
-    /** State to control create expense popup */
-    const [createExpense, setCreateExpense] = useState(false);
-    /** State to control edit expense popup */
-    const [editExpense, setEditExpense] = useState('');
+    const handleEditExpenseSuccess = () => {
+        fetch('/api/'+id+'/expense', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        date: dayjs().format('YYYY-MM-DD')
+                    }
+                )
+            }
+        )
+        .then(response => response.json())
+        .then(data => setExpenses(data));
+
+        handleEditExpensePopupDisappear()
+    }
 
     /** Opens create expense popup */
     const handleCreateExpensePopupAppear = () => {
@@ -186,7 +225,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
                     <div className='flex justify-center items-center bg-indigo-600 h-96 w-96 m-8 rounded-full'>
                         <div className='flex flex-col justify-center items-center bg-slate-900 h-72 w-72 rounded-full'>
                             <p className='cursor-default text-slate-200 text-2xl font-semibold'>You've spent:</p>
-                            <p className='cursor-default text-slate-200 text-3xl font-normal'>${props.totalExpense.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
+                            <p className='cursor-default text-slate-200 text-3xl font-normal'>${props.TotalExpense.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
                         </div>
                     </div>
                     <p className='cursor-default text-slate-200 text-2xl font-semibold mb-3'>This Month's Budget:</p>
@@ -196,8 +235,8 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
                             id='budget'
                             name='budget'
                             className='bg-slate-800 focus:bg-slate-900 text-lg text-slate-200 placeholder:text-slate-400 text-center border-2 border-slate-800 focus:border-blue-600 outline-none focus:outline-none w-72 px-3 py-2 rounded-t-lg duration-150 ease-in-out'
-                            placeholder={JSON.stringify(props.budget)}
-                            defaultValue={props.budget}
+                            placeholder={JSON.stringify(props.Budget)}
+                            defaultValue={props.Budget}
                             onChange={e => setBudget(Number(e.target.value))}
                             required
                         />
@@ -241,14 +280,14 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
 
             {/** create expense form */}
             {createExpense ?
-                <CreateExpense close={handleCreateExpensePopupDisappear} id={id}/>
+                <CreateExpense close={handleCreateExpensePopupDisappear} id={id} success={handleCreateExpenseSuccess} />
                 :
                 <></>
             }
 
             {/** edit expense form */}
             {editExpense !== '' ?
-                <EditExpense expense={expenses.find(e => e['ID'] === editExpense)} close={handleEditExpensePopupDisappear} id={id}/>
+                <EditExpense expense={expenses.find(e => e['ID'] === editExpense)} close={handleEditExpensePopupDisappear} id={id} success={handleEditExpenseSuccess} />
                 :
                 <></>
             }

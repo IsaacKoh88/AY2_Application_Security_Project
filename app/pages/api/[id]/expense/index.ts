@@ -4,7 +4,7 @@ import authorisedValidator from '../../../../utils/authorised-validator';
 
 type Data = {
     ID: string,
-    ExpenseName: string,
+    Name: string,
     Amount: number,
     Date: string
 }[]
@@ -20,5 +20,15 @@ export default async function GetExpense(
 
         /** deconstruct request body */
         const { Month } = req.body;
+
+        /** get expenses */
+        const result = JSON.parse(JSON.stringify(await executeQuery({
+            query: 'SELECT ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date FROM expense WHERE AccountId = ?',
+            values: [req.query.id],
+        })));
+
+        res.status(200).json(result);
+        res.end('OK');
+        return
     };
 };
