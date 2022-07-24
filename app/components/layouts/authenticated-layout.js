@@ -27,14 +27,15 @@ const Layout = ({ children }) => {
                             <p className='ml-4'>Search...</p>
                         </div>
                     </div>
-                    <div className='cursor-pointer flex justify-center items-center h-10 w-10 rounded-lg bg-indigo-600 mr-10 hover:shadow-md hover:shadow-indigo-600 duration-150 ease-in-out'>
+                    {/*<div className='cursor-pointer flex justify-center items-center h-10 w-10 rounded-lg bg-indigo-600 mr-10 hover:shadow-md hover:shadow-indigo-600 duration-150 ease-in-out'>
                         <i className='text-slate-200 gg-notification'></i>
-                    </div>
-                    <div className='cursor-pointer flex flex-row justify-center items-center h-12 mr-3 hover:text-slate-200 duration-150 ease-in-out'>
-                        <div className='h-12 w-12 rounded-full bg-slate-800'></div>
-                        <p className='mx-3'>Username</p>
-                        <i className='gg-chevron-down'></i>
-                    </div>
+                    </div>*/}
+                    <Link href='/account'>
+                        <div className='cursor-pointer flex flex-row justify-center items-center h-12 mr-3 hover:text-slate-200 duration-150 ease-in-out'>
+                            <div className='h-12 w-12 rounded-full bg-slate-800'></div>
+                            <p className='mx-3'>Username</p>
+                        </div>
+                    </Link>
                 </div>
 
                 {/** page contents */}
