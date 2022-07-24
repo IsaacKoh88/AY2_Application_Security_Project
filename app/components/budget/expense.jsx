@@ -7,7 +7,7 @@ const Expense = ({ expense, editExpense }) => {
             onClick={() => editExpense(expense['ID'])}
         >
             <p className='text-slate-200 group-hover:text-white text-lg font-semibold'>{ expense['Name'] }</p>
-            <p className='text-slate-200 group-hover:text-white text-lg font-semibold'>${ expense['Amount'] }</p>
+            <p className='text-slate-200 group-hover:text-white text-lg font-semibold'>${ expense['Amount'].toLocaleString(undefined, {minimumFractionDigits: 2}) }</p>
         </div>
     );
 };

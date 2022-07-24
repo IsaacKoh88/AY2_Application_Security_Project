@@ -1,3 +1,4 @@
+-- Error: cannot destructure properly name of undefined as it is undefined can be ignored, cause the blocks still run
 -- @block
 DROP TABLE IF EXISTS account, events, category, todo, budget, expense, notes;
 
@@ -42,7 +43,7 @@ CREATE TABLE expense(
     AccountID   VARCHAR(36) NOT NULL,
     ID          VARCHAR(36) NOT NULL,
     Name        VARCHAR(255) NOT NULL,
-    Amount      INT NOT NULL,
+    Amount      DECIMAL(65,2) NOT NULL,
     Date        DATE NOT NULL
 );
 
@@ -203,7 +204,7 @@ BEGIN
 END;
 
 
-CREATE PROCEDURE insertExpenseData (IN AccountID VARCHAR(36), Name VARCHAR(255), Amount INT, Date DATE)
+CREATE PROCEDURE insertExpenseData (IN AccountID VARCHAR(36), Name VARCHAR(255), Amount DECIMAL(65, 2), Date DATE)
 BEGIN
     SET @AccountID = AccountID;
     SET @Name = Name;
@@ -285,6 +286,7 @@ DROP PROCEDURE IF EXISTS updateEvent;
 DROP PROCEDURE IF EXISTS updateTodo;
 DROP PROCEDURE IF EXISTS updateBudget;
 DROP PROCEDURE IF EXISTS updateExpense;
+DROP PROCEDURE IF EXISTS updateNotes;
 
 
 CREATE PROCEDURE updateAccount (IN hashedPassword VARCHAR(255), id VARCHAR(36), email VARCHAR(255))
@@ -345,7 +347,7 @@ BEGIN
     DEALLOCATE PREPARE stmt;
 END;
 
-CREATE PROCEDURE updateExpense (IN AccountID VARCHAR(36), ID VARCHAR(36), Name VARCHAR(255), Amount INT, Date DATE)
+CREATE PROCEDURE updateExpense (IN AccountID VARCHAR(36), ID VARCHAR(36), Name VARCHAR(255), Amount DECIMAL(65, 2) , Date DATE)
 BEGIN
     SET @AccountID = AccountID;
     SET @ID = ID;
@@ -374,7 +376,7 @@ END;
 
 
 -- @block
-select * from calendar;
+select * from events;
 
 -- @block
 SELECT * FROM account;
@@ -394,3 +396,5 @@ select * from expense;
 -- @block
 select * from notes;
 
+--@block
+call updateExpense('5a6048a2-d47e-408d-b38e-cf9ebfa189d5', '348cc4d2-05aa-4acb-940b-7824228faa66', 'q', 1000003.98, '2022-07-24')
