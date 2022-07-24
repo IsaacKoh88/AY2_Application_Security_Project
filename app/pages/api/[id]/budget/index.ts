@@ -3,7 +3,6 @@ import executeQuery from '../../../../utils/db'
 import authorisedValidator from '../../../../utils/authorised-validator';
 
 type Data = {
-    ID: string,
     Budget: number,
 }
 
@@ -18,5 +17,14 @@ export default async function GetBudget(
 
         /** deconstruct request body */
         const { Month } = req.body;
+
+        /* get budget */
+        const result = JSON.parse(JSON.stringify(await executeQuery({
+            query: 'SELECT Budget FROM budget WHERE AccountID=?',
+            values: [req.query.id],
+        })));
+
+        res.status(200).json({ Budget: result.Budget })
+
     };
 };
