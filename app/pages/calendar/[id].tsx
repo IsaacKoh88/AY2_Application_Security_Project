@@ -162,6 +162,21 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
         fetch('/api/'+id+'/category')
         .then(response => response.json())
         .then(data => setCategories(data));
+        fetch('/api/'+id+'/event', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        date: selectedDate.format('YYYY-MM-DD')
+                    }
+                )
+            }
+        )
+        .then(response => response.json())
+        .then(data => setEvents(data));
 
         handleEditCategoryPopupDisappear();
     };

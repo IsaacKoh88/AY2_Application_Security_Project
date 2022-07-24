@@ -58,8 +58,13 @@ const EditEvent = ({ id, event, categories, success, close }) => {
                             name='eventCategory'
                             className='bg-slate-800 focus:bg-slate-900 text-white placeholder:text-slate-400 border-2 border-slate-800 focus:border-blue-600 outline-none focus:outline-none px-3 py-2 rounded-md duration-150 ease-in-out'
                             value={ categoryId }
-                            onChange={e => setCategoryId(e.target.value)}
+                            onChange={e => {setCategoryId(e.target.value); console.log(e.target.value)}}
                         >
+                            <option
+                                value={ null }
+                            >
+                                None
+                            </option>
                             {categories.map((category, index) => (
                                 <option
                                     value={ category.ID }

@@ -18,23 +18,23 @@ CREATE TABLE category(
 
 CREATE TABLE events(
     AccountID   VARCHAR(36) NOT NULL,
-    ID          VARCHAR(36) PRIMARY KEY NOT NULL,
+    ID          VARCHAR(36) PRIMARY KEY NOT NULL UNIQUE,
     Name        VARCHAR(255) NOT NULL,
     Date        DATE NOT NULL,
     StartTime 	TIME NOT NULL,
 	EndTime	    TIME NOT NULL,
     Description TEXT NULL,
-    CategoryID  VARCHAR(36) NULL DEFAULT '',
+    CategoryID  VARCHAR(36) NULL,
     FOREIGN KEY (AccountID) REFERENCES account(id) ON DELETE CASCADE,
     FOREIGN KEY (CategoryID) REFERENCES category(ID) ON DELETE SET DEFAULT
 );
 
 CREATE TABLE todo(
     AccountID   VARCHAR(36) NOT NULL,
-    ID          VARCHAR(36) PRIMARY KEY NOT NULL,
+    ID          VARCHAR(36) PRIMARY KEY NOT NULL UNIQUE,
     Name        VARCHAR(255) NOT NULL,
     Date        DATE NOT NULL,
-    Checked     TINYINT(4) NOT NULL,
+    Checked     TINYINT(1) NOT NULL,
     FOREIGN KEY (AccountID) REFERENCES account(id) ON DELETE CASCADE
 );
 
@@ -46,7 +46,7 @@ CREATE TABLE budget(
 
 CREATE TABLE expense(
     AccountID   VARCHAR(36) NOT NULL,
-    ID          VARCHAR(36) PRIMARY KEY NOT NULL,
+    ID          VARCHAR(36) PRIMARY KEY NOT NULL UNIQUE,
     Name        VARCHAR(255) NOT NULL,
     Amount      DECIMAL(65,2) NOT NULL,
     Date        DATE NOT NULL,
@@ -55,7 +55,7 @@ CREATE TABLE expense(
 
 CREATE TABLE notes(
     AccountID   VARCHAR(36) NOT NULL,
-    ID          VARCHAR(36)PRIMARY KEY NOT NULL,
+    ID          VARCHAR(36)PRIMARY KEY NOT NULL UNIQUE,
     Name        VARCHAR(255) NOT NULL,
     Date        DATE NOT NULL,
     Description TEXT NULL,
@@ -122,6 +122,11 @@ BEGIN
     
     PREPARE stmt FROM 'INSERT INTO account VALUES (?, ?, ?)';
     EXECUTE stmt USING @ID, @email, @password;
+    DEALLOCATE PREPARE stmt;
+
+    SET @budget = 1000;
+    PREPARE stmt FROM 'INSERT INTO budget VALUES(?, ?)'; 
+    EXECUTE stmt USING @ID, @budget;
     DEALLOCATE PREPARE stmt;
 END;
 

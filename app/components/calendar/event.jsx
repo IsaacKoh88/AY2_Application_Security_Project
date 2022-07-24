@@ -70,7 +70,7 @@ const Event = ({ id, event, categories, editEvent, success }) => {
 
     return (
         <div 
-            className={`group cursor-pointer flex flex-col justify-start items-center w-full px-3 py-2 my-2 rounded-lg transition-max-h duration-300 ease-in-out overflow-hidden ${expand ? 'max-h-screen' : 'max-h-10'} ${getCategoryColor(categories.find(e => e.ID === event.CategoryID).Color)}`}
+            className={`group cursor-pointer flex flex-col justify-start items-center w-full px-3 py-2 my-2 rounded-lg transition-max-h duration-300 ease-in-out overflow-hidden ${expand ? 'max-h-screen' : 'max-h-10'} ${getCategoryColor(event.CategoryID ? categories.find(e => e.ID === event.CategoryID).Color : '')}`}
             onClick={() => handleClickDetails()}
         >
             <div className='flex flex-row justify-between items-center w-full'>

@@ -17,7 +17,12 @@ export default async function CreateEvent(
         await authorisedValidator(req, res); 
 
         /** deconstruct body data */
-        const { eventName, date, startTime, endTime, description, categoryId} = req.body;
+        let { eventName, date, startTime, endTime, description, categoryId} = req.body;
+
+        /** check category null */
+        if (categoryId === 'None') {
+            categoryId = null
+        }
 
         /** generate uuidv4 */
         const id = uuidv4();

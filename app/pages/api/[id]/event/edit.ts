@@ -16,7 +16,12 @@ export default async function EditEvent(
         await authorisedValidator(req, res);
 
         /** deconstruct body data */
-        const { eventID, eventName, date, startTime, endTime, description, categoryId} = req.body;
+        let { eventID, eventName, date, startTime, endTime, description, categoryId} = req.body;
+
+        /** check category null */
+        if (categoryId === 'None') {
+            categoryId = null
+        }
 
         /* insert data into category table */
         const result = await executeQuery({
