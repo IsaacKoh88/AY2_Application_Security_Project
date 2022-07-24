@@ -83,14 +83,16 @@ export async function getServerSideProps(context:any) {
         };
 
         try {
+            const currentDate = dayjs().format('YYYY-MM-DD')
+
             const resultTodo = JSON.parse(JSON.stringify(await executeQuery({
                 query: 'SELECT ID, Name, Date, Checked FROM todo WHERE AccountID=?',
                 values: [id],
             })));
 
             const resultEvents = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'SELECT ID, Name, Date, StartTime, EndTime, Description, CategoryID FROM events WHERE AccountID=?',
-                values: [id],
+                query: 'SELECT ID, Name, Date, StartTime, EndTime, Description, CategoryID FROM events WHERE AccountID=? AND Date=?',
+                values: [id, currentDate],
             })));
 
             const resultCategories = JSON.parse(JSON.stringify(await executeQuery({
@@ -166,7 +168,19 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
 
     /** Handles create new event success */
     const handleCreateEventSuccess = () => {
-        fetch('/api/'+id+'/event')
+        fetch('/api/'+id+'/event', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        date: selectedDate.format('YYYY-MM-DD')
+                    }
+                )
+            }
+        )
         .then(response => response.json())
         .then(data => setEvents(data));
 
@@ -175,7 +189,19 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
 
     /** Handles edit category success */
     const handleEditEventSuccess = () => {
-        fetch('/api/'+id+'/event')
+        fetch('/api/'+id+'/event', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        date: selectedDate.format('YYYY-MM-DD')
+                    }
+                )
+            }
+        )
         .then(response => response.json())
         .then(data => setEvents(data));
 
@@ -184,7 +210,19 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
 
     /** Handles edit category success */
     const handleDeleteEventSuccess = () => {
-        fetch('/api/'+id+'/event')
+        fetch('/api/'+id+'/event', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        date: selectedDate.format('YYYY-MM-DD')
+                    }
+                )
+            }
+        )
         .then(response => response.json())
         .then(data => setEvents(data));
     };
@@ -235,6 +273,22 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
 
     /** Handles date selection action */
     const handleSelectDate = (index: Dayjs) => {
+        console.log(index.format('YYYY-MM-DD'))
+        fetch('/api/'+id+'/event', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        date: index.format('YYYY-MM-DD')
+                    }
+                )
+            }
+        )
+        .then(response => response.json())
+        .then(data => setEvents(data));
         setSelectedDate(index);
     };
 

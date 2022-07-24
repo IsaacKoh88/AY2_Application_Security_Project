@@ -17,7 +17,7 @@ export default async function GetCategory(
         /** check user authorisation */
         await authorisedValidator(req, res);
 
-        /* insert data into category table */
+        /* get data from table */
         const result = JSON.parse(JSON.stringify(await executeQuery({
             query: 'SELECT ID, Name, Color FROM category WHERE AccountID=?',
             values: [req.query.id],
