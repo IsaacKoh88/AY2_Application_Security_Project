@@ -11,10 +11,10 @@ CREATE TABLE account(
 CREATE TABLE events(
     AccountID   VARCHAR(36) NOT NULL,
     ID          VARCHAR(36) PRIMARY KEY NOT NULL,
+    Name        VARCHAR(255) NOT NULL,
     Date        DATE NOT NULL,
     StartTime 	TIME NOT NULL,
 	EndTime	    TIME NOT NULL,
-    Name        VARCHAR(255) NOT NULL,
     Description TEXT NULL,
     CategoryID  VARCHAR(36) NOT NULL
 );
