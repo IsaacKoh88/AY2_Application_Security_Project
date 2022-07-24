@@ -19,6 +19,7 @@ type ExpenseProps = {
 
 type BudgetProps = {
     id: number;
+    budget: number;
     totalExpense: number;
     expense: ExpenseProps;
 }
@@ -65,16 +66,26 @@ export async function getServerSideProps(context:any) {
         })));
 
         const resultExpense = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'select ID, Name, Amount, Date from expense where AccountId = ?',
+            query: 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ?',
             values: [id],
         })));
 
+        const resultBudget = JSON.parse(JSON.stringify(await executeQuery({
+            query: 'select Budget from budget where AccountId = ?',
+            values: [id],
+        })));
+        
+        var totalExpense = 0
+        if (resultTotalExpense[0]['TotalExpense'] !== null) {
+            totalExpense = resultTotalExpense[0]['TotalExpense']
+        }
 
         try {
             return{
                 props: {
                     id: id,
-                    totalExpense: resultTotalExpense[0]['TotalExpense'],
+                    budget: resultBudget[0]['Budget'],
+                    totalExpense: totalExpense,
                     expense: resultExpense
                 }
             }
@@ -97,9 +108,7 @@ export async function getServerSideProps(context:any) {
 
 
 const Budget: NextPageWithLayout<BudgetProps> = (props) => {
-    const id = props.id;
-    console.log(props.expense)
-    
+    const id = props.id;    
 
     /** State to store current budget */
     const [budget, setBudget] = useState(0);
@@ -158,7 +167,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
                     <div className='flex justify-center items-center bg-indigo-600 h-96 w-96 m-8 rounded-full'>
                         <div className='flex flex-col justify-center items-center bg-slate-900 h-72 w-72 rounded-full'>
                             <p className='cursor-default text-slate-200 text-2xl font-semibold'>You've spent:</p>
-                            <p className='cursor-default text-slate-200 text-3xl font-normal'>${props.totalExpense}</p>
+                            <p className='cursor-default text-slate-200 text-3xl font-normal'>${props.totalExpense.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
                         </div>
                     </div>
                     <p className='cursor-default text-slate-200 text-2xl font-semibold mb-3'>This Month's Budget:</p>
@@ -168,8 +177,8 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
                         id='budget'
                         name='budget'
                         className='bg-slate-800 focus:bg-slate-900 text-lg text-slate-200 placeholder:text-slate-400 text-center border-2 border-slate-800 focus:border-blue-600 outline-none focus:outline-none w-72 px-3 py-2 rounded-t-lg duration-150 ease-in-out'
-                        placeholder='Budget'
-                        value={ budget }
+                        placeholder={JSON.stringify(props.budget)}
+                        defaultValue={props.budget}
                         onChange={e => setBudget(Number(e.target.value))}
                         required
                     />
@@ -220,7 +229,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
 
             {/** edit expense form */}
             {editExpense !== '' ?
-                <EditExpense expense={expenses.find(e => e['ID'] === editExpense)} close={handleEditExpensePopupDisappear} />
+                <EditExpense expense={expenses.find(e => e['ID'] === editExpense)} close={handleEditExpensePopupDisappear} id={id}/>
                 :
                 <></>
             }

@@ -1,3 +1,4 @@
+-- Error: cannot destructure properly name of undefined as it is undefined can be ignored, cause the blocks still run
 -- @block
 DROP TABLE IF EXISTS account, events, category, todo, budget, expense, notes;
 
@@ -9,7 +10,7 @@ CREATE TABLE account(
 
 CREATE TABLE events(
     AccountID   VARCHAR(36) NOT NULL,
-    ID          VARCHAR(36) NOT NULL,
+    ID          VARCHAR(36) PRIMARY KEY NOT NULL,
     Date        DATE NOT NULL,
     StartTime 	TIME NOT NULL,
 	EndTime	    TIME NOT NULL,
@@ -20,14 +21,14 @@ CREATE TABLE events(
 
 CREATE TABLE category(
     AccountID   VARCHAR(36) NOT NULL,
-    ID          VARCHAR(36) NOT NULL,
+    ID          VARCHAR(36) PRIMARY KEY NOT NULL,
     Name        VARCHAR(255) NOT NULL,
     Color       VARCHAR(7) NOT NULL
 );
 
 CREATE TABLE todo(
     AccountID   VARCHAR(36) NOT NULL,
-    ID          VARCHAR(36) NOT NULL,
+    ID          VARCHAR(36) PRIMARY KEY NOT NULL,
     Name        VARCHAR(255) NOT NULL,
     Date        DATE NOT NULL,
     Checked     TINYINT(4) NOT NULL
@@ -35,20 +36,22 @@ CREATE TABLE todo(
 
 CREATE TABLE budget(
     AccountID   VARCHAR(36) NOT NULL,
+    ID          VARCHAR(36) PRIMARY KEY NOT NULL,
+    Date        DATE NOT NULL,
     Budget      INT NOT NULL
 );
 
 CREATE TABLE expense(
     AccountID   VARCHAR(36) NOT NULL,
-    ID          VARCHAR(36) NOT NULL,
+    ID          VARCHAR(36) PRIMARY KEY NOT NULL,
     Name        VARCHAR(255) NOT NULL,
-    Amount      INT NOT NULL,
+    Amount      DECIMAL(65,2) NOT NULL,
     Date        DATE NOT NULL
 );
 
 CREATE TABLE notes(
     AccountID   VARCHAR(36) NOT NULL,
-    ID          VARCHAR(36) NOT NULL,
+    ID          VARCHAR(36)PRIMARY KEY NOT NULL,
     Name        VARCHAR(255) NOT NULL,
     Date        DATE NOT NULL,
     Description TEXT NULL
@@ -203,7 +206,7 @@ BEGIN
 END;
 
 
-CREATE PROCEDURE insertExpenseData (IN AccountID VARCHAR(36), Name VARCHAR(255), Amount INT, Date DATE)
+CREATE PROCEDURE insertExpenseData (IN AccountID VARCHAR(36), Name VARCHAR(255), Amount DECIMAL(65, 2), Date DATE)
 BEGIN
     SET @AccountID = AccountID;
     SET @Name = Name;
@@ -235,7 +238,7 @@ BEGIN
     SET @notesName = notesName;
     SET @notesDate = notesDate;
     SET @description = description;
-    
+
     SET @notes_id = uuid_v4s();
 
     PREPARE stmt FROM 'SELECT count(*) FROM notes where AccountID = ? and ID = ? INTO @count'; 
@@ -287,6 +290,7 @@ DROP PROCEDURE IF EXISTS updateEvent;
 DROP PROCEDURE IF EXISTS updateTodo;
 DROP PROCEDURE IF EXISTS updateBudget;
 DROP PROCEDURE IF EXISTS updateExpense;
+DROP PROCEDURE IF EXISTS updateNotes;
 
 
 CREATE PROCEDURE updateAccount (IN hashedPassword VARCHAR(255), id VARCHAR(36), email VARCHAR(255))
@@ -347,8 +351,36 @@ BEGIN
     DEALLOCATE PREPARE stmt;
 END;
 
+CREATE PROCEDURE updateExpense (IN AccountID VARCHAR(36), ID VARCHAR(36), Name VARCHAR(255), Amount DECIMAL(65, 2) , Date DATE)
+BEGIN
+    SET @AccountID = AccountID;
+    SET @ID = ID;
+    SET @Name = Name;
+    SET @Amount = Amount;
+    SET @Date = Date;
+
+    PREPARE stmt FROM 'UPDATE expense SET Name=?, Amount=?, Date=? WHERE AccountID=? and ID=?';
+    EXECUTE stmt using @Name, @Amount, @Date, @AccountID, @ID;
+    DEALLOCATE PREPARE stmt;
+END;
+
 -- @block
-select * from calendar;
+-- Consists of stored procedure that delete data
+DROP PROCEDURE IF EXISTS deleteExpenseData;
+
+CREATE PROCEDURE deleteExpenseData (IN AccountID VARCHAR(36), ID VARCHAR(36))
+BEGIN
+    SET @AccountID = AccountID;
+    SET @ID = ID;
+
+    PREPARE stmt FROM 'DELETE FROM expense WHERE AccountID=? and ID=?';
+    EXECUTE stmt using @AccountID, @ID;
+    DEALLOCATE PREPARE stmt;
+END;
+
+
+-- @block
+select * from events;
 
 -- @block
 SELECT * FROM account;
@@ -368,3 +400,5 @@ select * from expense;
 -- @block
 select * from notes;
 
+--@block
+call updateExpense('5a6048a2-d47e-408d-b38e-cf9ebfa189d5', '348cc4d2-05aa-4acb-940b-7824228faa66', 'q', 1000003.98, '2022-07-24')

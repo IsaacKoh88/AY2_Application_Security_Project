@@ -1,8 +1,47 @@
 import React, { Fragment, useState } from 'react';
 
-const EditExpense = ({ expense, close }) => {
+const EditExpense = ({ expense, close, id }) => {
     const [name, setName] = useState(expense['Name']);
     const [amount, setAmount] = useState(expense['Amount']);
+    const [date, setDate] = useState(expense['Date']);
+
+    const FormSubmitHandler = async () => {
+        const response = await fetch('/api/'+id+'/expense/edit', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        accountID: id,
+                        id: expense['ID'],
+                        expenseName: name,
+                        amount: amount, 
+                        date: date
+                    }
+                )
+            }
+        );
+    }
+
+    const FormSubmitHandler2 = async () => {
+        const response = await fetch('/api/'+id+'/expense/delete', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        accountID: id,
+                        id: expense['ID'],
+                    }
+                )
+            }
+        );
+    }
+
 
     return (
         <Fragment>
@@ -24,6 +63,7 @@ const EditExpense = ({ expense, close }) => {
                     />
                     <input 
                         type='number'
+                        step="0.01"
                         id='expenseAmount'
                         name='expenseAmount'
                         className='bg-slate-800 w-full text-white focus:outline-none px-3 py-2 my-2 rounded-md'
@@ -35,7 +75,14 @@ const EditExpense = ({ expense, close }) => {
                     <input 
                         type='submit'
                         value='Confirm Changes'
-                        className='cursor-pointer self-center bg-blue-600 text-slate-200 hover:text-white px-4 py-2 mt-2.5 rounded-md duration-150 ease-in-out'
+                        className='cursor-pointer self-left bg-blue-600 text-slate-200 hover:text-white px-4 py-2 mt-2.5 rounded-md duration-150 ease-in-out'
+                        onClick={() => FormSubmitHandler()}
+                    />
+                    <input 
+                        type='submit'
+                        value='Delete Expense'
+                        className='cursor-pointer self-right bg-blue-600 text-slate-200 hover:text-white px-4 py-2 mt-2.5 rounded-md duration-150 ease-in-out'
+                        onClick={() => FormSubmitHandler2()}
                     />
                 </form>
             </div>

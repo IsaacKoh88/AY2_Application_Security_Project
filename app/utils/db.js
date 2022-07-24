@@ -17,6 +17,7 @@ export default async function executeQuery({ query, values }) {
         await connection.end();
         return results;
     } catch (error) {
+        console.log(error)
         return { error };
     }
 }
