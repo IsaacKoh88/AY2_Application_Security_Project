@@ -114,11 +114,6 @@ BEGIN
         EXECUTE stmt USING @ID;
         DEALLOCATE PREPARE stmt;
     END WHILE;
-
-    SET @budget = 1000;
-    PREPARE stmt FROM 'INSERT INTO budget VALUES(?, ?)'; 
-    EXECUTE stmt USING @ID, @budget;
-    DEALLOCATE PREPARE stmt;
     
     PREPARE stmt FROM 'INSERT INTO account VALUES (?, ?, ?)';
     EXECUTE stmt USING @ID, @email, @password;
@@ -400,5 +395,5 @@ select * from expense;
 -- @block
 select * from notes;
 
---@block
+-- @block
 call updateExpense('5a6048a2-d47e-408d-b38e-cf9ebfa189d5', '348cc4d2-05aa-4acb-940b-7824228faa66', 'q', 1000003.98, '2022-07-24')
