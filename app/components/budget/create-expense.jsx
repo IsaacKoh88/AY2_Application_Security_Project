@@ -44,6 +44,7 @@ const CreateExpense = ({ id, close }) => {
                     />
                     <input 
                         type='number'
+                        step="0.01"
                         id='expenseAmount'
                         name='expenseAmount'
                         className='bg-slate-800 w-full text-white focus:outline-none px-3 py-2 my-2 rounded-md'

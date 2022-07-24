@@ -167,7 +167,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
                     <div className='flex justify-center items-center bg-indigo-600 h-96 w-96 m-8 rounded-full'>
                         <div className='flex flex-col justify-center items-center bg-slate-900 h-72 w-72 rounded-full'>
                             <p className='cursor-default text-slate-200 text-2xl font-semibold'>You've spent:</p>
-                            <p className='cursor-default text-slate-200 text-3xl font-normal'>${props.totalExpense}</p>
+                            <p className='cursor-default text-slate-200 text-3xl font-normal'>${props.totalExpense.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
                         </div>
                     </div>
                     <p className='cursor-default text-slate-200 text-2xl font-semibold mb-3'>This Month's Budget:</p>
