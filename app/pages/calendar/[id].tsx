@@ -86,12 +86,12 @@ export async function getServerSideProps(context:any) {
             const currentDate = dayjs().format('YYYY-MM-DD')
 
             const resultTodo = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'SELECT ID, Name, Date, Checked FROM todo WHERE AccountID=?',
+                query: 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, Checked FROM todo WHERE AccountID=?',
                 values: [id],
             })));
 
             const resultEvents = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'SELECT ID, Name, Date, StartTime, EndTime, Description, CategoryID FROM events WHERE AccountID=? AND Date=?',
+                query: 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, StartTime, EndTime, Description, CategoryID FROM events WHERE AccountID=? AND Date=?',
                 values: [id, currentDate],
             })));
 
