@@ -36,8 +36,8 @@ CREATE TABLE todo(
 
 CREATE TABLE budget(
     AccountID   VARCHAR(36) NOT NULL,
-    ID          VARCHAR(36) PRIMARY KEY NOT NULL,
-    Date        DATE NOT NULL,
+    -- ID          VARCHAR(36) PRIMARY KEY NOT NULL,
+    -- Date        DATE NOT NULL,
     Budget      INT NOT NULL
 );
 
