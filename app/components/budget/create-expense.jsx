@@ -37,7 +37,7 @@ const CreateExpense = ({ id, close }) => {
                         id='expenseName'
                         name='expenseName'
                         className='bg-slate-800 w-full text-white text-xl font-semibold placeholder:text-slate-400 focus:outline-none px-3 py-2 rounded-md'
-                        placeholder='To-do Name'
+                        placeholder='Expense Name'
                         value={ name }
                         onChange={e => setName(e.target.value)}
                         required
