@@ -9,7 +9,7 @@ CREATE TABLE account(
 
 CREATE TABLE events(
     AccountID   VARCHAR(36) NOT NULL,
-    ID          VARCHAR(36) NOT NULL,
+    ID          VARCHAR(36) PRIMARY KEY NOT NULL,
     Date        DATE NOT NULL,
     StartTime 	TIME NOT NULL,
 	EndTime	    TIME NOT NULL,
@@ -20,14 +20,14 @@ CREATE TABLE events(
 
 CREATE TABLE category(
     AccountID   VARCHAR(36) NOT NULL,
-    ID          VARCHAR(36) NOT NULL,
+    ID          VARCHAR(36) PRIMARY KEY NOT NULL,
     Name        VARCHAR(255) NOT NULL,
     Color       VARCHAR(7) NOT NULL
 );
 
 CREATE TABLE todo(
     AccountID   VARCHAR(36) NOT NULL,
-    ID          VARCHAR(36) NOT NULL,
+    ID          VARCHAR(36) PRIMARY KEY NOT NULL,
     Name        VARCHAR(255) NOT NULL,
     Date        DATE NOT NULL,
     Checked     TINYINT(4) NOT NULL
@@ -35,12 +35,14 @@ CREATE TABLE todo(
 
 CREATE TABLE budget(
     AccountID   VARCHAR(36) NOT NULL,
+    ID          VARCHAR(36) PRIMARY KEY NOT NULL,
+    Date        DATE NOT NULL,
     Budget      INT NOT NULL
 );
 
 CREATE TABLE expense(
     AccountID   VARCHAR(36) NOT NULL,
-    ID          VARCHAR(36) NOT NULL,
+    ID          VARCHAR(36) PRIMARY KEY NOT NULL,
     Name        VARCHAR(255) NOT NULL,
     Amount      INT NOT NULL,
     Date        DATE NOT NULL
@@ -48,7 +50,7 @@ CREATE TABLE expense(
 
 CREATE TABLE notes(
     AccountID   VARCHAR(36) NOT NULL,
-    ID          VARCHAR(36) NOT NULL,
+    ID          VARCHAR(36)PRIMARY KEY NOT NULL,
     Name        VARCHAR(255) NOT NULL,
     Date        DATE NOT NULL,
     Description TEXT NULL

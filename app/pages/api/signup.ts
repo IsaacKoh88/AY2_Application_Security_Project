@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import executeQuery from '../../utils/db'
 import * as argon2 from 'argon2';
-import { v4 as uuidv4 } from 'uuid';
 
 type Data = {
     message: string
@@ -19,10 +18,6 @@ export default async function SignupHandler(
         try {
             /** hash password */
             const hashedPassword = await argon2.hash(password);
-            console.log(hashedPassword);
-
-            /** generate uuidv4 */
-            const id = uuidv4();
 
             /** connects to mysql database and queries it */            
             const result = await executeQuery({
