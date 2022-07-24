@@ -257,6 +257,7 @@ BEGIN
     EXECUTE stmt USING @AccountID, @notes_id, @notesName, @notesDate, @description;
     DEALLOCATE PREPARE stmt;
 END;
+
 -- @block
 -- Consists of stored procedure that select data
 DROP PROCEDURE IF EXISTS selectEmail_Id;
@@ -279,6 +280,7 @@ BEGIN
     EXECUTE stmt USING @email;
     DEALLOCATE PREPARE stmt;
 END;
+
 
 -- @block
 -- Consists of stored procedure that update data
