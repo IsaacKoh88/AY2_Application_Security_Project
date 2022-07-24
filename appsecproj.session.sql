@@ -5,7 +5,15 @@ DROP TABLE IF EXISTS account, events, category, todo, budget, expense, notes;
 CREATE TABLE account(
     id  VARCHAR(36) PRIMARY KEY NOT NULL UNIQUE,
     email    VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR (255) NOT NULL
+    password VARCHAR (255) NOT NULL,
+);
+
+CREATE TABLE category(
+    AccountID   VARCHAR(36) NOT NULL,
+    ID          VARCHAR(36) PRIMARY KEY NOT NULL,
+    Name        VARCHAR(255) NOT NULL,
+    Color       VARCHAR(7) NOT NULL,
+    FOREIGN KEY (AccountID) REFERENCES account(id) ON DELETE CASCADE
 );
 
 CREATE TABLE events(
@@ -16,14 +24,9 @@ CREATE TABLE events(
     StartTime 	TIME NOT NULL,
 	EndTime	    TIME NOT NULL,
     Description TEXT NULL,
-    CategoryID  VARCHAR(36) NOT NULL
-);
-
-CREATE TABLE category(
-    AccountID   VARCHAR(36) NOT NULL,
-    ID          VARCHAR(36) PRIMARY KEY NOT NULL,
-    Name        VARCHAR(255) NOT NULL,
-    Color       VARCHAR(7) NOT NULL
+    CategoryID  VARCHAR(36) NULL DEFAULT '',
+    FOREIGN KEY (AccountID) REFERENCES account(id) ON DELETE CASCADE,
+    FOREIGN KEY (CategoryID) REFERENCES category(ID) ON DELETE SET DEFAULT
 );
 
 CREATE TABLE todo(
@@ -31,14 +34,14 @@ CREATE TABLE todo(
     ID          VARCHAR(36) PRIMARY KEY NOT NULL,
     Name        VARCHAR(255) NOT NULL,
     Date        DATE NOT NULL,
-    Checked     TINYINT(4) NOT NULL
+    Checked     TINYINT(4) NOT NULL,
+    FOREIGN KEY (AccountID) REFERENCES account(id) ON DELETE CASCADE
 );
 
 CREATE TABLE budget(
     AccountID   VARCHAR(36) NOT NULL,
-    ID          VARCHAR(36) PRIMARY KEY NOT NULL,
-    Date        DATE NOT NULL,
-    Budget      INT NOT NULL
+    Budget      INT NOT NULL,
+    FOREIGN KEY (AccountID) REFERENCES account(id) ON DELETE CASCADE
 );
 
 CREATE TABLE expense(
@@ -46,7 +49,8 @@ CREATE TABLE expense(
     ID          VARCHAR(36) PRIMARY KEY NOT NULL,
     Name        VARCHAR(255) NOT NULL,
     Amount      DECIMAL(65,2) NOT NULL,
-    Date        DATE NOT NULL
+    Date        DATE NOT NULL,
+    FOREIGN KEY (AccountID) REFERENCES account(id) ON DELETE CASCADE
 );
 
 CREATE TABLE notes(
@@ -54,7 +58,8 @@ CREATE TABLE notes(
     ID          VARCHAR(36)PRIMARY KEY NOT NULL,
     Name        VARCHAR(255) NOT NULL,
     Date        DATE NOT NULL,
-    Description TEXT NULL
+    Description TEXT NULL,
+    FOREIGN KEY (AccountID) REFERENCES account(id) ON DELETE CASCADE
 );
 
 
