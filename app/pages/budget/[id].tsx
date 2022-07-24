@@ -1,6 +1,7 @@
 import type { NextPageWithLayout } from '../_app';
 import React, { Fragment, useState, ReactElement } from 'react'
 import Head from 'next/head'
+import Link from 'next/link';
 import Expense from '../../components/budget/expense';
 import CreateExpense from '../../components/budget/create-expense';
 import EditExpense from '../../components/budget/edit-expense';
@@ -215,7 +216,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
     return (
         <Fragment>
             <Head>
-                <title>Account Details</title> 
+                <title>Expense Tracker</title> 
                 <meta name="viewport" content="initial-scale=1.0, width=device-width" />
             </Head>
 
@@ -234,7 +235,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
                             type='number'
                             id='budget'
                             name='budget'
-                            className='bg-slate-800 focus:bg-slate-900 text-lg text-slate-200 placeholder:text-slate-400 text-center border-2 border-slate-800 focus:border-blue-600 outline-none focus:outline-none w-72 px-3 py-2 rounded-t-lg duration-150 ease-in-out'
+                            className='bg-slate-800 focus:bg-slate-900 text-lg text-slate-200 placeholder:text-slate-400 text-center border-2 border-slate-800 focus:border-blue-600 outline-none focus:outline-none w-72 px-3 py-2 rounded-lg duration-150 ease-in-out'
                             placeholder={JSON.stringify(props.Budget)}
                             defaultValue={props.Budget}
                             onChange={e => setBudget(Number(e.target.value))}
@@ -244,10 +245,15 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
                         <input 
                             type='button'
                             value='Submit'
-                            className='cursor-pointer self-center bg-blue-600 text-slate-200 hover:text-white w-72 rounded-b-md duration-150 ease-in-out'
+                            className='cursor-pointer self-center bg-blue-600 text-slate-200 hover:text-white w-72 py-2 mt-3 rounded-lg duration-150 ease-in-out'
                             onClick={() => FormSubmitHandler()}
                         />
                     </form>
+                    <Link href={'/budget/history/' + id}>
+                        <div className='group cursor-pointer flex justify-center items-center bg-slate-800 hover:bg-slate-700 mt-auto w-72 py-2 rounded-lg duration-150 ease-in-out'>
+                            <p className='text-slate-200 group-hover:text-white duration-150 ease-in-out'>View History</p>
+                        </div>
+                    </Link>
                 </div>
             </div>
 
