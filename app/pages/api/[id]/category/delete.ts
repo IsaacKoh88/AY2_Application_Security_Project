@@ -18,7 +18,7 @@ export default async function DeleteCategory(
         /** deconstruct body data */
         const { categoryID } = req.body;
 
-        /* insert data into category table */
+        /* delete data into category table */
         const result = await executeQuery({
             query: 'DELETE FROM category WHERE AccountID=? AND ID=?',
             values: [req.query.id, categoryID],

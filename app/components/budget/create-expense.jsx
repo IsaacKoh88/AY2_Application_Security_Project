@@ -54,7 +54,7 @@ const CreateExpense = ({ id, close }) => {
                         required
                     />
                     <input 
-                        type='submit'
+                        type='button'
                         value='Confirm Changes'
                         className='cursor-pointer self-center bg-blue-600 text-slate-200 hover:text-white px-4 py-2 mt-2.5 rounded-md duration-150 ease-in-out'
                         onClick={() => FormSubmitHandler()}
