@@ -185,6 +185,7 @@ DROP PROCEDURE IF EXISTS selectId_Email;
 DROP PROCEDURE IF EXISTS selectSumExpense_AccountID;
 DROP PROCEDURE IF EXISTS selectExpenseData;
 DROP PROCEDURE IF EXISTS selectBudget_AccountID;
+DROP PROCEDURE IF EXISTS selectExpenseHistory;
 
 CREATE PROCEDURE selectEmail_Id (IN id VARCHAR(36))
 BEGIN
@@ -227,6 +228,15 @@ BEGIN
     SET @AccountID = AccountID;
 
     PREPARE stmt FROM 'SELECT Budget FROM budget WHERE AccountId = ?';
+    EXECUTE stmt USING @AccountID;
+    DEALLOCATE PREPARE stmt;
+END;
+
+CREATE PROCEDURE selectExpenseHistory (IN AccountID VARCHAR(36))
+BEGIN
+    SET @AccountID = AccountID;
+
+    PREPARE stmt FROM 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ? order by Date desc, Name, Amount';
     EXECUTE stmt USING @AccountID;
     DEALLOCATE PREPARE stmt;
 END;
