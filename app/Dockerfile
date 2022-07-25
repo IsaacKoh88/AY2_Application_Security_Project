@@ -11,9 +11,10 @@ COPY ./ ./
 
 # Install node dependencies and build application
 RUN npm install
+RUN npm run build
 
 # Define port application runs on
 EXPOSE 3000
 
 # Start application server
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]

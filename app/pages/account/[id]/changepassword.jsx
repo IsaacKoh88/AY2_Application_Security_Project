@@ -27,11 +27,11 @@ export async function getServerSideProps(context) {
 
         {/* check if email is the same as the one in the id of URL */}
         const result = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'SELECT email FROM account WHERE id=?',
+            query: 'CAll selectEmail_Id(?)',
             values: [id],
         })));
 
-        if (result[0]['email'] === email) {
+        if (result[0][0]['email'] === email) {
             return {
                 props: {
                         id: id,
@@ -66,7 +66,7 @@ const ChangePassword = ({ id }) => {
 
     {/** Calls API on form submit */}
     const FormSubmitHandler = async () => {
-        const res = await fetch('/api/changepassword', {
+        const res = await fetch('/api/' +id+ '/account/change-password', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

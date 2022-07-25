@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import executeQuery from '../../utils/db';
+import generateJWT from '../../utils/generate-jwt';
 import setCookie from '../../utils/set-cookie';
-import * as jose from 'jose'
+import * as argon2 from 'argon2';
 
 const LoginHandler = async (
     req: NextApiRequest,
@@ -11,29 +12,25 @@ const LoginHandler = async (
     if ((req.method == 'POST') && (req.body)) {
         /** deconstructs request body */
         const { email, password } = req.body;
-        
-        const jwtToken = await new jose.SignJWT({ email: email })
-                        .setProtectedHeader({ alg: 'HS256' })
-                        .setIssuedAt()
-                        .setExpirationTime('30d')
-                        .sign(new TextEncoder().encode(`qwertyuiop`))
-                        .then(value => {return value});
 
-        /** connects to mysql database and queries it */
         try {
+            /** connects to mysql database and queries it */
             const result = await executeQuery({
-                query: 'SELECT email FROM account WHERE email=? AND password=?',
-                values: [email, password],
+                query: 'SELECT id, email, password FROM account WHERE email=?',
+                values: [email],
             });
-            if (result[0] !== undefined) {
-                res.status(200);
+
+            /** if row exists in database and password is verified */
+            if ((result[0] !== undefined) && (await argon2.verify(result[0].password, password))) {
+                /** generates jwt token */
+                const jwtToken = await generateJWT(email);
                 // Calling our pure function using the `res` object, it will add the `set-cookie` header
-                setCookie(res, 'token', jwtToken)
-                res.end('OK');
+                setCookie(res, 'token', jwtToken);
+                res.redirect(307, ('/account/' + result[0].id));
             }
             else {
-                res.statusCode = 405;
-                res.end('Error');
+                res.statusCode = 401;
+                res.end('Email or Password is incorrect');
                 return
             }
         } 

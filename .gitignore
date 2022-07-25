@@ -38,8 +38,7 @@ yarn-error.log*
 .vscode
 
 # database
-*.sql
-*.session.sql
+
 
 # ssl cert
 certs

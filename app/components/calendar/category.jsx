@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Category = ({ category, changeStatus, editCategory }) => {
+const Category = ({ category, editCategory }) => {
     const getCategoryColor = color => {
         if (color === 'rose') {
             return 'checked:bg-rose-600';
@@ -49,8 +49,7 @@ const Category = ({ category, changeStatus, editCategory }) => {
                     id={ category['ID'] } 
                     name={ category['Name'] } 
                     className={`appearance-none cursor-pointer bg-slate-400 h-4 w-4 rounded ${getCategoryColor(category['Color'])}`} 
-                    onChange={e => changeStatus(e.target.id, e.target.checked)} 
-                    checked={ category['Activated'] } 
+                    checked={ true } 
                 />
                 <label 
                     htmlFor={ category['ID'] } 

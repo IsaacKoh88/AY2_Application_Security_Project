@@ -1,15 +1,38 @@
 version: '3.8'
 services: 
-  app: 
+
+  # Pulls reverse-proxy server docker image
+  reverse-proxy:
+    image: nginx:latest
+    container_name: reverse-proxy
+    depends_on:
+      - next-app
+      - mysql-server
+    volumes:
+      - ./reverse-proxy/nginx.conf:/etc/nginx/nginx.conf
+      - ./reverse-proxy/includes/:/etc/nginx/conf.d/
+      - ./reverse-proxy/certs/:/etc/nginx/
+    ports:
+      - 80:80
+
+  # Builds application server docker image
+  next-app: 
     build: 
       context: ./app
       dockerfile: Dockerfile
+    container_name: next-app
     ports:
       - 3000:3000
     depends_on:
       - mysql-server
+    restart: on-failure
+
+  # Pulls mysql server docker image
   mysql-server:
     image: mysql:8.0
+    container_name: mysql-server
+    ports: 
+      - 3306:3306
     environment:
       MYSQL_DATABASE: appsecdb
       MYSQL_USER: app

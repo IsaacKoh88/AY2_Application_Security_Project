@@ -1,7 +1,7 @@
 # Create directory for certs if it does not exist
-mkdir -p app/certs
+mkdir -p reverse-proxy/certs
 # Generate ssl certs and private key
-openssl req -x509 -out app/certs/localhost.crt -keyout app/certs/localhost.key \
+openssl req -x509 -out reverse-proxy/certs/localhost.crt -keyout reverse-proxy/certs/localhost.key \
     -days 365 \
     -newkey rsa:2048 -nodes -sha256 \
     -subj '/CN=localhost' -extensions EXT -config <( \
@@ -10,13 +10,13 @@ openssl req -x509 -out app/certs/localhost.crt -keyout app/certs/localhost.key \
 OS="`uname`"
 case $OS in
     'Linux'*)
-        sudo cp app/certs/localhost.crt /usr/local/share/ca-certificates/localhost.crt
+        sudo cp reverse-proxy/certs/localhost.crt /usr/local/share/ca-certificates/localhost.crt
         sudo update-ca-certificates
         ;;
     'Darwin'*)
-        sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain app/certs/localhost.crt
+        sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain reverse-proxy/certs/localhost.crt
         ;;
     'Windows'*)
-        certutil -addstore -f "ROOT" app/certs/localhost.crt
+        certutil -addstore -f "ROOT" reverse-proxy/certs/localhost.crt
         ;;
 esac

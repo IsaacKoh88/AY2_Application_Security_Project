@@ -3,9 +3,32 @@ import { Fragment } from 'react'
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Navbar from '../components/navbar'
+import zxcvbn from 'zxcvbn';
 
 
 const Login: NextPage = () => {
+
+    //
+    const [isButtonEnabled] = useState<boolean>(true);
+
+    //styling
+    const styles = {
+        button: {
+            padding: "15px 30px",
+            cursor: "pointer",
+            background: "#1E88E5",
+            color: "#fff",
+            fontWeight: "bold",
+            border: "none",
+            borderRadius: "30px",
+        },
+        loginButton: {
+            cursor: "pointer",
+            opacity: 1,
+        },
+    }
+
+
     return (
         <Fragment>
             <Head>
@@ -30,13 +53,24 @@ const Login: NextPage = () => {
                             <label className='text-lg text-slate-900 ml-0.5 mb-1' htmlFor='password'>Password:</label>
                             <input 
                                 className='text-slate-900 border focus:border-blue-600 rounded-md p-2 mb-4' 
-                                type='password' 
+                                type='password'
                                 id='password' 
                                 name='password' 
-                                placeholder='Password' 
+                                placeholder='Password'
                                 required
+
                             />
-                            <button className='text-white bg-blue-600 rounded-md p-2' type='submit'>Login</button>
+                            {/* <button className='text-white bg-blue-600 rounded-md p-2' type='submit'>Login</button> */}
+                            <button
+                                style={
+                                    isButtonEnabled
+                                        ? { ...styles.button, ...styles.loginButton }
+                                        : styles.button
+                                    }
+                                >
+                                    CONTINUE
+                            </button>
+
                         </form>
                     </div>
                 </div>
@@ -44,5 +78,7 @@ const Login: NextPage = () => {
         </Fragment>
     );
 };
+
+
 
 export default Login;

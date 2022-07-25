@@ -1,23 +1,29 @@
 import React, { Fragment, useState } from 'react';
 import colors from '../../utils/colors';
 
-const CreateCategory = ({ close }) => {
+const CreateCategory = ({ id, success, close }) => {
     const [categoryName, setCategoryName] = useState('');
-    const [categoryColor, setCategoryColor] = useState('rose');
+    const [categoryColor, setCategoryColor] = useState('red');
 
     const FormSubmitHandler = async () => {
-        const res = await fetch('/api/create-category', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(
-                {
-                    categoryName: categoryName, 
-                    color: color
-                }
-            )
-        })
+        const response = await fetch('/api/'+id+'/category/create', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        categoryName: categoryName, 
+                        categoryColor: categoryColor
+                    }
+                )
+            }
+        );
+
+        if (response.status === 201) {
+            success();
+        }
     }
 
     return (
@@ -48,25 +54,20 @@ const CreateCategory = ({ close }) => {
                         >
                             {colors.map((color, index) => (
                                 <option
-                                    value={ color }
+                                    value={ color.Name }
                                     key={ index }
                                 >
-                                    { color['Name'] }
+                                    { color.Name }
                                 </option>
                             ))}
                         </select>
                     </div>
                     <div className='flex flex-row justify-center items-center w-full mt-4 mb-1 '>
                         <input 
-                            type='submit'
+                            type='button'
                             value='Create Category'
                             className='cursor-pointer bg-blue-600 text-slate-200 hover:text-white px-4 py-2 mr-2 rounded-md duration-150 ease-in-out'
                             onClick={() => FormSubmitHandler()}
-                        />
-                        <input 
-                            type='button'
-                            value='Delete'
-                            className='cursor-pointer bg-red-600 text-slate-200 hover:text-white px-4 py-2 ml-2 rounded-md duration-150 ease-in-out'
                         />
                     </div>
                 </form>

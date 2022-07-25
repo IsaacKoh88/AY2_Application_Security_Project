@@ -15,11 +15,13 @@ export default async function SignupHandler(
         /** deconstructs request body */
         const { email, password } = req.body;
 
-        /** connects to mysql database and queries it */
         try {
-            const hashedPassword = await argon2.hash(password)
+            /** hash password */
+            const hashedPassword = await argon2.hash(password);
+
+            /** connects to mysql database and queries it */            
             const result = await executeQuery({
-                query: 'CALL insertdata(?, ?)',
+                query: 'CALL insertAccountData(?, ?)',
                 values: [email, hashedPassword],
             });
             res.status(200).json({ message: 'success'})

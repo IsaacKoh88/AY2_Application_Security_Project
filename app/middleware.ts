@@ -1,11 +1,47 @@
-import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import executeQuery from './utils/db';
+import * as jose from 'jose';;
 
 // This function can be marked `async` if using `await` inside
-export async function middleware(req: NextRequest, res:NextRequest) {
+export async function middleware(req: NextRequest) {
+    /** const JWTtoken = req.cookies['token'];
+    console.log('running')
 
-}
-// See "Matching Paths" below to learn more
+    /** if JWT does not exist 
+    if (JWTtoken === undefined){
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: false,
+            },
+        };
+    } else {
+        try {
+            /** check if JWT token is valid 
+            const { payload, protectedHeader } = await jose.jwtVerify(
+                JWTtoken, 
+                new TextEncoder().encode(`qwertyuiop`), 
+                {
+                    issuer: 'application-security-projet'
+                }
+            );
+            console.log(payload);
+            console.log(protectedHeader);
+        } 
+        
+        catch (error) {
+            /** reject if JWT token is invalid 
+            console.log(error);
+            return {
+                redirect: {
+                    destination: '/login',
+                    permanent: false,
+                },
+            };
+        };
+    };*/
+};
+/** Protected routes */
 export const config = {
-  matcher: '/:path'
-}
+    matcher: ['/calendar/:path*', '/account', '/account/:path*', '/budget/:path*', '/notes/:path*']
+};
