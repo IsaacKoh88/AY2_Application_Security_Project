@@ -18,6 +18,13 @@ export default async function CreateExpense(
         /** deconstruct body data */
         const { accountID, expenseName, amount, date } = req.body;
 
+        if (expenseName == ''){
+            res.statusCode = 400;
+            res.end('Success');
+            return
+
+        }
+        
         /* insert data into expense table */
         const result = await executeQuery({
             query: 'CALL insertExpenseData(?, ?, ?, ?)',
