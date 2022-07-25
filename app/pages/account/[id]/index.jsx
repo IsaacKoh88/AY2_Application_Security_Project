@@ -10,8 +10,8 @@ export async function getServerSideProps(context) {
     const JWTtoken = context.req.cookies['token'];
     const id = context.params.id
 
-    {/* if JWT does not exist */}
-    if (JWTtoken == undefined){
+    {/* if JWT does not exist */ }
+    if (JWTtoken == undefined) {
         return {
             redirect: {
                 destination: '/401',
@@ -21,12 +21,12 @@ export async function getServerSideProps(context) {
     }
 
     try {
-        {/* check if JWT token is valid */}
+        {/* check if JWT token is valid */ }
         const email = await jose.jwtVerify(JWTtoken, new TextEncoder()
-                    .encode(`qwertyuiop`))
-                    .then(value => {return(value['payload']['email'])});
+            .encode(`qwertyuiop`))
+            .then(value => { return (value['payload']['email']) });
 
-        {/* check if email is the same as the one in the id of URL */}
+        {/* check if email is the same as the one in the id of URL */ }
         const result = JSON.parse(JSON.stringify(await executeQuery({
             query: 'SELECT email FROM account WHERE id=?',
             values: [id],
@@ -35,14 +35,14 @@ export async function getServerSideProps(context) {
         if (result[0]['email'] === email) {
             return {
                 props: {
-                        id: id,
-                        email: email
+                    id: id,
+                    email: email
                 }
             }
         }
-        
+
         else {
-            {/* reject if email is not the same */}
+            {/* reject if email is not the same */ }
             return {
                 redirect: {
                     destination: '/403',
@@ -50,17 +50,17 @@ export async function getServerSideProps(context) {
                 },
             }
         }
-    } 
-    
+    }
+
     catch (error) {
-        {/* reject if JWT token is invalid */}
+        {/* reject if JWT token is invalid */ }
         return {
             redirect: {
                 destination: '/403',
                 permanent: false,
             },
         }
-    }    
+    }
 }
 
 const Account = ({ id, email }) => {
