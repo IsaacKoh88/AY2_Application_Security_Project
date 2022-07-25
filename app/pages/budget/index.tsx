@@ -23,15 +23,15 @@ export async function getServerSideProps(context:any) {
 
         /** check if email is the same as the one in the id of URL */
         const result = await executeQuery({
-            query: 'SELECT id FROM account WHERE email=?',
+            query: 'CALL selectId_Email(?)',
             values: [email],
         });
 
-        if (result[0] !== undefined) {
+        if (result[0][0] !== undefined) {
             /** redirect user to their calendar page if credentials are correct */
             return {
                 redirect: {
-                    destination: ('/budget/' + result[0].id),
+                    destination: ('/budget/' + result[0][0].id),
                     permanent: false,
                 },
             };
