@@ -16,8 +16,13 @@ export async function getServerSideProps(context) {
     const JWTtoken = context.req.cookies['token'];
     const id = context.params.id
 
+<<<<<<< HEAD:app/pages/account/[id]/index.jsx
+    {/* if JWT does not exist */ }
+    if (JWTtoken == undefined) {
+=======
     /** if JWT does not exist */
     if (JWTtoken == undefined){
+>>>>>>> 0d47162b7285273a3249b05e2d8006487966b3fc:app/pages/account/[id]/index.tsx
         return {
             redirect: {
                 destination: '/login',
@@ -27,28 +32,42 @@ export async function getServerSideProps(context) {
     }
 
     try {
+<<<<<<< HEAD:app/pages/account/[id]/index.jsx
+        {/* check if JWT token is valid */ }
+=======
         /** check if JWT token is valid */
+>>>>>>> 0d47162b7285273a3249b05e2d8006487966b3fc:app/pages/account/[id]/index.tsx
         const email = await jose.jwtVerify(JWTtoken, new TextEncoder()
-                    .encode(`qwertyuiop`))
-                    .then(value => {return(value['payload']['email'])});
+            .encode(`qwertyuiop`))
+            .then(value => { return (value['payload']['email']) });
 
+<<<<<<< HEAD:app/pages/account/[id]/index.jsx
+        {/* check if email is the same as the one in the id of URL */ }
+        const result = JSON.parse(JSON.stringify(await executeQuery({
+            query: 'SELECT email FROM account WHERE id=?',
+=======
         /** check if email is the same as the one in the id of URL */
         const result = await executeQuery({
             query: 'CALL selectEmail_Id(?)',
+>>>>>>> 0d47162b7285273a3249b05e2d8006487966b3fc:app/pages/account/[id]/index.tsx
             values: [id],
         });
 
         if (result[0][0].email === email) {
             return {
                 props: {
-                        id: id,
-                        email: email
+                    id: id,
+                    email: email
                 }
             }
         }
-        
+
         else {
+<<<<<<< HEAD:app/pages/account/[id]/index.jsx
+            {/* reject if email is not the same */ }
+=======
             /** reject if email is not the same */
+>>>>>>> 0d47162b7285273a3249b05e2d8006487966b3fc:app/pages/account/[id]/index.tsx
             return {
                 redirect: {
                     destination: '/403',
@@ -56,17 +75,21 @@ export async function getServerSideProps(context) {
                 },
             }
         }
-    } 
-    
+    }
+
     catch (error) {
+<<<<<<< HEAD:app/pages/account/[id]/index.jsx
+        {/* reject if JWT token is invalid */ }
+=======
         /** reject if JWT token is invalid */
+>>>>>>> 0d47162b7285273a3249b05e2d8006487966b3fc:app/pages/account/[id]/index.tsx
         return {
             redirect: {
                 destination: '/403',
                 permanent: false,
             },
         }
-    }    
+    }
 }
 
 const Account: NextPageWithLayout<accountProps> = (props) => {
