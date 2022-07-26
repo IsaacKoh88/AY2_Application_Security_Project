@@ -22,8 +22,11 @@ services:
       context: ./app
       dockerfile: Dockerfile
     container_name: next-app
-    ports:
-      - 3000:3000
+    environment:
+      - DB_HOST=mysql-server
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_NAME=appsecdb
     depends_on:
       - mysql-server
     restart: on-failure
@@ -32,6 +35,8 @@ services:
   mysql-server:
     image: mysql:8.0
     container_name: mysql-server
+    volumes:
+      - ./database/:/var/lib/mysql/
     ports: 
       - 3306:3306
     environment:
