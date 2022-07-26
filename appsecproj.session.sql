@@ -69,7 +69,7 @@ CREATE FUNCTION uuid_v4s()
     RETURNS CHAR(36)
     NO SQL
 BEGIN
-    -- 1th and 2nd block are made of 6 random bytes
+    -- 1th and 2nd block are made of 6 random bytyes
     SET @h1 = HEX(RANDOM_BYTES(4));
     SET @h2 = HEX(RANDOM_BYTES(2));
 
@@ -330,7 +330,7 @@ select * from events;
 -- @block
 SELECT * FROM account;
 
--- @block
+-- @blockyes
 select * from category;
 
 -- @block
