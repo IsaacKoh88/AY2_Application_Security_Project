@@ -119,9 +119,10 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
     const [createExpense, setCreateExpense] = useState(false);
     /** State to control edit expense popup */
     const [editExpense, setEditExpense] = useState('');
+    /** State to store expense */
+    const [totalexpense, setTotalExpenses] = useState(props.TotalExpense);
 
     const FormSubmitHandler = async () => {
-        console.log('ok')
         const response = await fetch('/api/'+id+'/budget/edit', 
             {
                 method: 'POST',
@@ -173,6 +174,23 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
         .then(response => response.json())
         .then(data => setExpenses(data));
 
+        fetch('/api/'+id+'/expense/totalExpense', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        date: dayjs().format('YYYY-MM-DD')
+                    }
+                )
+            }
+        )
+        .then(response => response.json())
+        .then(data => setTotalExpenses(data));
+
+
         handleCreateExpensePopupDisappear()
     }
 
@@ -191,7 +209,24 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
             }
         )
         .then(response => response.json())
-        .then(data => setExpenses(data));
+        .then(data => {setExpenses(data)});
+
+        fetch('/api/'+id+'/expense/totalExpense', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        date: dayjs().format('YYYY-MM-DD')
+                    }
+                )
+            }
+        )
+        .then(response => response.json())
+        .then(data => setTotalExpenses(data));
+
 
         handleEditExpensePopupDisappear()
     }
@@ -226,7 +261,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
                     <div className='flex justify-center items-center bg-indigo-600 h-96 w-96 m-8 rounded-full'>
                         <div className='flex flex-col justify-center items-center bg-slate-900 h-72 w-72 rounded-full'>
                             <p className='cursor-default text-slate-200 text-2xl font-semibold'>You've spent:</p>
-                            <p className='cursor-default text-slate-200 text-3xl font-normal'>${props.TotalExpense.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
+                            <p className='cursor-default text-slate-200 text-3xl font-normal'>${totalexpense.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
                         </div>
                     </div>
                     <p className='cursor-default text-slate-200 text-2xl font-semibold mb-3'>This Month's Budget:</p>
@@ -251,7 +286,6 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
                     </form>
                 </div>
             </div>
-            {/* use effect, update expense if an array is added */}
 
             {/** Expenses list */}
             <div className='flex flex-col grow justify-start items-center h-full pt-8 px-8 mr-8'>
