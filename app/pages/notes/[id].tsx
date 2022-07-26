@@ -32,14 +32,14 @@ type NotesProps = {
     categories: CategoriesProps,
     todos: TodoProps,
     notes: NoteProps,
+    StartTime: string,
+    EndTime: string,
 }
 
 type NoteProps = {
     ID: string,
     Name: string,
     Date: string,
-    StartTime: string,
-    EndTime: string,
     Description: string,
     Category: string,
 }[]
@@ -52,8 +52,9 @@ type CategoriesProps = {
     Color: string,
 }[]
 
-const [startTime, setStartTime] = useState('');
-const [endTime, setEndTime] = useState('');
+
+
+    
 
 export async function getServerSideProps(context:any) {
     const JWTtoken = context.req.cookies['token'];
@@ -143,6 +144,8 @@ const Notes: NextPageWithLayout<NotesProps> = (props) => {
     const [notes, setNotes] = useState(props.notes);
     /** State to store todos */
     const [todos, setTodos] = useState(props.todos)
+    const [StartTime, endStartTime] = useState(props.StartTime);
+    const [EndTime, endEndTime] = useState(props.EndTime);
 
     /** State to control create event popup */
     const [createNotes, setCreateNotes] = useState(false)

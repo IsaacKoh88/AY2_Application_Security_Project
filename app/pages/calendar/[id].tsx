@@ -46,6 +46,7 @@ type CalendarProps = {
     categories: CategoriesProps,
 }
 
+
 export async function getServerSideProps(context:any) {
     const JWTtoken = context.req.cookies['token'];
     const id = context.params.id
