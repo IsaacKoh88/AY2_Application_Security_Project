@@ -25,7 +25,6 @@ export default async function EditTodo(
         });
 
         res.status(201).json({ message: 'success' })
-        res.end();
         return
     }
     /* rejects requests that are empty */

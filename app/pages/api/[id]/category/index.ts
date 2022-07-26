@@ -24,7 +24,6 @@ export default async function GetCategory(
         })));
 
         res.status(200).json(result)
-        res.end('OK');
         return
     };
 };

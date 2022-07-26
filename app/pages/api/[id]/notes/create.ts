@@ -29,7 +29,6 @@ export default async function CreateNotes(
         });
 
         res.status(201).json({ message: 'success' })
-        res.end();
         return
     }
     /* rejects requests that are empty */

@@ -28,7 +28,6 @@ export default async function GetExpense(
         })));
 
         res.status(200).json(result[0]);
-        res.end('OK');
         return
     };
 };
