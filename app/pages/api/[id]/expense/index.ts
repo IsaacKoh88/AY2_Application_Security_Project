@@ -19,15 +19,15 @@ export default async function GetExpense(
         await authorisedValidator(req, res);
 
         /** deconstruct request body */
-        const { Month } = req.body;
+        const { date } = req.body;
 
         /** get expenses */
         const result = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'SELECT ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date FROM expense WHERE AccountId = ?',
-            values: [req.query.id],
+            query: 'CALL selectExpenseData_Month(?, ?)',
+            values: [req.query.id, date],
         })));
 
-        res.status(200).json(result);
+        res.status(200).json(result[0]);
         res.end('OK');
         return
     };

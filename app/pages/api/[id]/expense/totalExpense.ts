@@ -15,10 +15,12 @@ export default async function GetExpense(
         /** check user authorisation */
         await authorisedValidator(req, res);
 
+        const { date } = req.body;
+
         /** get total expenses */
         const result = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'CALL selectSumExpense_AccountID(?)',
-            values: [req.query.id],
+            query: 'CALL selectSumExpense_AccountID_Month(?, ?)',
+            values: [req.query.id, date],
         })));
 
         res.status(200).json(result[0][0].TotalExpense);

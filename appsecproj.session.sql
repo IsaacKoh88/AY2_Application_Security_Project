@@ -183,7 +183,8 @@ END;
 DROP PROCEDURE IF EXISTS selectEmail_Id;
 DROP PROCEDURE IF EXISTS selectId_Email;
 DROP PROCEDURE IF EXISTS selectSumExpense_AccountID;
-DROP PROCEDURE IF EXISTS selectExpenseData;
+DROP PROCEDURE IF EXISTS selectSumExpense_AccountID_Month;
+DROP PROCEDURE IF EXISTS selectExpenseData_Month;
 DROP PROCEDURE IF EXISTS selectBudget_AccountID;
 DROP PROCEDURE IF EXISTS selectExpenseHistory;
 
@@ -205,21 +206,32 @@ BEGIN
     DEALLOCATE PREPARE stmt;
 END;
 
+CREATE PROCEDURE selectSumExpense_AccountID_Month (IN ID VARCHAR(36), Date DATE)
+BEGIN
+    SET @ID = ID;
+    SET @Date = Date;
+
+    PREPARE stmt FROM 'SELECT sum(amount) TotalExpense FROM expense WHERE AccountId = ? AND DATE_FORMAT(Date, "%Y-%m") = DATE_FORMAT(?, "%Y-%m")';
+    EXECUTE stmt USING @ID, @Date;
+    DEALLOCATE PREPARE stmt;
+END;
+
+CREATE PROCEDURE selectExpenseData_Month (IN AccountID VARCHAR(36), Date Date)
+BEGIN
+    SET @AccountID = AccountID;
+    SET @Date = Date;
+
+    PREPARE stmt FROM 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ? AND DATE_FORMAT(Date, "%Y-%m") = DATE_FORMAT(?, "%Y-%m")';
+    EXECUTE stmt USING @AccountID, @Date;
+    DEALLOCATE PREPARE stmt;
+END;
+
 CREATE PROCEDURE selectSumExpense_AccountID (IN ID VARCHAR(36))
 BEGIN
     SET @ID = ID;
 
     PREPARE stmt FROM 'SELECT sum(amount) TotalExpense FROM expense WHERE AccountId = ?';
     EXECUTE stmt USING @ID;
-    DEALLOCATE PREPARE stmt;
-END;
-
-CREATE PROCEDURE selectExpenseData (IN AccountID VARCHAR(36))
-BEGIN
-    SET @AccountID = AccountID;
-
-    PREPARE stmt FROM 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ?';
-    EXECUTE stmt USING @AccountID;
     DEALLOCATE PREPARE stmt;
 END;
 
