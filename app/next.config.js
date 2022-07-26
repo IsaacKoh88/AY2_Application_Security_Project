@@ -50,8 +50,17 @@ module.exports = () => {
         ]
     }
 
+    const typescript = {
+        // !! WARN !!
+        // Dangerously allow production builds to successfully complete even if
+        // your project has type errors.
+        // !! WARN !!
+        ignoreBuildErrors: true,
+    }
+
     return {
         nextConfig,
         headers,
+        typescript
     }
 }
