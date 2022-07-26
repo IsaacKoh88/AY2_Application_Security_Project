@@ -112,7 +112,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
     const id = props.ID;    
 
     /** State to store current budget */
-    const [budget, setBudget] = useState(0);
+    const [budget, setBudget] = useState(props.Budget);
     /** State to store expense */
     const [expenses, setExpenses] = useState(props.Expense);
     /** State to control create expense popup */
@@ -121,6 +121,43 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
     const [editExpense, setEditExpense] = useState('');
     /** State to store expense */
     const [totalexpense, setTotalExpenses] = useState(props.TotalExpense);
+
+    /* Used to set the color of the outer circle */
+    var budgetDifference = budget - totalexpense
+    var BudgetColor = 0
+    if (budgetDifference > 0) {
+        BudgetColor = 1
+    }
+    else if (budgetDifference < 0) {
+        BudgetColor = 2
+    };
+
+    const funcProgressColor = () => {
+        switch(BudgetColor) {
+            case 0:
+                return 'blue';
+            case 1:
+                return 'green';
+            case 2:
+                return 'red';
+        }
+    }
+
+    const styles = {
+        circleColor: {
+            display: 'flex',
+            width: `384px`,
+            background: funcProgressColor(),
+            padding: '32px',
+            marginBottom: '25px',
+            height: '384px',
+            alignItems: "center",
+            justifyContent: 'center',
+            borderRadius: '9999px'
+        }
+    } as const; 
+
+ 
 
     const FormSubmitHandler = async () => {
         const response = await fetch('/api/'+id+'/budget/edit', 
@@ -258,7 +295,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
             {/** Budget overview */}
             <div className='flex flex-col justify-center items-center h-full'>
                 <div className='flex flex-col grow justify-start items-center m-8'>
-                    <div className='flex justify-center items-center bg-indigo-600 h-96 w-96 m-8 rounded-full'>
+                    <div style={styles.circleColor}>
                         <div className='flex flex-col justify-center items-center bg-slate-900 h-72 w-72 rounded-full'>
                             <p className='cursor-default text-slate-200 text-2xl font-semibold'>You've spent:</p>
                             <p className='cursor-default text-slate-200 text-3xl font-normal'>${totalexpense.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
