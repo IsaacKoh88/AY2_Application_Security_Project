@@ -84,7 +84,6 @@ const Account: NextPageWithLayout<accountProps> = (props) => {
                                 <p className='text-white'>Change Password</p>
                             </div>
                         </Link>
-
                     </div>
                 </div>
         </Fragment>

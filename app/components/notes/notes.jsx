@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Notes = ({ id, notes, categories, editNotes, success }) => {
+const NotesDisplay = ({ id, notes, categories, editNotes, success }) => {
     const [expand, setExpand] = useState(false);
 
     const getCategoryColor = Color => {
@@ -96,4 +96,4 @@ const Notes = ({ id, notes, categories, editNotes, success }) => {
     );
 };
 
-export default Notes;
+export default NotesDisplay;

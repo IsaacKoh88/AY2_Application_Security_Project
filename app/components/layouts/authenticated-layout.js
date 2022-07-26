@@ -1,6 +1,11 @@
 import NavItem from "../nav-items";
 import Link from "next/link";
+import Userfront from  "@userfront/core";
 
+
+Userfront.init("demo1234");
+
+{/**Define logout button component */}
 const Layout = ({ children }) => {
     return (
         <div className='flex flex-row h-screen w-screen text-slate-400 bg-slate-900'>
@@ -32,8 +37,13 @@ const Layout = ({ children }) => {
                     </div>*/}
                     <Link href='/account'>
                         <div className='cursor-pointer flex flex-row justify-center items-center h-12 mr-3 hover:text-slate-200 duration-150 ease-in-out'>
-                            <div className='h-12 w-12 rounded-full bg-slate-800'></div>
+                            <div className='h-12 w-12 mx-3 rounded-full bg-slate-800'></div>
                             <p className='mx-3'>Username</p>
+                        </div>
+                    </Link>
+                    <Link href='/login'>
+                        <div className='cursor-pointer flex flex-row justify-center items-center h-12 mr-3 hover:text-slate-200 duration-150 ease-in-out'>
+                            <p className='mx-3'>Sign Out</p>
                         </div>
                     </Link>
                 </div>

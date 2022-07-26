@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import dayjs from 'dayjs';
 import { useState } from 'react'
 
-const createNotes = ({ id, categories, success, close }) => {
+const CreateNotes = ({ id, categories, success, close }) => {
     const [notesName, setNoteName] = useState('');
     const [date, setDate] = useState(dayjs().format('YYYY-MM-DD'));
     const [description, setDescription] = useState('');
@@ -122,4 +122,4 @@ const createNotes = ({ id, categories, success, close }) => {
     );
 };
 
-export default createNotes;
+export default CreateNotes;
