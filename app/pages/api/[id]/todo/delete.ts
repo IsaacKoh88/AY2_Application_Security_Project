@@ -25,7 +25,6 @@ export default async function DeleteTodo(
         });
 
         res.status(200).json({ message: 'success' })
-        res.end('OK');
         return
     }
     /* rejects requests that are empty */

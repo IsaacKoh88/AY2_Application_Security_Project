@@ -25,7 +25,6 @@ export default async function DeleteEvent(
         });
 
         res.status(200).json({ message: 'success' })
-        res.end();
         return
     }
     /* rejects requests that are empty */
