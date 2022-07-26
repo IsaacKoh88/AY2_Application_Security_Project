@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import executeQuery from '../../../../utils/db'
 import authorisedValidator from '../../../../utils/authorised-validator';
+import moment from 'moment';
 
 type Data = {
     ID: string,
@@ -13,20 +14,36 @@ export default async function GetEvent(
     res: NextApiResponse<Data>
 ) {
     /* accepts only GET requests and non-empty requests */
-    if ((req.method == 'POST') && (req.cookies['token'])) {
+    if ((req.method == 'POST') && (req.body) && (req.cookies['token'])) {
         /** check user authorisation */
         await authorisedValidator(req, res);
 
-        /** deconstruct request body */
-        const { date } = req.body
+        try {
+            /** deconstruct request body */
+            const { date } = req.body
 
-        /* insert data into category table */
-        const result = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, StartTime, EndTime, Description, CategoryID FROM events WHERE AccountID=? AND Date=?',
-            values: [req.query.id, date],
-        })));
+            if (moment(date, 'YYYY-MM-DD', true).isValid()) {
 
-        res.status(200).json(result)
+                /* insert data into category table */
+                const result = JSON.parse(JSON.stringify(await executeQuery({
+                    query: 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, StartTime, EndTime, Description, CategoryID FROM events WHERE AccountID=? AND Date=?',
+                    values: [req.query.id, date],
+                })));
+
+                res.status(200).json(result)
+                return
+            }
+        }
+        /** if request body components do not fit requirements */
+        catch {
+            res.statusCode = 400;
+            res.end('Request format error');
+        }
+    }
+    /* rejects requests that are empty */
+    else if (req.method !== 'POST') {
+        res.statusCode = 405;
+        res.end('Error');
         return
-    };
+    }
 };
