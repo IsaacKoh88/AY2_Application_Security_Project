@@ -40,10 +40,22 @@ export default async function GetEvent(
             res.end('Request format error');
         }
     }
-    /* rejects requests that are empty */
+    /* rejects requests that are not POST */
     else if (req.method !== 'POST') {
         res.statusCode = 405;
         res.end('Error');
+        return
+    }
+    /** if request body components do not fit requirements */
+    else if (!req.body) {
+        res.statusCode = 400;
+        res.end('Request format error');
+        return
+    }
+    /** if user is not authenticated */
+    else if (!req.cookies['token']) {
+        res.statusCode = 401;
+        res.end('Unauthorised');
         return
     }
 };

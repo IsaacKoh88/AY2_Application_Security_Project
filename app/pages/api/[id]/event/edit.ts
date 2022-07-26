@@ -33,8 +33,6 @@ export default async function EditEvent(
                         values: [req.query.id, eventID],
                     });
 
-                    console.log(idcheck)
-
                     if (idcheck[0]['COUNT(*)'] === 1) {
                         /** check category null */
                         if (categoryId === 'None' || categoryId === '' || categoryId === 'null') {
@@ -46,8 +44,6 @@ export default async function EditEvent(
                             query: 'UPDATE events SET Name=?, Date=?, StartTime=?, EndTime=?, Description=?, CategoryID=? WHERE AccountID=? AND ID=?',
                             values: [eventName, date, startTime, endTime, description, categoryId, req.query.id, eventID],
                         });
-
-                        console.log(result)
 
                         res.status(201).json({ message: 'success' })
                         return
@@ -80,6 +76,18 @@ export default async function EditEvent(
     else if (req.method !== 'POST') {
         res.statusCode = 405;
         res.end('Error');
+        return
+    }
+    /** if request body components do not fit requirements */
+    else if (!req.body) {
+        res.statusCode = 400;
+        res.end('Request format error');
+        return
+    }
+    /** if user is not authenticated */
+    else if (!req.cookies['token']) {
+        res.statusCode = 401;
+        res.end('Unauthorised');
         return
     }
 }

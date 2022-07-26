@@ -71,4 +71,16 @@ export default async function CreateEvent(
         res.end('Error');
         return
     }
+    /** if request body components do not fit requirements */
+    else if (!req.body) {
+        res.statusCode = 400;
+        res.end('Request format error');
+        return
+    }
+    /** if user is not authenticated */
+    else if (!req.cookies['token']) {
+        res.statusCode = 401;
+        res.end('Unauthorised');
+        return
+    }
 }
