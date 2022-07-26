@@ -12,7 +12,7 @@ type accountProps = {
     email: string
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context: { req: { cookies: { [x: string]: any; }; }; params: { id: any; }; }) { //added this
     const JWTtoken = context.req.cookies['token'];
     const id = context.params.id
 
