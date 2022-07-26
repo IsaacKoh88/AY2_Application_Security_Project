@@ -9,7 +9,6 @@ import Layout from '../../components/layouts/authenticated-layout';
 import dayjs from 'dayjs';
 import executeQuery from '../../utils/db';
 import * as jose from 'jose';
-import { prototype } from 'events';
 
 type ExpenseProps = {
     ID: string;
@@ -26,6 +25,7 @@ type BudgetProps = {
 }
 
 export async function getServerSideProps(context:any) {
+    
     const JWTtoken = context.req.cookies['token'];
     const id = context.params.id
 
@@ -47,47 +47,47 @@ export async function getServerSideProps(context:any) {
 
         /** check if email is the same as the one in the id of URL */
         const result = await executeQuery({
-            query: 'SELECT email FROM account WHERE id=?',
+            query: 'CALL selectEmail_Id(?)',
             values: [id],
         });
 
         /** reject if user does not have permission to route */
-        if (result[0].email !== email) {
+        if (result[0][0].email !== email) {
             return {
                 redirect: {
-                    destination: '/401',
+                    destination: '/403',
                     permanent: false,
                 },
             };
         };
 
         const resultTotalExpense = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'select sum(amount) TotalExpense from expense where AccountId = ?',
-            values: [id],
+            query: 'CALL selectSumExpense_AccountID_Month(?, ?)',
+            values: [id, dayjs().format('YYYY-MM-DD')],
         })));
 
         const resultExpense = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ?',
-            values: [id],
+            query: 'CALL selectExpenseData_Month(?, ?)',
+            values: [id, dayjs().format('YYYY-MM-DD')],
         })));
 
         const resultBudget = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'select Budget from budget where AccountId = ?',
+            query: 'CALL selectBudget_AccountID(?)',
             values: [id],
         })));
         
         var totalExpense = 0
-        if (resultTotalExpense[0]['TotalExpense'] !== null) {
-            totalExpense = resultTotalExpense[0]['TotalExpense']
+        if (resultTotalExpense[0][0]['TotalExpense'] !== null) {
+            totalExpense = resultTotalExpense[0][0]['TotalExpense']
         }
 
         try {
             return{
                 props: {
                     ID: id,
-                    Budget: resultBudget[0]['Budget'],
+                    Budget: resultBudget[0][0]['Budget'],
                     TotalExpense: totalExpense,
-                    Expense: resultExpense
+                    Expense: resultExpense[0]
                 }
             }
         } 
@@ -112,16 +112,54 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
     const id = props.ID;    
 
     /** State to store current budget */
-    const [budget, setBudget] = useState(0);
+    const [budget, setBudget] = useState(props.Budget);
     /** State to store expense */
     const [expenses, setExpenses] = useState(props.Expense);
     /** State to control create expense popup */
     const [createExpense, setCreateExpense] = useState(false);
     /** State to control edit expense popup */
     const [editExpense, setEditExpense] = useState('');
+    /** State to store expense */
+    const [totalexpense, setTotalExpenses] = useState(props.TotalExpense);
+
+    /* Used to set the color of the outer circle */
+    var budgetDifference = budget - totalexpense
+    var BudgetColor = 0
+    if (budgetDifference > 0) {
+        BudgetColor = 1
+    }
+    else if (budgetDifference < 0) {
+        BudgetColor = 2
+    };
+
+    const funcProgressColor = () => {
+        switch(BudgetColor) {
+            case 0:
+                return 'blue';
+            case 1:
+                return 'green';
+            case 2:
+                return 'red';
+        }
+    }
+
+    const styles = {
+        circleColor: {
+            display: 'flex',
+            width: `384px`,
+            background: funcProgressColor(),
+            padding: '32px',
+            marginBottom: '25px',
+            height: '384px',
+            alignItems: "center",
+            justifyContent: 'center',
+            borderRadius: '9999px'
+        }
+    } as const; 
+
+ 
 
     const FormSubmitHandler = async () => {
-        console.log('ok')
         const response = await fetch('/api/'+id+'/budget/edit', 
             {
                 method: 'POST',
@@ -173,6 +211,23 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
         .then(response => response.json())
         .then(data => setExpenses(data));
 
+        fetch('/api/'+id+'/expense/totalExpense', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        date: dayjs().format('YYYY-MM-DD')
+                    }
+                )
+            }
+        )
+        .then(response => response.json())
+        .then(data => setTotalExpenses(data));
+
+
         handleCreateExpensePopupDisappear()
     }
 
@@ -191,7 +246,24 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
             }
         )
         .then(response => response.json())
-        .then(data => setExpenses(data));
+        .then(data => {setExpenses(data)});
+
+        fetch('/api/'+id+'/expense/totalExpense', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        date: dayjs().format('YYYY-MM-DD')
+                    }
+                )
+            }
+        )
+        .then(response => response.json())
+        .then(data => setTotalExpenses(data));
+
 
         handleEditExpensePopupDisappear()
     }
@@ -223,10 +295,10 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
             {/** Budget overview */}
             <div className='flex flex-col justify-center items-center h-full'>
                 <div className='flex flex-col grow justify-start items-center m-8'>
-                    <div className='flex justify-center items-center bg-indigo-600 h-96 w-96 m-8 rounded-full'>
+                    <div style={styles.circleColor}>
                         <div className='flex flex-col justify-center items-center bg-slate-900 h-72 w-72 rounded-full'>
                             <p className='cursor-default text-slate-200 text-2xl font-semibold'>You've spent:</p>
-                            <p className='cursor-default text-slate-200 text-3xl font-normal'>${props.TotalExpense.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
+                            <p className='cursor-default text-slate-200 text-3xl font-normal'>${totalexpense.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
                         </div>
                     </div>
                     <p className='cursor-default text-slate-200 text-2xl font-semibold mb-3'>This Month's Budget:</p>
@@ -235,7 +307,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
                             type='number'
                             id='budget'
                             name='budget'
-                            className='bg-slate-800 focus:bg-slate-900 text-lg text-slate-200 placeholder:text-slate-400 text-center border-2 border-slate-800 focus:border-blue-600 outline-none focus:outline-none w-72 px-3 py-2 rounded-lg duration-150 ease-in-out'
+                            className='bg-slate-800 focus:bg-slate-900 text-lg text-slate-200 placeholder:text-slate-400 text-center border-2 border-slate-800 focus:border-blue-600 outline-none focus:outline-none w-72 px-3 py-2 rounded-t-lg duration-150 ease-in-out'
                             placeholder={JSON.stringify(props.Budget)}
                             defaultValue={props.Budget}
                             onChange={e => setBudget(Number(e.target.value))}
@@ -245,23 +317,23 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
                         <input 
                             type='button'
                             value='Submit'
-                            className='cursor-pointer self-center bg-blue-600 text-slate-200 hover:text-white w-72 py-2 mt-3 rounded-lg duration-150 ease-in-out'
+                            className='cursor-pointer self-center bg-blue-600 text-slate-200 hover:text-white w-72 rounded-b-lg duration-150 ease-in-out'
                             onClick={() => FormSubmitHandler()}
                         />
                     </form>
-                    <Link href={'/budget/history/' + id}>
-                        <div className='group cursor-pointer flex justify-center items-center bg-slate-800 hover:bg-slate-700 mt-auto w-72 py-2 rounded-lg duration-150 ease-in-out'>
-                            <p className='text-slate-200 group-hover:text-white duration-150 ease-in-out'>View History</p>
-                        </div>
-                    </Link>
                 </div>
             </div>
 
             {/** Expenses list */}
             <div className='flex flex-col grow justify-start items-center h-full pt-8 px-8 mr-8'>
                 <div className='flex flex-row justify-between items-center w-full mb-2'>
+                    <Link href={'/budget/history/' + id}>
+                        <div className='group cursor-pointer flex justify-center items-center bg-slate-800 hover:bg-slate-700 mt-auto w-fit px-5 py-2 rounded-lg duration-150 ease-in-out'>
+                            <p className='text-slate-200 group-hover:text-white duration-150 ease-in-out'>View History</p>
+                        </div>
+                    </Link>
                     <div className='flex grow justify-center items-center ml-10'>
-                        <p className='cursor-default text-xl text-slate-200 font-bold'>{ dayjs().format('MMMM') }'s Expenses</p>
+                        <p className='cursor-default text-xl text-slate-200 font-bold'>{ dayjs().format('MMMM YYYY') }'s Expenses</p>
                     </div>
                     <div 
                         className='group cursor-pointer flex justify-center items-center hover:bg-slate-800 w-10 h-10 rounded-lg duration-150 ease-in-out'

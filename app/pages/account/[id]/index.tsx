@@ -12,7 +12,7 @@ type accountProps = {
     email: string
 }
 
-export async function getServerSideProps(context: { req: { cookies: { [x: string]: any; }; }; params: { id: any; }; }) { //added this
+export async function getServerSideProps(context:any) {
     const JWTtoken = context.req.cookies['token'];
     const id = context.params.id
 
@@ -29,10 +29,8 @@ export async function getServerSideProps(context: { req: { cookies: { [x: string
     try {
         /** check if JWT token is valid */
         const email = await jose.jwtVerify(JWTtoken, new TextEncoder()
-                    .encode(`qwertyuiop`))
-                    .then(value => {return(value['payload']['email'])});
-
-        /** check if email is the same as the one in the id of URL */
+            .encode(`qwertyuiop`))
+            .then(value => { return (value['payload']['email']) });
         const result = await executeQuery({
             query: 'CALL selectEmail_Id(?)',
             values: [id],
@@ -41,12 +39,12 @@ export async function getServerSideProps(context: { req: { cookies: { [x: string
         if (result[0][0].email === email) {
             return {
                 props: {
-                        id: id,
-                        email: email
+                    id: id,
+                    email: email
                 }
             }
         }
-        
+
         else {
             /** reject if email is not the same */
             return {
@@ -56,8 +54,8 @@ export async function getServerSideProps(context: { req: { cookies: { [x: string
                 },
             }
         }
-    } 
-    
+    }
+
     catch (error) {
         /** reject if JWT token is invalid */
         return {
@@ -66,7 +64,7 @@ export async function getServerSideProps(context: { req: { cookies: { [x: string
                 permanent: false,
             },
         }
-    }    
+    }
 }
 
 const Account: NextPageWithLayout<accountProps> = (props) => {

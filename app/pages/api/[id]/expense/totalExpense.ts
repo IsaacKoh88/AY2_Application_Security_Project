@@ -3,11 +3,8 @@ import executeQuery from '../../../../utils/db'
 import authorisedValidator from '../../../../utils/authorised-validator';
 
 type Data = {
-    ID: string,
-    Name: string,
-    Amount: number,
-    Date: string
-}[]
+    TotalExpense: number,
+}
 
 export default async function GetExpense(
     req: NextApiRequest,
@@ -18,16 +15,15 @@ export default async function GetExpense(
         /** check user authorisation */
         await authorisedValidator(req, res);
 
-        /** deconstruct request body */
         const { date } = req.body;
 
-        /** get expenses */
+        /** get total expenses */
         const result = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'CALL selectExpenseData_Month(?, ?)',
+            query: 'CALL selectSumExpense_AccountID_Month(?, ?)',
             values: [req.query.id, date],
         })));
 
-        res.status(200).json(result[0]);
+        res.status(200).json(result[0][0].TotalExpense);
         res.end('OK');
         return
     };

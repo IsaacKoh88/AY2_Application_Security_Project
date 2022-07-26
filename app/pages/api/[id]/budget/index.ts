@@ -24,7 +24,7 @@ export default async function GetBudget(
             values: [req.query.id],
         })));
 
-        res.status(200).json({ Budget: result.Budget })
+        res.status(200).json({ Budget: result[0].Budget })
 
     };
 };
