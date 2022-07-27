@@ -3,18 +3,16 @@ services:
 
   # Pulls reverse-proxy server docker image
   reverse-proxy:
-    image: nginx:latest
+    build:
+      context: ./reverse-proxy
+      dockerfile: Dockerfile
     container_name: reverse-proxy
     depends_on:
       - next-app
       - mysql-server
-    volumes:
-      - ./reverse-proxy/nginx.conf:/etc/nginx/nginx.conf
-      - ./reverse-proxy/includes/:/etc/nginx/conf.d/
-      - ./reverse-proxy/certs/:/etc/nginx/certs/
     ports:
-      - 80:80
-      - 443:443
+      - 80:8080
+      - 443:8443
 
   # Builds application server docker image
   next-app: 
