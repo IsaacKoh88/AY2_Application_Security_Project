@@ -18,11 +18,12 @@ export default async function CreateExpense(
         /** deconstruct body data */
         const { accountID, expenseName, amount, date } = req.body;
 
-        if (expenseName == ''){
+        /* validate input */
+        const dateregex = /([1-2]?[0][8-9]?[0-9]?[0-9])-(0[0-9]|1[0-2])-(0[1-9]|[1-2]?[0-9]|3[0-1])/
+        if (accountID === '' || accountID.length !== 36 || expenseName === '' || expenseName.length >= 255 || amount <= 0 || date === '' || dateregex.test(date)===false){
             res.statusCode = 400;
-            res.end('Success');
+            res.end('Request format error');
             return
-
         }
         
         /* insert data into expense table */

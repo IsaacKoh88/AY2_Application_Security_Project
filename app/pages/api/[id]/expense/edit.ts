@@ -18,6 +18,14 @@ export default async function EditExpense(
         /** deconstruct body data */
         const { accountID, id, expenseName, amount, date } = req.body;
 
+        /* validate input */
+        const dateregex = /([1-2]?[0][8-9]?[0-9]?[0-9])-(0[0-9]|1[0-2])-(0[1-9]|[1-2]?[0-9]|3[0-1])/
+        if (accountID === '' || accountID.length !== 36 || id === '' || id.length !== 36 || expenseName === '' || expenseName.length >= 255 || amount <= 0 || date === '' || dateregex.test(date)===false){
+            res.statusCode = 400;
+            res.end('Request format error');
+            return
+        }
+
         /* update data in expense table */
         const result = await executeQuery({
             query: 'CALL updateExpense(?, ?, ?, ?, ?)',
