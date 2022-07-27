@@ -11,6 +11,7 @@ export default async function executeQuery({ query, values }) {
         });
     
         const [results, fields] = await connection.query(query, values);
+        await connection.end()
         return results
     } catch (error) {
         console.log(error)

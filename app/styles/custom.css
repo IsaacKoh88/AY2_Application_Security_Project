@@ -8,3 +8,24 @@
 .transition-max-h {
     transition: max-height 0.50s;
 }
+
+.safe {
+    height: calc(100vh - 80px);
+}
+
+.category {
+    height: calc(100vh - 416px)
+}
+
+.events {
+    height: calc(100vh - 138px)
+}
+
+.scrollbar {
+    -ms-overflow-style: none; /* for Internet Explorer, Edge */
+    scrollbar-width: none; /* for Firefox */
+}
+
+.scrollbar::-webkit-scrollbar {
+    display: none;
+}

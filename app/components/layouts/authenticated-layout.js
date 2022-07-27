@@ -25,13 +25,13 @@ const Layout = ({ children }) => {
             <div className='flex flex-col grow'>
 
                 {/** top utility bar */}
-                <div className='relative flex flex-row items-center h-20 w-full px-10 before:absolute before:bottom-0 before:left-5 before:right-5 before:h-px before:border-b-2 before:border-slate-800'>
-                    <div className='flex justify-center items-center grow h-full'>
+                <div className='relative flex flex-row justify-end items-center h-20 w-full px-10 before:absolute before:bottom-0 before:left-5 before:right-5 before:h-px before:border-b-2 before:border-slate-800'>
+                    {/**<div className='flex justify-center items-center grow h-full'>
                         <div className='cursor-pointer flex flex-row justify-start items-center px-5 h-12 w-1/2 rounded-xl hover:text-slate-200 duration-150 ease-in-out bg-slate-800'>
                             <i className='gg-search'></i>
                             <p className='ml-4'>Search...</p>
                         </div>
-                    </div>
+                    </div>*/}
                     {/*<div className='cursor-pointer flex justify-center items-center h-10 w-10 rounded-lg bg-indigo-600 mr-10 hover:shadow-md hover:shadow-indigo-600 duration-150 ease-in-out'>
                         <i className='text-slate-200 gg-notification'></i>
                     </div>*/}
@@ -49,7 +49,7 @@ const Layout = ({ children }) => {
                 </div>
 
                 {/** page contents */}
-                <div className='flex flex-row grow justify-start items-center'>
+                <div className='flex flex-row safe justify-start items-center'>
                     {children}
                 </div>
             </div>
