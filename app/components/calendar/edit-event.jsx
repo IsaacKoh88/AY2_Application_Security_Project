@@ -61,7 +61,7 @@ const EditEvent = ({ id, event, categories, success, close }) => {
                             onChange={e => {setCategoryId(e.target.value); console.log(e.target.value)}}
                         >
                             <option
-                                value={ null }
+                                value='None'
                             >
                                 None
                             </option>

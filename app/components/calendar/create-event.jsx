@@ -59,7 +59,7 @@ const CreateEvent = ({ id, categories, success, close }) => {
                             onChange={e => setCategoryId(e.target.value)}
                         >
                             <option
-                                value={ null }
+                                value='None'
                             >
                                 None
                             </option>

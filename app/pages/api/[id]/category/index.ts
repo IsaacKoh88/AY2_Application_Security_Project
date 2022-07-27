@@ -25,5 +25,17 @@ export default async function GetCategory(
 
         res.status(200).json(result)
         return
-    };
+    }
+    /* rejects requests that are not GET */
+    else if (req.method !== 'GET') {
+        res.statusCode = 405;
+        res.end('Error');
+        return
+    }
+    /** if user is not authenticated */
+    else if (!req.cookies['token']) {
+        res.statusCode = 401;
+        res.end('Unauthorised');
+        return
+    }
 };
