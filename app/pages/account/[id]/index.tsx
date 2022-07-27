@@ -9,15 +9,15 @@ import * as jose from 'jose'
 
 type accountProps = {
     id: string,
-    email: string
+    email: string,
 }
 
-export async function getServerSideProps(context:any) {
+export async function getServerSideProps(context: any) {
     const JWTtoken = context.req.cookies['token'];
     const id = context.params.id
 
     /** if JWT does not exist */
-    if (JWTtoken == undefined){
+    if (JWTtoken == undefined) {
         return {
             redirect: {
                 destination: '/login',
@@ -40,7 +40,7 @@ export async function getServerSideProps(context:any) {
             return {
                 props: {
                     id: id,
-                    email: email
+                    email: email,
                 }
             }
         }
@@ -74,18 +74,21 @@ const Account: NextPageWithLayout<accountProps> = (props) => {
                 <title>Account Details</title>
                 <meta name="viewport" content="initial-scale=1.0, width=device-width" />
             </Head>
-                <div className='flex justify-center items-center w-full h-full'>
-                    <div className='flex flex-col justify-start items-start h-fit w-[500px] bg-white rounded-2xl p-5 mb-8'>
-
-                        <p className='text-lg text-slate-900 pb-2'>Account details</p>
-                        <p className='text-slate-700 pb-4'>Email: {props.email}</p>
-                        <Link href={'/account/' + props.id + '/changepassword'}>
-                            <div className='bg-blue-600 cursor-pointer px-3 py-2 rounded-md'>
-                                <p className='text-white'>Change Password</p>
+            <div className='flex justify-center items-center w-full h-full'>
+                <div className='bg-slate-800 flex flex-col h-fit w-[500px] bg-white rounded-2xl p-5 mb-8'>
+                    <p className='text-white text-3xl p-3 font-bold'>Account details</p>
+                    <div className="inline-flex px-5 pt-3 pb-2 ">
+                        <Link href={'/account/' + props.id + '/changepfp.jsx'}>
+                            <div className="relative text-center p-2">
+                                {/* <p className="text-white top-1/2 font-bold absolute opacity-0 hover:opacity-100">Edit</p> */}
+                                <img src='/defaultpfp.jpeg' className="h-[150px] w-[150px] block rounded-[50%] hover:opacity-50" />
                             </div>
                         </Link>
                     </div>
+
+
                 </div>
+            </div>
         </Fragment>
     );
 };
