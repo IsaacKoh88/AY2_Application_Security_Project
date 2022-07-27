@@ -60,3 +60,21 @@ export default async function DeleteEvent(
         return
     }
 }
+
+/**
+API request body must follow the structure below
+
+{
+    eventID: string      required    (36 character UUID format & must be a valid categoryID)
+}
+
+Requires authentication?    yes
+
+Response format             200         json        {message: 'success'}
+
+Errors
+400         request body not following above structure
+401         unauthenticated
+405         request not using POST method
+
+*/

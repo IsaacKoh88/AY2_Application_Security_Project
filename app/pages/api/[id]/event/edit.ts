@@ -91,3 +91,28 @@ export default async function EditEvent(
         return
     }
 }
+
+/**
+API request body must follow the structure below
+
+{
+    eventID: string         required    (36 character UUID format & must be a valid eventID)
+    eventName: string,      required    (between 1 and 255 characters long)
+    date: string,           required    (YYYY-MM-DD format)
+    startTime: string,      required    (XX:XX:XX format)
+    endTime: string,        required    (XX:XX:XX format)
+    description: string,    required    (between 0 and 65535 characters long)
+    categoryId: string      optional    (36 character UUID format & must be a valid categoryID)
+}
+
+Requires authentication?    yes
+
+Response format             201         json        {message: 'success'}
+
+Errors
+400         request body not following above structure
+401         unauthenticated
+404         event not found
+405         request not using POST method
+
+*/

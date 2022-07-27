@@ -78,3 +78,24 @@ export default async function CreateCategory(
         return
     }
 }
+
+/**
+API request body must follow the structure below
+
+{
+    categoryName: string,   required    (between 1 and 255 characters long)
+    categoryColor: string,  required    (between 1 and 7 characters long & must be a recognised color in utils/colors.ts)
+}
+
+Requires authentication?    yes
+
+Response format             201         json        {message: 'success'}
+
+Errors
+304         limit of 50 categories has been reached
+400         request body not following above structure
+401         unauthenticated
+405         request not using POST method
+500         unexpected server error
+
+*/
