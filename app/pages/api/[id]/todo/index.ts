@@ -19,7 +19,7 @@ export default async function GetEvent(
 
         /* insert data into category table */
         const result = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, Checked FROM todo WHERE AccountID=?',
+            query: 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, Checked FROM todo WHERE AccountID=? LIMIT 50',
             values: [req.query.id],
         })));
 

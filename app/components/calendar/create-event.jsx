@@ -30,6 +30,12 @@ const CreateEvent = ({ id, categories, success, close }) => {
 
         if (response.status === 201) {
             success()
+        } else if (response.status === 400) {
+            alert('Error 400: Request body format error.');
+        } else if (response.status === 500) {
+            alert('Error 500: Internal server error.');
+        } else if (response.status === 304) {
+            alert('Error 304: Too many events created on that date, please remove some before adding more, or change event date');
         }
     }
 

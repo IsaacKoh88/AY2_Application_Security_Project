@@ -22,17 +22,36 @@ export default async function CreateTodo(
             const { todoName, date } = req.body;
 
             if ((todoName.length <= 255) && (moment(date, 'YYYY-MM-DD', true).isValid())) {
-                /** generate uuidv4 */
-                const id = uuidv4();
+                try {
+                    const idcheck = await executeQuery({
+                        query: 'SELECT COUNT(*) FROM todo WHERE AccountID=?',
+                        values: [req.query.id],
+                    });
 
-                /* insert data into calendar table */ 
-                const result = await executeQuery({
-                    query: 'INSERT INTO todo VALUES(?, ?, ?, ?, ?)',
-                    values: [req.query.id, id, todoName, date, 0],
-                });
+                    if (idcheck[0]['COUNT(*)'] < 50) {
+                        /** generate uuidv4 */
+                        const id = uuidv4();
 
-                res.status(201).json({ message: 'success' })
-                return
+                        /* insert data into calendar table */ 
+                        const result = await executeQuery({
+                            query: 'INSERT INTO todo VALUES(?, ?, ?, ?, ?)',
+                            values: [req.query.id, id, todoName, date, 0],
+                        });
+
+                        res.status(201).json({ message: 'success' })
+                        return
+                    }
+                    /** more than 50 categories */
+                    else {
+                        res.statusCode = 304;
+                        res.end('Too many Todos created, please remove some before adding more');
+                    }
+                }
+                /** unexpected error */
+                catch {
+                    res.statusCode = 500;
+                    res.end('Unexpected Error');
+                }
             }
         }
         /** if request body components do not fit requirements */

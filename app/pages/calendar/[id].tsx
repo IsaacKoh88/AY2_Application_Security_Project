@@ -280,11 +280,20 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
         );
 
         if (response.status === 201) {
-            console.log('ok')
             fetch('/api/'+id+'/todo')
             .then(response => response.json())
             .then(data => setTodos(data));
-        };
+        } else if (response.status === 400) {
+            alert('Error 400: Request body format error.')
+            fetch('/api/'+id+'/todo')
+            .then(response => response.json())
+            .then(data => setTodos(data));
+        } else if (response.status === 404) {
+            alert('Error 404: Todo item not found')
+            fetch('/api/'+id+'/todo')
+            .then(response => response.json())
+            .then(data => setTodos(data));
+        }
     };
 
     /** Handles date selection action */
@@ -374,7 +383,7 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
                 <SmallCalendar selectedDate={selectedDate} handleSelectDate={handleSelectDate} />
 
                 {/** calendar category checkboxes */}
-                <div className='flex flex-col grow justify-start items-start w-full mt-6'>
+                <div className='flex flex-col category justify-start items-start w-full mt-6'>
                     <div className='flex flex-row justify-center items-center w-full mb-2'>
                         <div className='flex grow justify-center items-center ml-10'>
                             <p className='cursor-default text-lg text-slate-200 font-bold'>Categories</p>
@@ -392,7 +401,7 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
                             <p className=''>No Categories</p>
                         </div> 
                         :
-                        <div className='flex flex-col grow justify-start items-center w-full overflow-y-scroll'>
+                        <div className='flex flex-col justify-start items-center w-full overflow-y-scroll pb-4 scrollbar'>
                             {/** display a card for each category */}
                             {categories.map((category, index) => (
                                 <Category category={category} editCategory={handleEditCategoryPopupAppear} key={index} />
@@ -423,14 +432,13 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
                             <p className=''>No Events</p>
                         </div> 
                         :
-                        <div className='flex flex-col grow justify-start items-center w-full overflow-y-scroll'>
+                        <div className='flex flex-col relative justify-start items-center w-full overflow-scroll scrollbar'>
                             {/** display a card for each event */}
                             {events.map((event, index) => 
                                 <Event id={id} event={event} categories={categories} editEvent={handleEditEventPopupAppear} success={handleDeleteEventSuccess} key={index} />
                             )}
                         </div>
                     }
-                    <div className='flex flex-col justify-start items-center'></div>
                 </div>
 
                 {/** to-do list */}
@@ -454,8 +462,6 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
                         :
                         <div className='flex flex-col grow justify-start items-center w-full overflow-y-scroll'>
                             {/** display a card for each to-do */}
-
-
                             {todos.map((todo, index) => (
                                 <Todo todo={todo} changeStatus={handleTodoCheck} editTodo={handleEditTodoPopupAppear} key={index} />
                             ))}

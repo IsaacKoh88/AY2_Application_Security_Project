@@ -47,9 +47,7 @@ const SmallCalendar = ({ selectedDate, handleSelectDate }) => {
             {/** Calendar header */}
             <header className="flex justify-between mb-2">
                 <button onClick={handlePrevMonth}>
-                    <span className="material-icons-outlined cursor-pointer text-gray-600 mx-2">
-                        chevron_left
-                    </span>
+                    <span className="gg-chevron-left cursor-pointer hover:text-white mx-2 duration-150 ease-in-out"></span>
                 </button>
                 <p className="cursor-default text-lg text-slate-200 font-bold">
                     {dayjs(new Date(dayjs().year(), currentMonthIdx)).format(
@@ -57,9 +55,7 @@ const SmallCalendar = ({ selectedDate, handleSelectDate }) => {
                     )}
                 </p>
                 <button onClick={handleNextMonth}>
-                    <span className="material-icons-outlined cursor-pointer text-gray-600 mx-2">
-                        chevron_right
-                    </span>
+                    <span className="gg-chevron-right cursor-pointer hover:text-white mx-2 duration-150 ease-in-out"></span>
                 </button>
             </header>
 
