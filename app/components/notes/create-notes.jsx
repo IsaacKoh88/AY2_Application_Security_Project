@@ -7,6 +7,8 @@ const CreateNotes = ({ id, categories, success, close }) => {
     const [date, setDate] = useState(dayjs().format('YYYY-MM-DD'));
     const [description, setDescription] = useState('');
     const [categoryId, setCategoryId] = useState('');
+    const [StartTime, endStartTime] = useState('');
+    const [EndTime, setEndTime] = useState('');
 
     const FormSubmitHandler = async () => {
         const response = await fetch('/api/'+id+'/notes/create', {
