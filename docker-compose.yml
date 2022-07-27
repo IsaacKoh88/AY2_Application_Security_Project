@@ -21,10 +21,10 @@ services:
       dockerfile: Dockerfile
     container_name: next-app
     environment:
-      - DB_HOST=mysql-server
-      - DB_USER=root
-      - DB_PASSWORD=password
-      - DB_NAME=appsecdb
+      DB_HOST: mysql-server
+      DB_USER: app
+      DB_PASSWORD: V6m#4&hE896O5I7he=ropR4mls2=t7+swibodi=Re!8acrU+8afr8StUFeR_0?ad
+      DB_NAME: appsecdb
     depends_on:
       - mysql-server
     restart: on-failure
@@ -37,8 +37,3 @@ services:
       - ./database/:/var/lib/mysql/
     ports: 
       - 3306:3306
-    environment:
-      MYSQL_DATABASE: appsecdb
-      MYSQL_USER: app
-      MYSQL_PASSWORD: password
-      MYSQL_ROOT_PASSWORD: password
