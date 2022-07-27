@@ -24,7 +24,18 @@ export default async function GetEvent(
         })));
 
         res.status(200).json(result)
-        res.end('OK');
         return
-    };
+    }
+    /* rejects requests that are not GET */
+    else if (req.method !== 'GET') {
+        res.statusCode = 405;
+        res.end('Error');
+        return
+    }
+    /** if user is not authenticated */
+    else if (!req.cookies['token']) {
+        res.statusCode = 401;
+        res.end('Unauthorised');
+        return
+    }
 };

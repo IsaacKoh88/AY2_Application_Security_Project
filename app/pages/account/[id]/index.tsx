@@ -84,14 +84,6 @@ const Account: NextPageWithLayout<accountProps> = (props) => {
                                 <img src='/defaultpfp.jpeg' className="h-[150px] w-[150px] block rounded-[50%] hover:opacity-50" />
                             </div>
                         </Link>
-                        <div className="content-end p-2">
-                            <p className='text-white text-lg self-center font-bold pb-4'>Email:  <span className="bg-slate-700 p-3 px-4 font-normal rounded-md">{props.email}</span></p>
-                            <Link href={'/account/' + props.id + '/changepassword'}>
-                                <div className='bg-blue-600 float-right self-stretch w-40 cursor-pointer px-3 py-2 rounded-md'>
-                                    <p className='text-white'>Change Password</p>
-                                </div>
-                            </Link>
-                        </div>
                     </div>
 
 

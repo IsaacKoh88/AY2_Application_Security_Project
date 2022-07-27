@@ -14,6 +14,7 @@ type PasswordStrength =
     | "Very Strong";
 
 
+
 const Signup: NextPage = () => {
     
     // The password
@@ -48,6 +49,8 @@ const Signup: NextPage = () => {
         setPassword(enteredValue);
     };
 
+
+
     useEffect(() => {
         if (password.length <= 4) {
         setPasswordStrength("Very Weak");
@@ -61,7 +64,7 @@ const Signup: NextPage = () => {
         } else if (password.length <= 12) {
         setPasswordStrength("Strong");
         setIsButtonDisabled(false);
-        } else {
+        } else{
         setPasswordStrength("Very Strong");
         setIsButtonDisabled(false);
         }

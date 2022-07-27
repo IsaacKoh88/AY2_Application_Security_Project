@@ -16,26 +16,46 @@ export default async function CreateCategory(
         /** check user authorisation */
         await authorisedValidator(req, res);
 
-        /** deconstruct body data */
-        const { categoryName, categoryColor } = req.body;
+        try {
+            /** deconstruct body data */
+            const { categoryName, categoryColor } = req.body;
 
-        /** generate uuidv4 */
-        const id = uuidv4();
+            if ((categoryName <= 255) && (categoryColor === 'red' || categoryColor === 'orange' || categoryColor === 'amber' || categoryColor === 'yellow' || categoryColor === 'lime' || categoryColor === 'green' || categoryColor === 'emerald' || categoryColor === 'teal' || categoryColor === 'cyan' || categoryColor === 'sky' || categoryColor === 'blue' || categoryColor === 'indigo' || categoryColor === 'violet' || categoryColor === 'purple' || categoryColor === 'fuchsia' || categoryColor === 'pink' || categoryColor === 'rose')) {
+                /** generate uuidv4 */
+                const id = uuidv4();
 
-        /* insert data into category table */
-        const result = await executeQuery({
-            query: 'INSERT INTO category VALUES(?, ?, ?, ?)',
-            values: [req.query.id, id, categoryName, categoryColor],
-        });
+                /* insert data into category table */
+                const result = await executeQuery({
+                    query: 'INSERT INTO category VALUES(?, ?, ?, ?)',
+                    values: [req.query.id, id, categoryName, categoryColor],
+                });
 
-        res.status(201).json({ message: 'success' })
-        res.end();
-        return
+                res.status(201).json({ message: 'success' })
+                return
+            }
+        }
+        /** if request body components do not fit requirements */
+        catch {
+            res.statusCode = 400;
+            res.end('Request format error');
+        }
     }
-    /* rejects requests that are empty */
-    else if (!req.body) {
+    /* rejects requests that are not POST */
+    else if (req.method !== 'POST') {
         res.statusCode = 405;
         res.end('Error');
+        return
+    }
+    /** if request body components do not fit requirements */
+    else if (!req.body) {
+        res.statusCode = 400;
+        res.end('Request format error');
+        return
+    }
+    /** if user is not authenticated */
+    else if (!req.cookies['token']) {
+        res.statusCode = 401;
+        res.end('Unauthorised');
         return
     }
 }

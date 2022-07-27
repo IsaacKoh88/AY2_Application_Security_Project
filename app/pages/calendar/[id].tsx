@@ -46,6 +46,7 @@ type CalendarProps = {
     categories: CategoriesProps,
 }
 
+
 export async function getServerSideProps(context:any) {
     const JWTtoken = context.req.cookies['token'];
     const id = context.params.id
@@ -90,10 +91,10 @@ export async function getServerSideProps(context:any) {
                 values: [id],
             })));
 
-            const resultEvents = JSON.parse(JSON.stringify(await executeQuery({
+            const resultEvents = await executeQuery({
                 query: 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, StartTime, EndTime, Description, CategoryID FROM events WHERE AccountID=? AND Date=?',
                 values: [id, currentDate],
-            })));
+            });
 
             const resultCategories = JSON.parse(JSON.stringify(await executeQuery({
                 query: 'SELECT ID, Name, Color FROM category WHERE AccountID=?',

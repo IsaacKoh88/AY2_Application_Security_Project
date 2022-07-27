@@ -2,11 +2,13 @@ import React, { Fragment } from 'react';
 import dayjs from 'dayjs';
 import { useState } from 'react'
 
-const createNotes = ({ id, categories, success, close }) => {
+const CreateNotes = ({ id, categories, success, close }) => {
     const [notesName, setNoteName] = useState('');
     const [date, setDate] = useState(dayjs().format('YYYY-MM-DD'));
     const [description, setDescription] = useState('');
     const [categoryId, setCategoryId] = useState('');
+    const [StartTime, endStartTime] = useState('');
+    const [EndTime, setEndTime] = useState('');
 
     const FormSubmitHandler = async () => {
         const response = await fetch('/api/'+id+'/notes/create', {
@@ -122,4 +124,4 @@ const createNotes = ({ id, categories, success, close }) => {
     );
 };
 
-export default createNotes;
+export default CreateNotes;
