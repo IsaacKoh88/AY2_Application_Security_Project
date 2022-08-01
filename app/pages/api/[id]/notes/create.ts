@@ -19,16 +19,19 @@ export default async function CreateNotes(
         /** deconstruct body data */
         const { notesName, description} = req.body;
 
+        console.log(req.query.id)
+
         /** generate uuidv4 */
         const id = uuidv4();
 
         /* insert data into notes table */
         const result = await executeQuery({
-            query: 'INSERT INTO category VALUES(?, ?, ?, ?)',
+            query: 'INSERT INTO notes VALUES(?, ?, ?, ?)',
             values: [req.query.id, id, notesName, description],
         });
 
-        res.status(201).json({ message: 'success' })
+        res.statusCode = 201;
+        res.end('Error');
         return
     }
     /* rejects requests that are empty */
