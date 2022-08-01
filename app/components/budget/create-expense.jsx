@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 
 const CreateExpense = ({ id, close, success }) => {
     const [name, setName] = useState('');
-    const [amount, setAmount] = useState();
+    const [amount, setAmount] = useState(0);
     const [date, setDate] = useState(dayjs().format('YYYY-MM-DD'));
     
     const FormSubmitHandler = async () => {

@@ -18,6 +18,12 @@ export default async function EditBudget(
         /** deconstruct body data */
         const { accountID, budget } = req.body;
 
+        if (accountID === '' || accountID.length !== 36 || budget <= 0){
+            res.statusCode = 400;
+            res.end('Request format error');
+            return
+        }
+
         /* update budget table */
         const result = await executeQuery({
             query: 'CALL updateBudget(?, ?)',

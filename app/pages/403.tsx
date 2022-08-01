@@ -3,8 +3,63 @@ import { Fragment } from 'react'
 import Head from 'next/head'
 import Navbar from '../components/navbar'
 import Link from 'next/link'
+import executeQuery from '../utils/db';
+import * as jose from 'jose';
 
-const Error403: NextPage = () => {
+type ErrorProps = {
+    id: string;
+}
+
+export async function getServerSideProps(context:any) {
+    
+    const JWTtoken = context.req.cookies['token'];
+
+    /** if JWT does not exist */
+    if (JWTtoken == undefined){
+        return {
+            redirect: {
+                destination: '/401',
+                permanent: false,
+            },
+        }
+    }
+
+    try {
+        /** check if JWT token is valid */
+        const email = await jose.jwtVerify(JWTtoken, new TextEncoder()
+                    .encode(`qwertyuiop`))
+                    .then(value => {return(value['payload']['email'])});
+
+        /** get the id using email in JWT */
+        const result = await executeQuery({
+            query: 'CALL selectId_Email(?)',
+            values: [email],
+        });
+
+        try {
+            return{
+                props: {
+                    id: result[0][0].id,
+                }
+            }
+        } 
+        catch (error) {
+            console.log(error)
+        }  
+    } 
+    
+    catch (error) {
+        /** reject if JWT token is invalid */
+        return {
+            redirect: {
+                destination: '/401',
+                permanent: false,
+            },
+        }
+    };  
+};
+
+const Error403: NextPage<ErrorProps> = (props) => {
     return (
         <Fragment>
             <Head>
@@ -27,11 +82,11 @@ const Error403: NextPage = () => {
                                 We are sorry, but your current account does not have access to this page
                                 <br/>
                                 Please&nbsp;
-                                <Link href='/'>
+                                <Link href={'/account/' + props.id + '/logout'}>
                                     <a className='text-slate-500 underline'>switch account</a>
                                 </Link> 
                                 &nbsp;or go back to the&nbsp;
-                                <Link href='/'>
+                                <Link href={'/account/' + props.id}>
                                     <a className='text-slate-500 underline'>home</a>
                                 </Link>
                                 &nbsp;page to continue.
