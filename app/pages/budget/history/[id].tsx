@@ -4,7 +4,6 @@ import Head from 'next/head'
 import Link from 'next/link';
 import ExpenseHistory from '../../../components/budget/view-expenseHistory';
 import Layout from '../../../components/layouts/authenticated-layout';
-import dayjs from 'dayjs';
 import executeQuery from '../../../utils/db';
 import * as jose from 'jose';
 
@@ -68,7 +67,6 @@ export async function getServerSideProps(context:any) {
             query: 'CALL selectExpenseHistory(?)',
             values: [id],
         })));
-        console.log(resultExpense)
 
         const resultBudget = JSON.parse(JSON.stringify(await executeQuery({
             query: 'CALL selectBudget_AccountID(?)',
@@ -108,8 +106,145 @@ export async function getServerSideProps(context:any) {
 
 
 const Budget: NextPageWithLayout<BudgetProps> = (props) => {
+    const id = props.ID
     /** State to store expense */
     const [expenses, setExpenses] = useState(props.Expense);
+    const [dateButton, setDateButton] = useState('triangle-down')
+    const [nameButton, setNameButton] = useState('single-line')
+    const [amountButton, setAmountButton] = useState('single-line')
+
+    const orderByDate = async () => {
+        if (dateButton == 'triangle-down'){
+            setDateButton('triangle-up') 
+            setNameButton('single-line')
+            setAmountButton('single-line')
+            const response = await fetch('/api/'+id+'/expense/historyOrder', 
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(
+                        {
+                            OrderBy: 'Date Ascending',
+                            ID: id
+                        }
+                    )
+                }
+            )
+            .then(response => response.json())  
+            .then(data => {setExpenses(data)});   
+        }
+        else if (dateButton == 'triangle-up' || dateButton == 'single-line'){
+            setDateButton('triangle-down')
+            setNameButton('single-line')
+            setAmountButton('single-line')
+            const response = await fetch('/api/'+id+'/expense/historyOrder', 
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(
+                        {
+                            OrderBy: 'Date Descending',
+                            ID: id
+                        }
+                    )
+                }
+            )
+            .then(response => response.json())  
+            .then(data => {setExpenses(data)});   
+        }
+    }
+    const orderByName = async () => {
+        if (nameButton == 'triangle-down'){
+            setDateButton('single-line') 
+            setNameButton('triangle-up')
+            setAmountButton('single-line')
+            const response = await fetch('/api/'+id+'/expense/historyOrder', 
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(
+                        {
+                            OrderBy: 'Name Ascending',
+                            ID: id
+                        }
+                    )
+                }
+            )
+            .then(response => response.json())  
+            .then(data => {setExpenses(data)});   
+        }
+        else if (nameButton == 'triangle-up' || nameButton == 'single-line'){
+            setDateButton('single-line')
+            setNameButton('triangle-down')
+            setAmountButton('single-line')
+            const response = await fetch('/api/'+id+'/expense/historyOrder', 
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(
+                        {
+                            OrderBy: 'Name Descending',
+                            ID: id
+                        }
+                    )
+                }
+            )
+            .then(response => response.json())  
+            .then(data => {setExpenses(data)});   
+        }
+    }
+    const orderByAmount = async () => {
+        if (amountButton == 'triangle-down'){
+            setDateButton('single-line') 
+            setNameButton('single-line')
+            setAmountButton('triangle-up')
+            const response = await fetch('/api/'+id+'/expense/historyOrder', 
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(
+                        {
+                            OrderBy: 'Amount Ascending',
+                            ID: id
+                        }
+                    )
+                }
+            )
+            .then(response => response.json())  
+            .then(data => {setExpenses(data)});   
+        }
+        else if (amountButton == 'triangle-up' || amountButton == 'single-line'){
+            setDateButton('single-line')
+            setNameButton('single-line')
+            setAmountButton('triangle-down')
+            const response = await fetch('/api/'+id+'/expense/historyOrder', 
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(
+                        {
+                            OrderBy: 'Amount Descending',
+                            ID: id
+                        }
+                    )
+                }
+            )
+            .then(response => response.json())  
+            .then(data => {setExpenses(data)});   
+        }
+    }
 
     return (
         <Fragment>
@@ -136,9 +271,30 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
                         <table className='w-full table-fixed text-center'>
                             <tbody>
                                 <tr className='h-10'>
-                                    <th className='text-slate-200 text-lg font-bold text-left pl-3'>Name</th>
-                                    <th className='text-slate-200 text-lg font-bold'>Date</th>
-                                    <th className='text-slate-200 text-lg font-bold text-right pr-3'>Amount</th>
+                                    <th className='text-slate-200 text-lg font-bold text-left pl-3'>
+                                        <div className='group cursor-pointer flex justify-start items-center text-left' onClick={() => orderByName()}>
+                                            Name &nbsp; 
+                                            <span>
+                                                <i className={nameButton}/>
+                                            </span>
+                                        </div>
+                                    </th>
+                                    <th className='text-slate-200 text-lg font-bold text-center'>
+                                        <div className='group cursor-pointer flex justify-center items-center text-center' onClick={() => orderByDate()}>
+                                            Date &nbsp; 
+                                            <span>
+                                                <i className={dateButton}/>
+                                            </span>
+                                        </div>
+                                    </th>
+                                    <th className='text-slate-200 text-lg font-bold text-right pr-8'>
+                                    <div className='group cursor-pointer flex justify-end items-center text-center' onClick={() => orderByAmount()}>
+                                            Amount &nbsp; 
+                                            <span>
+                                                <i className={amountButton}/>
+                                            </span>
+                                        </div>
+                                    </th>
                                 </tr>
                                 {expenses.map((expense, index) => (
                                     <ExpenseHistory expense={expense} key={index} />
