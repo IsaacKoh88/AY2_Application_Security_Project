@@ -24,6 +24,7 @@ export default async function SignupHandler(
                 query: 'CALL insertAccountData(?, ?)',
                 values: [email, hashedPassword],
             });
+            console.log(result)
             res.status(200).json({ message: 'success'})
         } 
         catch ( error ) {

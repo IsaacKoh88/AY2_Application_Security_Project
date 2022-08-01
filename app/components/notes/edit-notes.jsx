@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 
-const editNotes = ({ id, notes, categories, success, close }) => {
+const editNotes = ({ id, notes, success, close }) => {
     const [notesName, setNotesName] = useState(notes.Name);
     const [date, setDate] = useState(notes.Date);
     const [description, setDescription] = useState(notes.Description);
