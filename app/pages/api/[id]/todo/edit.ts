@@ -81,3 +81,24 @@ export default async function EditTodo(
         return
     }
 }
+
+/**
+API request body must follow the structure below
+
+{
+    todoID: string          required    (36 character UUID format & must be a valid todoID)
+    todoName: string,       required    (between 1 and 255 characters long)
+    date: string,           required    (YYYY-MM-DD format)
+}
+
+Requires authentication?    yes
+
+Response format             201         json        {message: 'success'}
+
+Errors
+400         request body not following above structure
+401         unauthenticated
+404         todo not found
+405         request not using POST method
+
+*/

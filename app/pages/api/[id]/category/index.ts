@@ -19,7 +19,7 @@ export default async function GetCategory(
 
         /* get data from table */
         const result = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'SELECT ID, Name, Color FROM category WHERE AccountID=?',
+            query: 'SELECT ID, Name, Color FROM category WHERE AccountID=? LIMIT 50',
             values: [req.query.id],
         })));
 
@@ -39,3 +39,14 @@ export default async function GetCategory(
         return
     }
 };
+
+/**
+Requires authentication?    yes
+
+Response format             200         json        {ID: string, Name: string, Color: string}[]
+
+Errors
+401         unauthenticated
+405         request not using GET method
+
+*/

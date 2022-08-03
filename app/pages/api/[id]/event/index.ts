@@ -26,7 +26,7 @@ export default async function GetEvent(
 
                 /* insert data into category table */
                 const result = JSON.parse(JSON.stringify(await executeQuery({
-                    query: 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, StartTime, EndTime, Description, CategoryID FROM events WHERE AccountID=? AND Date=?',
+                    query: 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, StartTime, EndTime, Description, CategoryID FROM events WHERE AccountID=? AND Date=? LIMIT 50',
                     values: [req.query.id, date],
                 })));
 
@@ -59,3 +59,14 @@ export default async function GetEvent(
         return
     }
 };
+
+/**
+Requires authentication?    yes
+
+Response format             200         json        {ID: string, Name: string, Date: string, StartTime: string, EndTime: string, Description: string, CategoryID: string}[]
+
+Errors
+401         unauthenticated
+405         request not using GET method
+
+*/

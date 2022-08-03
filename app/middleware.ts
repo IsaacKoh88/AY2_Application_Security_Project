@@ -43,5 +43,10 @@ export async function middleware(req: NextRequest) {
 };
 /** Protected routes */
 export const config = {
-    matcher: ['/calendar/:path*', '/account', '/account/:path*', '/budget/:path*', '/notes/:path*']
+    matcher: ['/calendar/:path*', '/account', '/account/:path*', '/budget/:path*', '/notes/:path*'],
+    api: {
+        bodyParser: {
+            sizeLimit: '1mb',
+        },
+    },
 };

@@ -20,18 +20,37 @@ export default async function CreateCategory(
             /** deconstruct body data */
             const { categoryName, categoryColor } = req.body;
 
-            if ((categoryName <= 255) && (categoryColor === 'red' || categoryColor === 'orange' || categoryColor === 'amber' || categoryColor === 'yellow' || categoryColor === 'lime' || categoryColor === 'green' || categoryColor === 'emerald' || categoryColor === 'teal' || categoryColor === 'cyan' || categoryColor === 'sky' || categoryColor === 'blue' || categoryColor === 'indigo' || categoryColor === 'violet' || categoryColor === 'purple' || categoryColor === 'fuchsia' || categoryColor === 'pink' || categoryColor === 'rose')) {
-                /** generate uuidv4 */
-                const id = uuidv4();
+            if ((categoryName.length <= 255) && (categoryColor === 'red' || categoryColor === 'orange' || categoryColor === 'amber' || categoryColor === 'yellow' || categoryColor === 'lime' || categoryColor === 'green' || categoryColor === 'emerald' || categoryColor === 'teal' || categoryColor === 'cyan' || categoryColor === 'sky' || categoryColor === 'blue' || categoryColor === 'indigo' || categoryColor === 'violet' || categoryColor === 'purple' || categoryColor === 'fuchsia' || categoryColor === 'pink' || categoryColor === 'rose')) {
+                try {
+                    const idcheck = await executeQuery({
+                        query: 'SELECT COUNT(*) FROM category WHERE AccountID=?',
+                        values: [req.query.id],
+                    });
 
-                /* insert data into category table */
-                const result = await executeQuery({
-                    query: 'INSERT INTO category VALUES(?, ?, ?, ?)',
-                    values: [req.query.id, id, categoryName, categoryColor],
-                });
+                    if (idcheck[0]['COUNT(*)'] < 50) {
+                        /** generate uuidv4 */
+                        const id = uuidv4();
 
-                res.status(201).json({ message: 'success' })
-                return
+                        /* insert data into category table */
+                        const result = await executeQuery({
+                            query: 'INSERT INTO category VALUES(?, ?, ?, ?)',
+                            values: [req.query.id, id, categoryName, categoryColor],
+                        });
+
+                        res.status(201).json({ message: 'success' })
+                        return
+                    }
+                    /** more than 50 categories */
+                    else {
+                        res.statusCode = 304;
+                        res.end('Too many categories created, please remove some before adding more');
+                    }
+                }
+                /** unexpected error */
+                catch {
+                    res.statusCode = 500;
+                    res.end('Unexpected Error');
+                }
             }
         }
         /** if request body components do not fit requirements */
@@ -59,3 +78,24 @@ export default async function CreateCategory(
         return
     }
 }
+
+/**
+API request body must follow the structure below
+
+{
+    categoryName: string,   required    (between 1 and 255 characters long)
+    categoryColor: string,  required    (between 1 and 7 characters long & must be a recognised color in utils/colors.ts)
+}
+
+Requires authentication?    yes
+
+Response format             201         json        {message: 'success'}
+
+Errors
+304         limit of 50 categories has been reached
+400         request body not following above structure
+401         unauthenticated
+405         request not using POST method
+500         unexpected server error
+
+*/
