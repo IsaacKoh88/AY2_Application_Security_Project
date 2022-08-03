@@ -1,5 +1,5 @@
 -- @block
-DROP TABLE IF EXISTS account, events, category, todo, budget, expense, notes;
+DROP TABLE IF EXISTS account, events, category, todo, budget, expense, notes    ;
 
 CREATE TABLE account(
     id  VARCHAR(36) PRIMARY KEY NOT NULL UNIQUE,
@@ -56,10 +56,10 @@ CREATE TABLE notes(
     AccountID   VARCHAR(36) NOT NULL,
     ID          VARCHAR(36)PRIMARY KEY NOT NULL UNIQUE,
     Name        VARCHAR(255) NOT NULL,
-    Date        DATE NOT NULL,
     Description TEXT NULL,
     FOREIGN KEY (AccountID) REFERENCES account(id) ON DELETE CASCADE
 );
+
 
 
 -- @BLOCK
@@ -324,11 +324,12 @@ BEGIN
 END;
 
 
+
 -- @block
 select * from events;
 
 -- @block
-SELECT * FROM account;
+select * FROM account;
 
 -- @blockyes
 select * from category;

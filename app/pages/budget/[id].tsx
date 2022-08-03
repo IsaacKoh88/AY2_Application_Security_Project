@@ -18,7 +18,7 @@ type ExpenseProps = {
 }[]
 
 type BudgetProps = {
-    ID: number;
+    ID: string;
     Budget: number;
     TotalExpense: number;
     Expense: ExpenseProps;
@@ -225,7 +225,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
             }
         )
         .then(response => response.json())
-        .then(data => setTotalExpenses(data));
+        .then(data => setTotalExpenses(data.totalExpense));
 
 
         handleCreateExpensePopupDisappear()
@@ -262,7 +262,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
             }
         )
         .then(response => response.json())
-        .then(data => setTotalExpenses(data));
+        .then(data => setTotalExpenses(data.totalExpense));
 
 
         handleEditExpensePopupDisappear()
@@ -348,7 +348,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
                         <p className=''>No Expenses</p>
                     </div> 
                     :
-                    <div className='flex flex-col grow justify-start items-center w-full'>
+                    <div className='flex flex-col grow justify-start items-center w-full overflow-y-scroll'>
                         {expenses.map((expense, index) => (
                             <Expense expense={expense} editExpense={handleEditExpensePopupAppear} key={index} />
                         ))}

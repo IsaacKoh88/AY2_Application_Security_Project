@@ -3,7 +3,7 @@ import executeQuery from '../../../../utils/db'
 import authorisedValidator from '../../../../utils/authorised-validator';
 
 type Data = {
-    TotalExpense: number,
+    totalExpense: number,
 }
 
 export default async function GetExpense(
@@ -23,7 +23,13 @@ export default async function GetExpense(
             values: [req.query.id, date],
         })));
 
-        res.status(200).json(result[0][0].TotalExpense);
+        var totalExpense = 0
+        if (result[0][0]['TotalExpense'] !== null) {
+            totalExpense = result[0][0]['TotalExpense']
+        }
+
+
+        res.status(200).json( { totalExpense: totalExpense } );
         return
     };
 };

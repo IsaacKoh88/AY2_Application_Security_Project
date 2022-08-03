@@ -387,3 +387,25 @@
     right: 6px;
     top: 4px
 } 
+
+/* Icons CSS used in expense history */
+.triangle-down {
+	border-left: 8px solid transparent;
+	border-right: 8px solid transparent;
+	border-top: 7px solid;
+    position: absolute;
+}
+
+.triangle-up {
+	border-left: 8px solid transparent;
+	border-right: 8px solid transparent;
+	border-bottom: 7px solid;
+    position: absolute;
+}
+
+.single-line {
+    height: 1px;
+    width: 15px;
+    background-color: white;
+    position: absolute;
+}
