@@ -2,7 +2,7 @@
 mkdir -p reverse-proxy/certs
 # Generate ssl certs and private key
 openssl req -x509 -out reverse-proxy/certs/localhost.crt -keyout reverse-proxy/certs/localhost.key \
-    -days 365 \
+    -days 7 \
     -newkey rsa:2048 -nodes -sha256 \
     -subj '/CN=localhost' -extensions EXT -config <( \
     printf "[dn]\nCN=localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:localhost\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")

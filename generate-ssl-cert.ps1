@@ -1,21 +1,21 @@
 # Create directory for certs if it does not exist
-$FolderName = ".\app\certs"
+$FolderName = ".\reverse-proxy\certs"
 if (Test-Path $FolderName) {
-    Write-Host "Folder Exists"
+    Write-Host ".\reverse-proxy\certs exists"
     # Perform Delete file from folder operation
 }
 else
 {
     #PowerShell Create directory if not exists
     New-Item $FolderName -ItemType Directory
+    Write-Host "Folder Created successfully"
 }
 
 # Generate ssl certs and private key
-openssl req -x509 -out app\certs\localhost.crt -keyout app\certs\localhost.key /
-    -days 365 /
-    -newkey rsa:2048 -nodes -sha256 /
-    -subj '\CN=localhost' -extensions EXT -config <( /
-    printf "[dn]/nCN=localhost/n[req]/ndistinguished_name = dn/n[EXT]/nsubjectAltName=DNS:localhost/nkeyUsage=digitalSignature/nextendedKeyUsage=serverAuth")
+openssl req -x509 -out reverse-proxy/certs/localhost.crt -keyout reverse-proxy/certs/localhost.key `
+    -days 7 `
+    -newkey rsa:2048 -nodes -sha256 `
+    -subj '/CN=localhost'
 
 # Add ssl cert to trusted cert list
-certutil -addstore -f "ROOT" app/certs/localhost.crt
+#certutil -addstore -f "ROOT" app/certs/localhost.crt
