@@ -35,6 +35,5 @@ services:
     container_name: mysql-server
     volumes:
       - ./database/:/var/lib/mysql/
-    read-only: true
     ports: 
       - 3306:3306
