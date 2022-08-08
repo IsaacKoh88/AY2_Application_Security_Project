@@ -93,8 +93,11 @@ END
 -- @block
 -- Consists of stored procedure that inserts data
 DROP PROCEDURE IF EXISTS insertAccountData;
+DROP PROCEDURE IF EXISTS insertCategoryData;
+DROP PROCEDURE IF EXISTS insertEventData;
+DROP PROCEDURE IF EXISTS insertTodoData;
 DROP PROCEDURE IF EXISTS insertExpenseData;
-DROP PROCEDURE IF EXISTS inserTNotesData;
+DROP PROCEDURE IF EXISTS insertNotesData;
 
 CREATE PROCEDURE insertAccountData (IN email VARCHAR(255), IN password VARCHAR(255))
 BEGIN
@@ -122,6 +125,85 @@ BEGIN
     SET @budget = 1000;
     PREPARE stmt FROM 'INSERT INTO budget VALUES(?, ?)'; 
     EXECUTE stmt USING @ID, @budget;
+    DEALLOCATE PREPARE stmt;
+END;
+
+CREATE PROCEDURE insertCategoryData (IN accountID VARCHAR(36), categoryName VARCHAR(255), categoryColor VARCHAR(36))
+BEGIN
+    SET @accountID = accountID;
+    SET @categoryName = categoryName;
+    SET @categoryColor = categoryColor;
+
+    SET @ID = uuid_v4s();
+
+    PREPARE stmt FROM 'SELECT count(*) FROM category where id=? INTO @count'; 
+    EXECUTE stmt USING @ID;
+    DEALLOCATE PREPARE stmt;
+    
+    WHILE (@count = 1)
+    DO
+        SET @ID = uuid_v4s();
+        PREPARE stmt FROM 'SELECT count(*) FROM category where id=? INTO @count'; 
+        EXECUTE stmt USING @ID;
+        DEALLOCATE PREPARE stmt;
+    END WHILE;
+    
+    PREPARE stmt FROM 'INSERT INTO category VALUES(?, ?, ?, ?))';
+    EXECUTE stmt USING @accountID, @ID, @categoryName, @categoryColor;
+    DEALLOCATE PREPARE stmt;
+END;
+
+CREATE PROCEDURE insertEventData (IN accountID VARCHAR(36), eventName VARCHAR(255), date DATE, startTime TIME, endTime TIME, description VARCHAR(255), categoryID VARCHAR(36))
+BEGIN
+    SET @accountID = accountID;
+    SET @eventName = eventName;
+    SET @date = date;
+    SET @startTime = startTime;
+    SET @endTime = endTime;
+    SET @description = description;
+    SET @categoryID = categoryID;
+
+    SET @ID = uuid_v4s();
+
+    PREPARE stmt FROM 'SELECT count(*) FROM events where id=? INTO @count'; 
+    EXECUTE stmt USING @ID;
+    DEALLOCATE PREPARE stmt;
+    
+    WHILE (@count = 1)
+    DO
+        SET @ID = uuid_v4s();
+        PREPARE stmt FROM 'SELECT count(*) FROM events where id=? INTO @count'; 
+        EXECUTE stmt USING @ID;
+        DEALLOCATE PREPARE stmt;
+    END WHILE;
+    
+    PREPARE stmt FROM 'INSERT INTO events VALUES(?, ?, ?, ?, ?, ?, ?, ?)';
+    EXECUTE stmt USING @accountID, @ID, @eventName, @date, @startTime, @endTime, @description, @categoryID;
+    DEALLOCATE PREPARE stmt;
+END;
+
+CREATE PROCEDURE insertTodoData (IN accountID VARCHAR(36), categoryName VARCHAR(255), categoryColor VARCHAR(36))
+BEGIN
+    SET @accountID = accountID;
+    SET @categoryName = categoryName;
+    SET @categoryColor = categoryColor;
+
+    SET @ID = uuid_v4s();
+
+    PREPARE stmt FROM 'SELECT count(*) FROM category where id=? INTO @count'; 
+    EXECUTE stmt USING @ID;
+    DEALLOCATE PREPARE stmt;
+    
+    WHILE (@count = 1)
+    DO
+        SET @ID = uuid_v4s();
+        PREPARE stmt FROM 'SELECT count(*) FROM category where id=? INTO @count'; 
+        EXECUTE stmt USING @ID;
+        DEALLOCATE PREPARE stmt;
+    END WHILE;
+    
+    PREPARE stmt FROM 'INSERT INTO category VALUES(?, ?, ?, ?))';
+    EXECUTE stmt USING @accountID, @ID, @categoryName, @categoryColor;
     DEALLOCATE PREPARE stmt;
 END;
 
