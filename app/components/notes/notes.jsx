@@ -68,14 +68,15 @@ const NotesDisplay = ({ id, notes, editNotes, success }) => {
         };
     }
 
+    // console.log(notes)
     return (
         <div 
-            className={`group cursor-pointer flex flex-col justify-start items-center w-full px-3 py-2 my-2 rounded-lg transition-max-h duration-300 ease-in-out overflow-hidden ${expand ? 'max-h-screen' : 'max-h-10'} ${getCategoryColor(event.CategoryID ? categories.find(e => e.ID === event.CategoryID).Color : '')}`}
+            className={`group cursor-pointer flex flex-col justify-start items-center w-full px-3 py-2 my-2 rounded-lg transition-max-h duration-300 ease-in-out overflow-hidden`}
             onClick={() => handleClickDetails()}
         >
             <div className='flex flex-row justify-between items-center w-full'>
-                <p className={`font-semibold duration-300 ease-linear ${expand ? 'text-white' : 'text-slate-200 group-hover:text-white'}`}>{ event.Name }</p>
-                <p className={`font-semibold duration-300 ease-linear ${expand ? 'text-white' : 'text-slate-200 group-hover:text-white'}`}>{ event.StartTime } - { event.EndTime }</p>
+                <p className={`font-semibold duration-300 ease-linear {expand ? 'text-white' : 'text-slate-200 group-hover:text-white'}`}>{notes.Name}</p>
+                <p className={`font-semibold duration-300 ease-linear {expand ? 'text-white' : 'text-slate-200 group-hover:text-white'}`}></p>
             </div>
             <p className={`flex justify-start items-start text-white w-full mt-1`}>{ notes['Description'] }</p>
             <div className={`flex flex-row justify-end items-center w-full mt-2 mb-1`}>
