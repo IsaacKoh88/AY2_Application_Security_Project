@@ -22,7 +22,7 @@ export default async function DeleteEvent(
             if (eventID.length === 36) {
                 /* insert data into category table */
                 const result = await executeQuery({
-                    query: 'DELETE FROM events WHERE AccountID=? AND ID=?',
+                    query: 'CALL deleteEventData(?, ?)',
                     values: [req.query.id, eventID],
                 });
 
