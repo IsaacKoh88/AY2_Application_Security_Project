@@ -127,131 +127,65 @@ BEGIN
     DEALLOCATE PREPARE stmt;
 END;
 
-CREATE PROCEDURE insertCategoryData (IN accountID VARCHAR(36), categoryName VARCHAR(255), categoryColor VARCHAR(36))
+CREATE PROCEDURE insertCategoryData (IN accountID VARCHAR(36), ID VARCHAR(36), categoryName VARCHAR(255), categoryColor VARCHAR(36))
 BEGIN
     SET @accountID = accountID;
+    SET @ID = ID;
     SET @categoryName = categoryName;
     SET @categoryColor = categoryColor;
-
-    SET @ID = uuid_v4s();
-
-    PREPARE stmt FROM 'SELECT count(*) FROM category where id=? INTO @count'; 
-    EXECUTE stmt USING @ID;
-    DEALLOCATE PREPARE stmt;
-    
-    WHILE (@count = 1)
-    DO
-        SET @ID = uuid_v4s();
-        PREPARE stmt FROM 'SELECT count(*) FROM category where id=? INTO @count'; 
-        EXECUTE stmt USING @ID;
-        DEALLOCATE PREPARE stmt;
-    END WHILE;
     
     PREPARE stmt FROM 'INSERT INTO category VALUES(?, ?, ?, ?)';
     EXECUTE stmt USING @accountID, @ID, @categoryName, @categoryColor;
     DEALLOCATE PREPARE stmt;
 END;
 
-CREATE PROCEDURE insertEventData (IN accountID VARCHAR(36), eventName VARCHAR(255), date DATE, startTime TIME, endTime TIME, description VARCHAR(255), categoryID VARCHAR(36))
+CREATE PROCEDURE insertEventData (IN accountID VARCHAR(36), ID VARCHAR(36), eventName VARCHAR(255), date DATE, startTime TIME, endTime TIME, description VARCHAR(255), categoryID VARCHAR(36))
 BEGIN
     SET @accountID = accountID;
+    SET @ID = ID;
     SET @eventName = eventName;
     SET @date = date;
     SET @startTime = startTime;
     SET @endTime = endTime;
     SET @description = description;
     SET @categoryID = categoryID;
-
-    SET @ID = uuid_v4s();
-
-    PREPARE stmt FROM 'SELECT count(*) FROM events where id=? INTO @count'; 
-    EXECUTE stmt USING @ID;
-    DEALLOCATE PREPARE stmt;
-    
-    WHILE (@count = 1)
-    DO
-        SET @ID = uuid_v4s();
-        PREPARE stmt FROM 'SELECT count(*) FROM events where id=? INTO @count'; 
-        EXECUTE stmt USING @ID;
-        DEALLOCATE PREPARE stmt;
-    END WHILE;
     
     PREPARE stmt FROM 'INSERT INTO events VALUES(?, ?, ?, ?, ?, ?, ?, ?)';
     EXECUTE stmt USING @accountID, @ID, @eventName, @date, @startTime, @endTime, @description, @categoryID;
     DEALLOCATE PREPARE stmt;
 END;
 
-CREATE PROCEDURE insertTodoData (IN accountID VARCHAR(36), todoName VARCHAR(255), date DATE)
+CREATE PROCEDURE insertTodoData (IN accountID VARCHAR(36), ID VARCHAR(36), todoName VARCHAR(255), date DATE)
 BEGIN
     SET @accountID = accountID;
     SET @todoName = todoName;
     SET @date = date;
     SET @checked = 0;
 
-    SET @ID = uuid_v4s();
-
-    PREPARE stmt FROM 'SELECT count(*) FROM todo where id=? INTO @count'; 
-    EXECUTE stmt USING @ID;
-    DEALLOCATE PREPARE stmt;
-    
-    WHILE (@count = 1)
-    DO
-        SET @ID = uuid_v4s();
-        PREPARE stmt FROM 'SELECT count(*) FROM todo where id=? INTO @count'; 
-        EXECUTE stmt USING @ID;
-        DEALLOCATE PREPARE stmt;
-    END WHILE;
-    
     PREPARE stmt FROM 'INSERT INTO todo VALUES(?, ?, ?, ?, ?)';
     EXECUTE stmt USING @accountID, @ID, @todoName, @date, @checked;
     DEALLOCATE PREPARE stmt;
 END;
 
-CREATE PROCEDURE insertExpenseData (IN AccountID VARCHAR(36), Name VARCHAR(255), Amount DECIMAL(65, 2), Date DATE)
+CREATE PROCEDURE insertExpenseData (IN AccountID VARCHAR(36), ID VARCHAR(36), Name VARCHAR(255), Amount DECIMAL(65, 2), Date DATE)
 BEGIN
     SET @AccountID = AccountID;
+    SET @ID = ID;
     SET @Name = Name;
     SET @Amount = Amount;
     SET @Date = Date;
-
-    SET @ID = uuid_v4s();
-
-    PREPARE stmt FROM 'SELECT count(*) FROM expense WHERE ID = ? INTO @count'; 
-    EXECUTE stmt USING @ID;
-    DEALLOCATE PREPARE stmt;
-    
-    WHILE (@count = 1)
-    DO
-        SET @ID = uuid_v4s();
-        PREPARE stmt FROM 'SELECT count(*) FROM expense WHERE ID = ? INTO @count'; 
-        EXECUTE stmt USING @ID;
-        DEALLOCATE PREPARE stmt;
-    END WHILE;
 
     PREPARE stmt FROM 'INSERT INTO expense VALUES (?, ?, ?, ?, ?)';
     EXECUTE stmt USING @AccountID, @ID, @Name, @Amount, @Date;
     DEALLOCATE PREPARE stmt;
 END;
 
-CREATE PROCEDURE insertNotesData (IN accountID VARCHAR(36), notesName VARCHAR(255), description VARCHAR(255))
+CREATE PROCEDURE insertNotesData (IN accountID VARCHAR(36), ID VARCHAR(36), notesName VARCHAR(255), description VARCHAR(255))
 BEGIN
     SET @accountID = accountID;
+    SET @ID = ID;
     SET @notesName = notesName;
     SET @description = description;
-
-    SET @ID = uuid_v4s();
-
-    PREPARE stmt FROM 'SELECT count(*) FROM notes WHERE ID = ? INTO @count'; 
-    EXECUTE stmt USING @ID;
-    DEALLOCATE PREPARE stmt;
-
-    WHILE (@count = 1)
-    DO
-        SET @ID = uuid_v4s();
-        PREPARE stmt FROM 'SELECT count(*) FROM notes WHERE ID = ? INTO @count'; 
-        EXECUTE stmt USING @ID;
-        DEALLOCATE PREPARE stmt;
-    END WHILE;
 
     PREPARE stmt FROM 'INSERT INTO notes VALUES (?, ?, ?, ?)';
     EXECUTE stmt USING @accountID, @ID, @notesName, @description;
@@ -421,8 +355,11 @@ END;
 -- Consists of stored procedure to select data
 DROP PROCEDURE IF EXISTS selectEmail_Id;
 DROP PROCEDURE IF EXISTS selectId_Email;
+
 DROP PROCEDURE IF EXISTS selectTodo_AccountID;
 DROP PROCEDURE IF EXISTS selectEvent_AccountID_Date;
+DROP PROCEDURE IF EXISTS selectCategory_AccountID;
+
 DROP PROCEDURE IF EXISTS selectSumExpense_AccountID;
 DROP PROCEDURE IF EXISTS selectSumExpense_AccountID_Month;
 DROP PROCEDURE IF EXISTS selectExpenseData_Month;
