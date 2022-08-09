@@ -421,6 +421,8 @@ END;
 -- Consists of stored procedure to select data
 DROP PROCEDURE IF EXISTS selectEmail_Id;
 DROP PROCEDURE IF EXISTS selectId_Email;
+DROP PROCEDURE IF EXISTS selectTodo_AccountID;
+DROP PROCEDURE IF EXISTS selectEvent_AccountID_Date;
 DROP PROCEDURE IF EXISTS selectSumExpense_AccountID;
 DROP PROCEDURE IF EXISTS selectSumExpense_AccountID_Month;
 DROP PROCEDURE IF EXISTS selectExpenseData_Month;
@@ -444,6 +446,36 @@ BEGIN
     EXECUTE stmt USING @email;
     DEALLOCATE PREPARE stmt;
 END;
+
+
+CREATE PROCEDURE selectTodo_AccountID (IN accountID VARCHAR(36))
+BEGIN
+    SET @accountID = accountID;
+
+    PREPARE stmt FROM 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, Checked FROM todo WHERE AccountID=?';
+    EXECUTE stmt USING @accountID;
+    DEALLOCATE PREPARE stmt;
+END;
+
+CREATE PROCEDURE selectEvent_AccountID_Date (IN accountID VARCHAR(36), date DATE)
+BEGIN
+    SET @accountID = accountID;
+    SET @date = date;
+
+    PREPARE stmt FROM 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, StartTime, EndTime, Description, CategoryID FROM events WHERE AccountID=? AND Date=?';
+    EXECUTE stmt USING @accountID, @date;
+    DEALLOCATE PREPARE stmt;
+END;
+
+CREATE PROCEDURE selectCategory_AccountID (IN accountID VARCHAR(36))
+BEGIN
+    SET @accountID = accountID;
+
+    PREPARE stmt FROM 'SELECT ID, Name, Color FROM category WHERE AccountID=?';
+    EXECUTE stmt USING @accountID;
+    DEALLOCATE PREPARE stmt;
+END;
+
 
 CREATE PROCEDURE selectSumExpense_AccountID_Month (IN ID VARCHAR(36), Date DATE)
 BEGIN
