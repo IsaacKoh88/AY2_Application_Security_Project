@@ -22,23 +22,43 @@ export default async function CreateCategory(
 
             if ((categoryName.length <= 255) && (categoryColor === 'red' || categoryColor === 'orange' || categoryColor === 'amber' || categoryColor === 'yellow' || categoryColor === 'lime' || categoryColor === 'green' || categoryColor === 'emerald' || categoryColor === 'teal' || categoryColor === 'cyan' || categoryColor === 'sky' || categoryColor === 'blue' || categoryColor === 'indigo' || categoryColor === 'violet' || categoryColor === 'purple' || categoryColor === 'fuchsia' || categoryColor === 'pink' || categoryColor === 'rose')) {
                 try {
-                    const idcheck = await executeQuery({
+                    const totalCategories = JSON.parse(JSON.stringify(await executeQuery({
                         query: 'SELECT COUNT(*) FROM category WHERE AccountID=?',
                         values: [req.query.id],
-                    });
+                    })));
 
-                    if (idcheck[0]['COUNT(*)'] < 50) {
-                        /** generate uuidv4 */
-                        const id = uuidv4();
+                    if (totalCategories[0]['COUNT(*)'] < 50) {
 
-                        /* insert data into category table */
-                        const result = await executeQuery({
-                            query: 'INSERT INTO category VALUES(?, ?, ?, ?)',
-                            values: [req.query.id, id, categoryName, categoryColor],
-                        });
-
-                        res.status(201).json({ message: 'success' })
-                        return
+                        var id = uuidv4();
+                        var idcheck = JSON.parse(JSON.stringify(await executeQuery({
+                            query: 'SELECT COUNT(*) FROM category WHERE ID=?',
+                            values: [id],
+                        })));
+                        var totalCount = 0
+            
+                        while (idcheck[0]['COUNT(*)'] == 1 && totalCount < 100) {              
+                            id = uuidv4()
+                            var idcheck = JSON.parse(JSON.stringify(await executeQuery({
+                                query: 'SELECT COUNT(*) FROM category WHERE ID=?',
+                                values: [id],
+                            })));
+                            totalCount += 1
+                        }
+                        
+                        if (totalCount >= 100) {
+                            res.status(500).json({message: 'Too many uuids checked, please try again'})
+                            return
+                        }
+                        else {
+                            /* insert data into category table */
+                            const result = await executeQuery({
+                                query: 'CALL insertCategoryData(?, ?, ?, ?)',
+                                values: [req.query.id, id, categoryName, categoryColor],
+                            });
+            
+                            res.status(201).json({ message: 'success' })
+                            return
+                        }
                     }
                     /** more than 50 categories */
                     else {

@@ -23,23 +23,41 @@ export default async function CreateTodo(
 
             if ((todoName.length <= 255) && (moment(date, 'YYYY-MM-DD', true).isValid())) {
                 try {
-                    const idcheck = await executeQuery({
+                    const totalTodos = JSON.parse(JSON.stringify(await executeQuery({
                         query: 'SELECT COUNT(*) FROM todo WHERE AccountID=?',
                         values: [req.query.id],
-                    });
+                    })));
 
-                    if (idcheck[0]['COUNT(*)'] < 50) {
-                        /** generate uuidv4 */
-                        const id = uuidv4();
+                    if (totalTodos[0]['COUNT(*)'] < 50) {
+                        var id = uuidv4();
+                        var idcheck = JSON.parse(JSON.stringify(await executeQuery({
+                            query: 'SELECT COUNT(*) FROM expense WHERE ID=?',
+                            values: [id],
+                        })));
+                        var totalCount = 1
 
-                        /* insert data into calendar table */ 
-                        const result = await executeQuery({
-                            query: 'INSERT INTO todo VALUES(?, ?, ?, ?, ?)',
-                            values: [req.query.id, id, todoName, date, 0],
-                        });
+                        while (idcheck[0]['COUNT(*)'] == 1 && totalCount < 100) {              
+                            id = uuidv4()
+                            var idcheck = JSON.parse(JSON.stringify(await executeQuery({
+                                query: 'SELECT COUNT(*) FROM expense WHERE ID=?',
+                                values: [id],
+                            })));
+                            totalCount += 1
+                        }
+                        if (totalCount >= 100) {
+                            res.status(500).json({message: 'Too many uuids checked, please try again'})
+                            return
+                        }
+                        else {
+                            /* insert data into calendar table */ 
+                            const result = await executeQuery({
+                                query: 'CALL insertTodoData(?, ?, ?, ?)',
+                                values: [req.query.id, id, todoName, date],
+                            });
 
-                        res.status(201).json({ message: 'success' })
-                        return
+                            res.status(201).json({ message: 'success' })
+                            return
+                        }
                     }
                     /** more than 50 categories */
                     else {
