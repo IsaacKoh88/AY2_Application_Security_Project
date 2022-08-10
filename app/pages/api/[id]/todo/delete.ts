@@ -22,7 +22,7 @@ export default async function DeleteTodo(
             if (todoID.length === 36) {
                 /* insert data into category table */
                 const result = await executeQuery({
-                    query: 'DELETE FROM todo WHERE AccountID=? AND ID=?',
+                    query: 'CALL deleteTodoData(?, ?)',
                     values: [req.query.id, todoID],
                 });
 

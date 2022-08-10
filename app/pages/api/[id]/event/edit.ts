@@ -28,10 +28,10 @@ export default async function EditEvent(
             if ((eventName.length <= 255) && (moment(date, 'YYYY-MM-DD', true).isValid()) && (timeregex.test(startTime)) && (timeregex.test(endTime)) && (description.length <= 65535) && (categoryId.length === 36 || categoryId === 'None' || categoryId === '' || categoryId === 'null')) {
 
                 try {
-                    const idcheck = await executeQuery({
+                    const idcheck = JSON.parse(JSON.stringify(await executeQuery({
                         query: 'SELECT COUNT(*) FROM events WHERE AccountID=? AND ID=?',
                         values: [req.query.id, eventID],
-                    });
+                    })));
 
                     if (idcheck[0]['COUNT(*)'] === 1) {
                         /** check category null */
@@ -41,8 +41,8 @@ export default async function EditEvent(
 
                         /* insert data into category table */
                         const result = await executeQuery({
-                            query: 'UPDATE events SET Name=?, Date=?, StartTime=?, EndTime=?, Description=?, CategoryID=? WHERE AccountID=? AND ID=?',
-                            values: [eventName, date, startTime, endTime, description, categoryId, req.query.id, eventID],
+                            query: 'CALL updateEvent(?, ?, ?, ?, ?, ?, ?, ?)',
+                            values: [req.query.id, eventID, eventName, date, startTime, endTime, description, categoryId],
                         });
 
                         res.status(201).json({ message: 'success' })

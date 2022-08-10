@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import executeQuery from '../../../../utils/db'
 import authorisedValidator from '../../../../utils/authorised-validator';
+import { v4 as uuidv4 } from 'uuid';
 
 type Data = {
     message: string
@@ -25,16 +26,43 @@ export default async function CreateExpense(
             res.end('Request format error');
             return
         }
-        
-        /* insert data into expense table */
-        const result = await executeQuery({
-            query: 'CALL insertExpenseData(?, ?, ?, ?)',
-            values: [accountID, expenseName, amount, date],
-        });
 
-        res.statusCode = 201;
-        res.end('Success');
-        return
+        try {
+            var id = uuidv4();
+            var idcheck = JSON.parse(JSON.stringify(await executeQuery({
+                query: 'SELECT COUNT(*) FROM expense WHERE ID=?',
+                values: [id],
+            })));
+            var totalCount = 1
+
+            while (idcheck[0]['COUNT(*)'] == 1 && totalCount < 100) {              
+                id = uuidv4()
+                var idcheck = JSON.parse(JSON.stringify(await executeQuery({
+                    query: 'SELECT COUNT(*) FROM expense WHERE ID=?',
+                    values: [id],
+                })));
+                totalCount += 1
+            }
+            if (totalCount >= 100) {
+                res.status(500).json({message: 'Too many uuids checked, please try again'})
+                return
+            }
+            else {
+                /* insert data into expense table */
+                const result = await executeQuery({
+                    query: 'CALL insertExpenseData(?, ?, ?, ?, ?)',
+                    values: [accountID, id, expenseName, amount, date],
+                });
+
+                res.status(201).json({ message: 'success' })
+                return
+            }
+        }
+        /** unexpected error */
+        catch {
+            res.statusCode = 500;
+            res.end('Unexpected Error');
+        }
     }
     /* rejects requests that are empty */
     else if (!req.body) {

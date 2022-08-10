@@ -22,6 +22,7 @@ type BudgetProps = {
     Budget: number;
     TotalExpense: number;
     Expense: ExpenseProps;
+    circleStyle: string;
 }
 
 export async function getServerSideProps(context:any) {
@@ -81,13 +82,25 @@ export async function getServerSideProps(context:any) {
             totalExpense = resultTotalExpense[0][0]['TotalExpense']
         }
 
+        const expenseDifference = resultBudget[0][0]['Budget'] - totalExpense
+        if (expenseDifference == 0){
+            var circleStyle = 'flex justify-center items-center bg-indigo-600 h-96 w-96 m-8 rounded-full'
+        }
+        else if (expenseDifference > 0) {
+            var circleStyle = 'flex justify-center items-center bg-lime-600 h-96 w-96 m-8 rounded-full'
+        }
+        else{
+            var circleStyle = 'flex justify-center items-center bg-red-700 h-96 w-96 m-8 rounded-full'
+        }
+
         try {
             return{
                 props: {
                     ID: id,
                     Budget: resultBudget[0][0]['Budget'],
                     TotalExpense: totalExpense,
-                    Expense: resultExpense[0]
+                    Expense: resultExpense[0],
+                    circleStyle: circleStyle
                 }
             }
         } 
@@ -121,41 +134,43 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
     const [editExpense, setEditExpense] = useState('');
     /** State to store expense */
     const [totalexpense, setTotalExpenses] = useState(props.TotalExpense);
+    /** State to store style */
+    const [circleStyle, setcircleStyle] = useState(props.circleStyle)
 
     /* Used to set the color of the outer circle */
-    var budgetDifference = budget - totalexpense
-    var BudgetColor = 0
-    if (budgetDifference > 0) {
-        BudgetColor = 1
-    }
-    else if (budgetDifference < 0) {
-        BudgetColor = 2
-    };
+    // var budgetDifference = budget - totalexpense
+    // var BudgetColor = 0
+    // if (budgetDifference > 0) {
+    //     BudgetColor = 1
+    // }
+    // else if (budgetDifference < 0) {
+    //     BudgetColor = 2
+    // };
 
-    const funcProgressColor = () => {
-        switch(BudgetColor) {
-            case 0:
-                return 'blue';
-            case 1:
-                return 'green';
-            case 2:
-                return 'red';
-        }
-    }
+    // const funcProgressColor = () => {
+    //     switch(BudgetColor) {
+    //         case 0:
+    //             return 'blue';
+    //         case 1:
+    //             return 'green';
+    //         case 2:
+    //             return 'red';
+    //     }
+    // }
 
-    const styles = {
-        circleColor: {
-            display: 'flex',
-            width: `384px`,
-            background: funcProgressColor(),
-            padding: '32px',
-            marginBottom: '25px',
-            height: '384px',
-            alignItems: "center",
-            justifyContent: 'center',
-            borderRadius: '9999px'
-        }
-    } as const; 
+    // const styles = {
+    //     circleColor: {
+    //         display: 'flex',
+    //         width: `360px`,
+    //         background: funcProgressColor(),
+    //         padding: '32px',
+    //         marginBottom: '15px',
+    //         height: '360px',
+    //         alignItems: "center",
+    //         justifyContent: 'center',
+    //         borderRadius: '9999px'
+    //     }
+    // } as const; 
 
  
 
@@ -176,6 +191,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
         );
 
         if (response.status === 201) {
+            // setcircleStyle('flex justify-center items-center bg-yellow-600 h-96 w-96 m-8 rounded-full')
             fetch('/api/'+id+'/budget', 
             {
                 method: 'POST',
@@ -190,7 +206,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
             }
         )
         .then(response => response.json())
-        .then(data => setBudget(data.Budget));
+        .then(data => (setBudget(data.Budget), setcircleStyle(data.circleStyle)));
         }
     };
 
@@ -225,7 +241,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
             }
         )
         .then(response => response.json())
-        .then(data => setTotalExpenses(data.totalExpense));
+        .then(data => (setTotalExpenses(data.totalExpense), setcircleStyle(data.circleStyle)));
 
 
         handleCreateExpensePopupDisappear()
@@ -262,7 +278,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
             }
         )
         .then(response => response.json())
-        .then(data => setTotalExpenses(data.totalExpense));
+        .then(data => (setTotalExpenses(data.totalExpense), setcircleStyle(data.circleStyle)));
 
 
         handleEditExpensePopupDisappear()
@@ -295,7 +311,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
             {/** Budget overview */}
             <div className='flex flex-col justify-center items-center h-full'>
                 <div className='flex flex-col grow justify-start items-center m-8'>
-                    <div style={styles.circleColor}>
+                    <div className={circleStyle}>
                         <div className='flex flex-col justify-center items-center bg-slate-900 h-72 w-72 rounded-full'>
                             <p className='cursor-default text-slate-200 text-2xl font-semibold'>You've spent:</p>
                             <p className='cursor-default text-slate-200 text-3xl font-normal'>${totalexpense.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
