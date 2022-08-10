@@ -460,7 +460,7 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
                             <p className=''>No To-dos</p>
                         </div> 
                         :
-                        <div className='flex flex-col grow justify-start items-center w-full overflow-y-scroll'>
+                        <div className='flex flex-col grow justify-start items-center w-full oveflow-y-scroll'>
                             {/** display a card for each to-do */}
                             {todos.map((todo, index) => (
                                 <Todo todo={todo} changeStatus={handleTodoCheck} editTodo={handleEditTodoPopupAppear} key={index} />

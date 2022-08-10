@@ -6,7 +6,7 @@ type Data = {
     message: string
 }
 
-export default async function EditTodo(
+export default async function EditNotes(
     req: NextApiRequest,
     res: NextApiResponse<Data>
 ) {
@@ -20,7 +20,7 @@ export default async function EditTodo(
 
         /* insert data into notes table */
         const result = await executeQuery({
-            query: 'UPDATE todo SET Name=?, Date=? WHERE AccountID=? AND ID=?',
+            query: 'UPDATE notes SET Name=?, description=? WHERE AccountID=? AND ID=?',
             values: [notesName, description, req.query.id, notesID],
         });
 

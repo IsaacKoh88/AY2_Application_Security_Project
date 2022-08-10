@@ -87,11 +87,13 @@ export async function getServerSideProps(context:any) {
     };  
 };
 
+
 const Notes: NextPageWithLayout<NotesProps> = (props) => {
     const id = useRouter().query.id
 
     /** State to store events */
     const [notes, setNotes] = useState(props.notes);
+
     /** State to control create event popup */
     const [createNotees, setCreateNotees] = useState(false)
     /** State to control edit event popup */
@@ -239,13 +241,3 @@ const Notes: NextPageWithLayout<NotesProps> = (props) => {
         </Fragment>
     );
 };
-
-Notes.getLayout = function getLayout(Notes: ReactElement) {
-    return (
-        <Layout>
-            {Notes}
-        </Layout>
-    );
-};
-
-export default Notes;
