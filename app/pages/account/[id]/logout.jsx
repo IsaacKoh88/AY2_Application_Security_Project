@@ -61,19 +61,8 @@ export async function getServerSideProps(context) {
     }    
 }
 
-const logout = ({ id }) => {
+const Logout = ({ id }) => {
     const [password] = useState('');
-
-    {/** Calls API on form submit */}
-    const FormSubmitHandler = async () => {
-        const res = await fetch('/api/' +id+ '/account/logout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id: id, password: password})
-        })
-    }
 
     return (
         <Fragment>
@@ -106,4 +95,4 @@ const logout = ({ id }) => {
     );
 };
 
-export default logout;
+export default Logout;

@@ -229,7 +229,7 @@ const Notes: NextPageWithLayout<NotesProps> = (props) => {
                         >
                             <picture>
                                 <source srcSet='/add_note.png' type='image/png' />
-                                <img src = 'add_note.png' />
+                                <img src = 'add_note.png' alt='add note button'/>
                             </picture>
                         </div>
                     <div className='flex flex-col justify-start items-center'></div>

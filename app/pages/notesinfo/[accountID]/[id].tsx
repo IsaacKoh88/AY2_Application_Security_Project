@@ -9,6 +9,7 @@ import EditNotes from '../../../components/notes/edit-notes';
 import NotesDisplay from '../../../components/notes/notes';
 
 
+
 type NotesProps = {
     notes: NoteProps,
 }
@@ -162,12 +163,6 @@ const Notes: NextPageWithLayout<NotesProps> = (props) => {
                         <div className='flex grow justify-center items-center ml-10'>
                             <p className='cursor-default text-xl text-slate-200 font-bold'>Notes</p>
                         </div>
-                        {/* <div 
-                            className='group cursor-pointer flex justify-center items-center hover:bg-slate-800 w-30 h-30 rounded-lg duration-150 ease-in-out'
-                            onClick={() => handleCreateNotesPopupAppear()}
-                        >
-                            <img src= '/add_note.png' />
-                        </div> */}
                     </div>
                     {(notes.length === 0) ? 
                         null
@@ -194,12 +189,6 @@ const Notes: NextPageWithLayout<NotesProps> = (props) => {
                             >
                                 <p className='text-red-500 font-semibold duration-150 ease-in-out'>Delete Notes</p>
                             </div>
-
-
-
-
-
-                            <img src= '/add_note.png' />
                         </div>
                     <div className='flex flex-col justify-start items-center'></div>
                 </div>  
