@@ -313,11 +313,11 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
                 <div className='flex flex-col grow justify-start items-center m-8'>
                     <div className={circleStyle}>
                         <div className='flex flex-col justify-center items-center bg-slate-900 h-72 w-72 rounded-full'>
-                            <p className='cursor-default text-slate-200 text-2xl font-semibold'>You've spent:</p>
+                            <p className='cursor-default text-slate-200 text-2xl font-semibold'>You&apos;ve spent:</p>
                             <p className='cursor-default text-slate-200 text-3xl font-normal'>${totalexpense.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
                         </div>
                     </div>
-                    <p className='cursor-default text-slate-200 text-2xl font-semibold mb-3'>This Month's Budget:</p>
+                    <p className='cursor-default text-slate-200 text-2xl font-semibold mb-3'>This Month&apos;s Budget:</p>
                     <form>
                         <input 
                             type='number'
@@ -349,7 +349,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
                         </div>
                     </Link>
                     <div className='flex grow justify-center items-center ml-10'>
-                        <p className='cursor-default text-xl text-slate-200 font-bold'>{ dayjs().format('MMMM YYYY') }'s Expenses</p>
+                        <p className='cursor-default text-xl text-slate-200 font-bold'>{ dayjs().format('MMMM YYYY') }&apos;s Expenses</p>
                     </div>
                     <div 
                         className='group cursor-pointer flex justify-center items-center hover:bg-slate-800 w-10 h-10 rounded-lg duration-150 ease-in-out'

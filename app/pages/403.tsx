@@ -5,6 +5,7 @@ import Navbar from '../components/navbar'
 import Link from 'next/link'
 import executeQuery from '../utils/db';
 import * as jose from 'jose';
+import Image from 'next/image'
 
 type ErrorProps = {
     id: string;
@@ -71,8 +72,8 @@ const Error403: NextPage<ErrorProps> = (props) => {
                 <Navbar />
                 <div className='container flex justify-center items-center flex-grow'>
                     <div className='flex flex-row justify-start items-start h-fit w-[80%] bg-white rounded-2xl p-5 mb-8'>
-                        <div className='h-fit w-[40%]  p-5 mb-8'>
-                            <img src='/403.png' />
+                        <div className='block h-fit w-[40%]  p-5 mb-8'>
+                            <Image src='/403.png' layout='fill' alt='403 Error' />
                         </div>
                         <div>
                             <div className='w-fit p-5 text-5xl'>
