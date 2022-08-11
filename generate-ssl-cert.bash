@@ -16,7 +16,4 @@ case $OS in
     'Darwin'*)
         sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain reverse-proxy/certs/localhost.crt
         ;;
-    'Windows'*)
-        certutil -addstore -f "ROOT" reverse-proxy/certs/localhost.crt
-        ;;
 esac
