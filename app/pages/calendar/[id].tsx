@@ -68,13 +68,13 @@ export async function getServerSideProps(context:any) {
                     .then(value => {return(value['payload']['email'])});
 
         /** check if email is the same as the one in the id of URL */
-        const result = await executeQuery({
-            query: 'SELECT email FROM account WHERE id=?',
+        const result = JSON.parse(JSON.stringify(await executeQuery({
+            query: 'CALL selectEmail_Id(?)',
             values: [id],
-        });
+        })));
 
         /** reject if user does not have permission to route */
-        if (result[0].email !== email) {
+        if (result[0][0].email !== email) {
             return {
                 redirect: {
                     destination: '/401',
@@ -87,25 +87,25 @@ export async function getServerSideProps(context:any) {
             const currentDate = dayjs().format('YYYY-MM-DD')
 
             const resultTodo = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, Checked FROM todo WHERE AccountID=?',
+                query: 'CALL selectTodoData_AccountID(?)',
                 values: [id],
             })));
 
-            const resultEvents = await executeQuery({
-                query: 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, StartTime, EndTime, Description, CategoryID FROM events WHERE AccountID=? AND Date=?',
+            const resultEvents = JSON.parse(JSON.stringify(await executeQuery({
+                query: 'CALL selectEventData_AccountID_Date(?,?)',
                 values: [id, currentDate],
-            });
+            })));
 
             const resultCategories = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'SELECT ID, Name, Color FROM category WHERE AccountID=?',
+                query: 'CALL selectCategoryData_AccountID(?)',
                 values: [id],
             })));
 
             return{
                 props: {
-                    todo: resultTodo,
-                    events: resultEvents,
-                    categories: resultCategories,
+                    todo: resultTodo[0],
+                    events: resultEvents[0],
+                    categories: resultCategories[0],
                 }
             }
         } 
