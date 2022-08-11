@@ -47,10 +47,10 @@ export async function getServerSideProps(context:any) {
                     .then(value => {return(value['payload']['email'])});
 
         /** check if email is the same as the one in the id of URL */
-        const result = await executeQuery({
+        const result = JSON.parse(JSON.stringify(await executeQuery({
             query: 'CALL selectEmail_Id(?)',
             values: [id],
-        });
+        })));
 
         /** reject if user does not have permission to route */
         if (result[0][0].email !== email) {
@@ -137,43 +137,6 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
     /** State to store style */
     const [circleStyle, setcircleStyle] = useState(props.circleStyle)
 
-    /* Used to set the color of the outer circle */
-    // var budgetDifference = budget - totalexpense
-    // var BudgetColor = 0
-    // if (budgetDifference > 0) {
-    //     BudgetColor = 1
-    // }
-    // else if (budgetDifference < 0) {
-    //     BudgetColor = 2
-    // };
-
-    // const funcProgressColor = () => {
-    //     switch(BudgetColor) {
-    //         case 0:
-    //             return 'blue';
-    //         case 1:
-    //             return 'green';
-    //         case 2:
-    //             return 'red';
-    //     }
-    // }
-
-    // const styles = {
-    //     circleColor: {
-    //         display: 'flex',
-    //         width: `360px`,
-    //         background: funcProgressColor(),
-    //         padding: '32px',
-    //         marginBottom: '15px',
-    //         height: '360px',
-    //         alignItems: "center",
-    //         justifyContent: 'center',
-    //         borderRadius: '9999px'
-    //     }
-    // } as const; 
-
- 
-
     const FormSubmitHandler = async () => {
         const response = await fetch('/api/'+id+'/budget/edit', 
             {
@@ -192,21 +155,32 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
 
         if (response.status === 201) {
             // setcircleStyle('flex justify-center items-center bg-yellow-600 h-96 w-96 m-8 rounded-full')
-            fetch('/api/'+id+'/budget', 
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(
-                    {
-                        date: dayjs().format('YYYY-MM-DD')
-                    }
-                )
-            }
-        )
-        .then(response => response.json())
-        .then(data => (setBudget(data.Budget), setcircleStyle(data.circleStyle)));
+            const response = fetch('/api/'+id+'/budget', 
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(
+                        {
+                            date: dayjs().format('YYYY-MM-DD')
+                        }
+                    )
+                }
+            )
+            .then(response => response.json())
+            .then(data => (setBudget(data.Budget), {return:{data}}));
+
+            response.then(data =>{
+                if (data.return.data.circleStyle === 'red')
+                    {setcircleStyle('flex justify-center items-center bg-red-700 h-96 w-96 m-8 rounded-full')}
+                else if (data.return.data.circleStyle === 'blue')
+                    {setcircleStyle('flex justify-center items-center bg-indigo-600 h-96 w-96 m-8 rounded-full')} 
+                else if (data.return.data.circleStyle === 'green')
+                    {setcircleStyle('flex justify-center items-center bg-lime-600 h-96 w-96 m-8 rounded-full')}
+                else 
+                    {setcircleStyle('flex justify-center items-center bg-white h-96 w-96 m-8 rounded-full')}
+            })
         }
     };
 
@@ -227,7 +201,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
         .then(response => response.json())
         .then(data => setExpenses(data));
 
-        fetch('/api/'+id+'/expense/totalExpense', 
+        const response = fetch('/api/'+id+'/expense/totalExpense', 
             {
                 method: 'POST',
                 headers: {
@@ -241,7 +215,18 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
             }
         )
         .then(response => response.json())
-        .then(data => (setTotalExpenses(data.totalExpense), setcircleStyle(data.circleStyle)));
+        .then(data => (setTotalExpenses(data.totalExpense), {return:{data}}));
+
+        response.then(data =>{
+            if (data.return.data.circleStyle === 'red')
+                {setcircleStyle('flex justify-center items-center bg-red-700 h-96 w-96 m-8 rounded-full')}
+            else if (data.return.data.circleStyle === 'blue')
+                {setcircleStyle('flex justify-center items-center bg-indigo-600 h-96 w-96 m-8 rounded-full')} 
+            else if (data.return.data.circleStyle === 'green')
+                {setcircleStyle('flex justify-center items-center bg-lime-600 h-96 w-96 m-8 rounded-full')}
+            else 
+                {setcircleStyle('flex justify-center items-center bg-white h-96 w-96 m-8 rounded-full')}
+        })
 
 
         handleCreateExpensePopupDisappear()
@@ -264,22 +249,32 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
         .then(response => response.json())
         .then(data => {setExpenses(data)});
 
-        fetch('/api/'+id+'/expense/totalExpense', 
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(
-                    {
-                        date: dayjs().format('YYYY-MM-DD')
-                    }
-                )
-            }
-        )
-        .then(response => response.json())
-        .then(data => (setTotalExpenses(data.totalExpense), setcircleStyle(data.circleStyle)));
+        const response = fetch('/api/'+id+'/expense/totalExpense', 
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+                {
+                    date: dayjs().format('YYYY-MM-DD')
+                }
+            )
+        }
+    )
+    .then(response => response.json())
+    .then(data => (setTotalExpenses(data.totalExpense), {return:{data}}));
 
+    response.then(data =>{
+        if (data.return.data.circleStyle === 'red')
+            {setcircleStyle('flex justify-center items-center bg-red-700 h-96 w-96 m-8 rounded-full')}
+        else if (data.return.data.circleStyle === 'blue')
+            {setcircleStyle('flex justify-center items-center bg-indigo-600 h-96 w-96 m-8 rounded-full')} 
+        else if (data.return.data.circleStyle === 'green')
+            {setcircleStyle('flex justify-center items-center bg-lime-600 h-96 w-96 m-8 rounded-full')}
+        else 
+            {setcircleStyle('flex justify-center items-center bg-white h-96 w-96 m-8 rounded-full')}
+    })
 
         handleEditExpensePopupDisappear()
     }

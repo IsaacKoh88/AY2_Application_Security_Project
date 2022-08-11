@@ -35,13 +35,13 @@ export default async function GetBudget(
 
         const expenseDifference = result[0].Budget - totalExpense
         if (expenseDifference == 0){
-            var circleStyle = 'flex justify-center items-center bg-indigo-600 h-96 w-96 m-8 rounded-full'
+            var circleStyle = 'blue'
         }
         else if (expenseDifference > 0) {
-            var circleStyle = 'flex justify-center items-center bg-lime-600 h-96 w-96 m-8 rounded-full'
+            var circleStyle = 'green'
         }
         else{
-            var circleStyle = 'flex justify-center items-center bg-red-700 h-96 w-96 m-8 rounded-full'
+            var circleStyle = 'red'
         }
 
         res.status(200).json({ Budget: result[0].Budget, circleStyle: circleStyle })
