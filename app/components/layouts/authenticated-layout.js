@@ -1,8 +1,6 @@
 import NavItem from "../nav-items";
 import Link from "next/link";
 import Userfront from "@userfront/core";
-import image from '/../../AY2_Application_Security_Project/app/public/defaultpfp.jpeg';
-
 
 Userfront.init("demo1234");
 
@@ -38,7 +36,7 @@ const Layout = ({ children }) => {
                     </div>*/}
                     <Link href='/account'>
                         <div className='cursor-pointer flex flex-row justify-center items-center h-12 mr-3 hover:text-slate-200 duration-150 ease-in-out'>
-                            <img src={image.src} className='h-12 w-12 mx-3 rounded-full' />
+                            <div className='h-12 w-12 mx-3 rounded-full' />
                             <p className='mx-3'>Username</p>
                         </div>
                     </Link>
