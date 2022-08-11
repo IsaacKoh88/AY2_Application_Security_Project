@@ -22,7 +22,7 @@ export default async function DeleteCategory(
             if (categoryID.length === 36) {
                 /* delete data into category table */
                 const result = await executeQuery({
-                    query: 'DELETE FROM category WHERE AccountID=? AND ID=?',
+                    query: 'CALL deleteCategoryData(?, ?)',
                     values: [req.query.id, categoryID],
                 });
 

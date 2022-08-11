@@ -23,16 +23,16 @@ export default async function EditTodo(
             if ((todoID.length === 36) && (todoName.length <= 255) && (moment(date, 'YYYY-MM-DD', true).isValid())) {
 
                 try {
-                    const idcheck = await executeQuery({
+                    const idcheck = JSON.parse(JSON.stringify(await executeQuery({
                         query: 'SELECT COUNT(*) FROM todo WHERE AccountID=? AND ID=?',
                         values: [req.query.id, todoID],
-                    });
+                    })));
 
                     if (idcheck[0]['COUNT(*)'] === 1) {
                         /* insert data into category table */
                         const result = await executeQuery({
-                            query: 'UPDATE todo SET Name=?, Date=? WHERE AccountID=? AND ID=?',
-                            values: [todoName, date, req.query.id, todoID],
+                            query: 'CALL updateTodo(?, ?, ?, ?)',
+                            values: [req.query.id, todoID, todoName, date,],
                         });
 
                         res.status(201).json({ message: 'success' })

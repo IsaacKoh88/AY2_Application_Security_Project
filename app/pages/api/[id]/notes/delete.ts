@@ -20,7 +20,7 @@ export default async function DeleteNotes(
 
         /* insert data into category table */
         const result = await executeQuery({
-            query: 'DELETE FROM todo WHERE AccountID=? AND ID=?',
+            query: 'DELETE FROM notes WHERE AccountID=? AND ID=?',
             values: [req.query.id, notesID],
         });
 

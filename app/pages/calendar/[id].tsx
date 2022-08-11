@@ -1,7 +1,7 @@
 import type { NextPageWithLayout } from '../_app';
 import { useRouter } from 'next/router';
 import React, { Fragment, ReactElement, useState, useEffect } from 'react'
-import Head from 'next/head'
+import Head from 'next/head';
 import SmallCalendar from '../../components/calendar/month'
 import Event from '../../components/calendar/event';
 import Todo from '../../components/calendar/todo';
@@ -160,9 +160,6 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
 
     /** Handles edit category success */
     const handleEditCategorySuccess = () => {
-        fetch('/api/'+id+'/category')
-        .then(response => response.json())
-        .then(data => setCategories(data));
         fetch('/api/'+id+'/event', 
             {
                 method: 'POST',
@@ -178,6 +175,9 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
         )
         .then(response => response.json())
         .then(data => setEvents(data));
+        fetch('/api/'+id+'/category')
+        .then(response => response.json())
+        .then(data => setCategories(data));
 
         handleEditCategoryPopupDisappear();
     };
@@ -460,7 +460,7 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
                             <p className=''>No To-dos</p>
                         </div> 
                         :
-                        <div className='flex flex-col grow justify-start items-center w-full overflow-y-scroll'>
+                        <div className='flex flex-col grow justify-start items-center w-full oveflow-y-scroll'>
                             {/** display a card for each to-do */}
                             {todos.map((todo, index) => (
                                 <Todo todo={todo} changeStatus={handleTodoCheck} editTodo={handleEditTodoPopupAppear} key={index} />

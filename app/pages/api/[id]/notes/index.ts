@@ -5,7 +5,6 @@ import authorisedValidator from '../../../../utils/authorised-validator';
 type Data = {
     ID: string,
     Name: string,
-    Color: string
 }[]
 
 export default async function GetEvent(
@@ -17,9 +16,9 @@ export default async function GetEvent(
         /** check user authorisation */
         await authorisedValidator(req, res);
 
-        /* insert data into todo table */
+        /* insert data into notes table */
         const result = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'SELECT ID, Name, Checked FROM todo WHERE AccountID=?',
+            query: 'SELECT ID, Name, Description FROM notes WHERE AccountID=?',
             values: [req.query.id],
         })));
 

@@ -28,28 +28,48 @@ export default async function CreateEvent(
 
             if ((eventName.length <= 255) && (moment(date, 'YYYY-MM-DD', true).isValid()) && (timeregex.test(startTime)) && (timeregex.test(endTime)) && (description.length <= 65535) && (categoryId.length === 36 || categoryId === 'None' || categoryId === '' || categoryId === 'null')) {
                 try {
-                    const idcheck = await executeQuery({
+                    const totalEvents = JSON.parse(JSON.stringify(await executeQuery({
                         query: 'SELECT COUNT(*) FROM events WHERE AccountID=? AND Date=?',
                         values: [req.query.id, date],
-                    });
+                    })));
 
-                    if (idcheck[0]['COUNT(*)'] < 50) {
-                        /** generate uuidv4 */
-                        const id = uuidv4();
+                    if (totalEvents[0]['COUNT(*)'] < 50) {
 
-                        /** check category null */
-                        if (categoryId === 'None' || categoryId === '' || categoryId === 'null') {
+                        var id = uuidv4();
+                        var idcheck = JSON.parse(JSON.stringify(await executeQuery({
+                            query: 'SELECT COUNT(*) FROM events WHERE ID=?',
+                            values: [id],
+                        })));
+                        var totalCount = 1
+            
+                        while (idcheck[0]['COUNT(*)'] == 1 && totalCount < 100) {              
+                            id = uuidv4()
+                            var idcheck = JSON.parse(JSON.stringify(await executeQuery({
+                                query: 'SELECT COUNT(*) FROM events WHERE ID=?',
+                                values: [id],
+                            })));
+                            totalCount += 1
+                        }
+
+                        if (totalCount >= 100) {
+                            res.status(500).json({message: 'Too many uuids checked, please try again'})
+                            return
+                        }
+                        else {
+                            /** check category null */
+                            if (categoryId === 'None' || categoryId === '' || categoryId === 'null') {
+                                /* insert data into calendar table */ 
+                                categoryId = null
+                            } 
                             /* insert data into calendar table */ 
-                            categoryId = null
-                        } 
-                        /* insert data into calendar table */ 
-                        const result = await executeQuery({
-                            query: 'INSERT INTO events VALUES(?, ?, ?, ?, ?, ?, ?, ?)',
-                            values: [req.query.id, id, eventName, date, startTime, endTime, description, categoryId],
-                        });
-
-                        res.status(201).json({ message: 'success' })
-                        return
+                            const result = await executeQuery({
+                                query: 'CALL insertEventData(?, ?, ?, ?, ?, ?, ?, ?)',
+                                values: [req.query.id, id, eventName, date, startTime, endTime, description, categoryId],
+                            });
+                
+                            res.status(201).json({ message: 'success' })
+                            return
+                        }
                     }
                     /** more than 50 events */
                     else {

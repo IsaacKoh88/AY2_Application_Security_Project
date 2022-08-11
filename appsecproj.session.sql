@@ -91,8 +91,11 @@ RETURN LOWER(
     )
 );
 END -- @block
--- Consists of stored procedure that inserts data
+-- Consists of stored procedure to inserts data
 DROP PROCEDURE IF EXISTS insertAccountData;
+DROP PROCEDURE IF EXISTS insertCategoryData;
+DROP PROCEDURE IF EXISTS insertEventData;
+DROP PROCEDURE IF EXISTS insertTodoData;
 DROP PROCEDURE IF EXISTS insertExpenseData;
 DROP PROCEDURE IF EXISTS inserTNotesData;
 CREATE PROCEDURE insertAccountData (IN email VARCHAR(255), IN password VARCHAR(255)) BEGIN

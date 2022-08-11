@@ -11,21 +11,8 @@ import EditNotes from '../../components/notes/edit-notes';
 import NotesDisplay from '../../components/notes/notes';
 
 
-
-type TodoProps = {
-    ID: string,
-    Name: string,
-    Date: string,
-    Checked: number,
-}[]
-
 type NotesProps = {
-    // length: number;
-    categories: CategoriesProps,
-    todos: TodoProps,
     notes: NoteProps,
-    StartTime: string,
-    EndTime: string,
 }
 
 type NoteProps = {
@@ -33,20 +20,8 @@ type NoteProps = {
     Name: string,
     Date: string,
     Description: string,
-    Category: string,
 }[]
 
-
-
-type CategoriesProps = {
-    ID: string,
-    Name: string,
-    Color: string,
-}[]
-
-
-
-    
 
 export async function getServerSideProps(context:any) {
     const JWTtoken = context.req.cookies['token'];
@@ -85,28 +60,14 @@ export async function getServerSideProps(context:any) {
         };
 
         try {
-            const currentDate = dayjs().format('YYYY-MM-DD')
-
-            const resultTodo = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, Checked FROM todo WHERE AccountID=?',
-                values: [id],
-            })));
-
             const resultNotes = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, StartTime, EndTime, Description, CategoryID FROM events WHERE AccountID=? AND Date=?',
-                values: [id, currentDate],
-            })));
-
-            const resultCategories = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'SELECT ID, Name, Color FROM category WHERE AccountID=?',
+                query: 'SELECT ID, Name, Description FROM notes WHERE AccountID=?',
                 values: [id],
             })));
 
             return{
                 props: {
-                    todo: resultTodo,
                     notes: resultNotes,
-                    categories: resultCategories,
                 }
             }
         } 
@@ -131,7 +92,6 @@ const Notes: NextPageWithLayout<NotesProps> = (props) => {
 
     /** State to store events */
     const [notes, setNotes] = useState(props.notes);
-
     /** State to control create event popup */
     const [createNotees, setCreateNotees] = useState(false)
     /** State to control edit event popup */
@@ -220,6 +180,7 @@ const Notes: NextPageWithLayout<NotesProps> = (props) => {
 
     /** Calls API to check to-do item as completed */
 
+
     return (
         <Fragment>
             <Head>
@@ -229,20 +190,17 @@ const Notes: NextPageWithLayout<NotesProps> = (props) => {
 
             <div className='flex flex-row grow h-full'>
 
-                {/** calendar date events */}
-                <div className='flex flex-col justify-start items-center h-full w-3/5 px-6'>
+                {/** Notes events */}
+                <div className='flex flex-col justify-start items-center h-full w-full px-6'>
                     <div className='flex flex-row justify-center items-center w-full mt-4 mb-2'>
                         <div className='flex grow justify-center items-center ml-10'>
-                            {/* <p className='cursor-default text-xl text-slate-200 font-bold'>Notes for {selectedDate.format('DD/MM/YYYY')}</p> */}
                             <p className='cursor-default text-xl text-slate-200 font-bold'>Notes</p>
                         </div>
                         <div 
-                            
-                            className='group cursor-pointer flex justify-center items-center hover:bg-slate-800 w-10 h-10 rounded-lg duration-150 ease-in-out'
+                            className='group cursor-pointer flex justify-center items-center hover:bg-slate-800 w-30 h-30 rounded-lg duration-150 ease-in-out'
                             onClick={() => handleCreateNotesPopupAppear()}
                         >
                             <img src= '/add_note.png' />
-                            {/* <i className='gg-plus group-hover:text-white'></i> */}
                         </div>
                     </div>
                     {(notes.length === 0) ? 
@@ -251,9 +209,9 @@ const Notes: NextPageWithLayout<NotesProps> = (props) => {
                             <p className=''>No Notes</p>
                         </div> 
                         :
-                        <div className='flex flex-col grow justify-start items-center w-full overflow-y-scroll'>
+                        <div className='flex flex-col grow justify-start items-center w-full'>
                             {/** display a card for each event */}
-                            {notes.map((Name, index) => 
+                            {notes.map((notes, index) => 
                                 <NotesDisplay id={id} notes={notes} editNotes={handleEditNotesPopupAppear} success={handleDeleteNotesSuccess} key={index} />
                             )}
                         </div>
