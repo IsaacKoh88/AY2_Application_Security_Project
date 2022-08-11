@@ -14,13 +14,12 @@ export default async function GetEvent(
     res: NextApiResponse<Data>
 ) {
     /* accepts only GET requests and non-empty requests */
-    if ((req.method == 'POST') && (req.body) && (req.cookies['token'])) {
+    if ((req.method == 'GET') && (req.cookies['token'])) {
         /** check user authorisation */
         await authorisedValidator(req, res);
 
         try {
-            /** deconstruct request body */
-            const { date } = req.body
+            const date = req.query.date;
 
             if (moment(date, 'YYYY-MM-DD', true).isValid()) {
 
@@ -41,15 +40,9 @@ export default async function GetEvent(
         }
     }
     /* rejects requests that are not POST */
-    else if (req.method !== 'POST') {
+    else if (req.method !== 'GET') {
         res.statusCode = 405;
         res.end('Error');
-        return
-    }
-    /** if request body components do not fit requirements */
-    else if (!req.body) {
-        res.statusCode = 400;
-        res.end('Request format error');
         return
     }
     /** if user is not authenticated */
@@ -67,6 +60,6 @@ Response format             200         json        {ID: string, Name: string, D
 
 Errors
 401         unauthenticated
-405         request not using GET method
+405         request not using POST method
 
 */
