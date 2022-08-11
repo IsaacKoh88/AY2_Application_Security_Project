@@ -38,7 +38,7 @@ const CreateNotes = ({ id, success, close }) => {
                             id='newNotes'
                             name='newNotes'
                             className='grow bg-slate-800 focus:bg-slate-900 text-white placeholder:text-slate-400 border-2 border-slate-800 focus:border-blue-600 outline-none focus:outline-none px-3 py-2 mt-2 rounded-md duration-150 ease-in-out'
-                            placeholder='New Notes'
+                            placeholder='Notes Title'
                             value={ notesName }
                             onChange={e => setNoteName(e.target.value)}
                             required

@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 
-const editNotes = ({ id, notes, success, close }) => {
+const EditNotes = ({ id, notes, success, close }) => {
     const [notesName, setNoteName] = useState(notes.Name);
     const [description, setDescription] = useState(notes.Description);
     const FormSubmitHandler = async () => {
@@ -67,4 +67,4 @@ const editNotes = ({ id, notes, success, close }) => {
     );
 };
 
-export default editNotes;
+export default EditNotes;

@@ -1,15 +1,12 @@
-import type { NextPageWithLayout } from '../_app';
+import type { NextPageWithLayout } from '../../_app';
 import { useRouter } from 'next/router';
 import React, { Fragment, ReactElement, useState, useEffect } from 'react'
 import Head from 'next/head'
-import Layout from '../../components/layouts/authenticated-layout';
-import dayjs, { Dayjs } from 'dayjs';
-import executeQuery from '../../utils/db';
+import Layout from '../../../components/layouts/authenticated-layout';
+import executeQuery from '../../../utils/db';
 import * as jose from 'jose';
-import CreateNotes from '../../components/notes/create-notes';
-import EditNotes from '../../components/notes/edit-notes';
-import NotesDisplay from '../../components/notes/notes';
-import Image from 'next/image';
+import EditNotes from '../../../components/notes/edit-notes';
+import NotesDisplay from '../../../components/notes/notes';
 
 
 type NotesProps = {
@@ -27,6 +24,7 @@ type NoteProps = {
 export async function getServerSideProps(context:any) {
     const JWTtoken = context.req.cookies['token'];
     const id = context.params.id
+    const accountID = context.params.accountID
 
     /** if JWT does not exist */
     if (JWTtoken == undefined){
@@ -47,7 +45,7 @@ export async function getServerSideProps(context:any) {
         /** check if email is the same as the one in the id of URL */
         const result = await executeQuery({
             query: 'SELECT email FROM account WHERE id=?',
-            values: [id],
+            values: [accountID],
         });
 
         /** reject if user does not have permission to route */
@@ -62,10 +60,10 @@ export async function getServerSideProps(context:any) {
 
         try {
             const resultNotes = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'SELECT ID, Name, Description FROM notes WHERE AccountID=?',
-                values: [id],
+                query: 'SELECT ID, Name, Description FROM notes WHERE AccountID=? and ID=?',
+                values: [accountID, id],
             })));
-
+            console.log(resultNotes)
             return{
                 props: {
                     notes: resultNotes,
@@ -93,32 +91,10 @@ const Notes: NextPageWithLayout<NotesProps> = (props) => {
 
     /** State to store events */
     const [notes, setNotes] = useState(props.notes);
-    /** State to control create event popup */
-    const [createNotees, setCreateNotees] = useState(false)
+
     /** State to control edit event popup */
     const [editNotes, setEditNotes] = useState('')
 
-
-    /** Handles create new event success */
-    const handleCreateNotesSuccess = () => {
-        fetch('/api/'+id+'/notes', 
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(
-                    {
-                        Name: '',
-                    }
-                )
-            }
-        )
-        .then(response => response.json())
-        .then(data => setNotes(data));
-
-        handleCreateNotesPopupDisappear();
-    };
 
     /** Handles edit category success */
     const handleEditNotesSuccess = () => {
@@ -160,14 +136,7 @@ const Notes: NextPageWithLayout<NotesProps> = (props) => {
         .then(data => setNotes(data));
     };
 
-    /** Opens create new event popup */
-    const handleCreateNotesPopupAppear = () => {
-        setCreateNotees(true);
-    };
-    /** Closes create new event popup */
-    const handleCreateNotesPopupDisappear = () => {
-        setCreateNotees(false);
-    };
+
     /** Opens edit category popup */
     const handleEditNotesPopupAppear = (index: string) => {
         setEditNotes(index);
@@ -178,21 +147,12 @@ const Notes: NextPageWithLayout<NotesProps> = (props) => {
     };
 
 
-
-
     return (
         <Fragment>
             <Head>
                 <title>Account Details</title> 
                 <meta name="viewport" content="initial-scale=1.0, width=device-width" />
             </Head>
-
-            <Image
-                src = '/add_note.png'
-                alt = 'add note button'
-                width = {500}
-                height = {500}
-            />
 
             <div className='flex flex-row grow h-full'>
 
@@ -211,10 +171,6 @@ const Notes: NextPageWithLayout<NotesProps> = (props) => {
                     </div>
                     {(notes.length === 0) ? 
                         null
-                        // <div className='flex grow justify-center items-center w-full'>
-                        //     {/** display no notes text if there are no notes */}
-                        //     <p className=''>No Notes</p>
-                        // </div> 
                         :
                         <div className='flex flex-col grow justify-start items-center'>
                             {/** display a card for each event */}
@@ -223,38 +179,42 @@ const Notes: NextPageWithLayout<NotesProps> = (props) => {
                             )}
                         </div>
                     }
-                        <div 
-                            className='group cursor-pointer flex justify-start items-center hover:bg-slate-800 w-30 h-30 rounded-lg duration-150 ease-in-out'
-                            onClick={() => handleCreateNotesPopupAppear()}
-                        >
-                            <picture>
-                                <source srcSet='/add_note.png' type='image/png' />
-                                <img src = 'add_note.png' />
-                            </picture>
+
+                    <p className='flex justify-start items-start text-white w-full mt-1'>{ ['Description'] }</p>
+                        <div className='flex flex-row justify-end items-center w-full mt-2 mb-1'>
+                            <div 
+                                className='cursor-pointer bg-slate-200 px-3 py-2 mr-2 rounded-md'
+                                onClick={() => EditNotes(notes.ID)}
+                            >
+                                <p className='text-blue-500 font-semibold duration-150 ease-in-out'>Edit Notes</p>
+                            </div>
+                            <div 
+                                className='group cursor-pointer bg-slate-200 px-3 py-2 ml-2 rounded-md'
+                                onClick={() => DeleteHandler()}
+                            >
+                                <p className='text-red-500 font-semibold duration-150 ease-in-out'>Delete Notes</p>
+                            </div>
+
+
+
+
+
+                            <img src= '/add_note.png' />
                         </div>
                     <div className='flex flex-col justify-start items-center'></div>
-                </div>
-
-            </div>
-            
-    
-
-            {/** create event form */}
-            {createNotees ?
-                <CreateNotes id={id} success={handleCreateNotesSuccess} close={handleCreateNotesPopupDisappear} />
-                :
-                <></>
-            }
-
+                </div>  
+            </div>  
             {/** edit event form */}
             {editNotes !== '' ? 
                 <EditNotes id={id} notes={notes.find((e: { ID: string; }) => e.ID === editNotes)} success={handleEditNotesSuccess} close={handleEditNotesPopupDisappear} />
                 :
                 <></>
-            }
+            }    
         </Fragment>
     );
 };
+
+
 
 Notes.getLayout = function getLayout(Notes: ReactElement) {
     return (
@@ -265,3 +225,7 @@ Notes.getLayout = function getLayout(Notes: ReactElement) {
 };
 
 export default Notes;
+
+function DeleteHandler(): void {
+    throw new Error('Function not implemented.');
+}

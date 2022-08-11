@@ -12,7 +12,7 @@ export default async function GetEvent(
     res: NextApiResponse<Data>
 ) {
     /* accepts only GET requests and non-empty requests */
-    if ((req.method == 'GET') && (req.cookies['token'])) {
+    if ((req.method == 'POST') && (req.cookies['token'])) {
         /** check user authorisation */
         await authorisedValidator(req, res);
 
