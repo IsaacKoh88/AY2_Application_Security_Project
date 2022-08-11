@@ -1,11 +1,12 @@
 import NavItem from "../nav-items";
 import Link from "next/link";
-import Userfront from  "@userfront/core";
+import Userfront from "@userfront/core";
+import image from '/../../AY2_Application_Security_Project/app/public/defaultpfp.jpeg';
 
 
 Userfront.init("demo1234");
 
-{/**Define logout button component */}
+{/**Define logout button component */ }
 const Layout = ({ children }) => {
     return (
         <div className='flex flex-row h-screen w-screen text-slate-400 bg-slate-900'>
@@ -37,7 +38,7 @@ const Layout = ({ children }) => {
                     </div>*/}
                     <Link href='/account'>
                         <div className='cursor-pointer flex flex-row justify-center items-center h-12 mr-3 hover:text-slate-200 duration-150 ease-in-out'>
-                            <div className='h-12 w-12 mx-3 rounded-full bg-slate-800'></div>
+                            <img src={image.src} className='h-12 w-12 mx-3 rounded-full' />
                             <p className='mx-3'>Username</p>
                         </div>
                     </Link>
