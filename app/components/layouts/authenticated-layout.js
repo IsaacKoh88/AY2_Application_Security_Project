@@ -43,6 +43,7 @@ const Layout = ({ children }) => {
                     <Link href='/login'>
                         <div className='cursor-pointer flex flex-row justify-center items-center h-12 mr-3 hover:text-slate-200 duration-150 ease-in-out'>
                             <p className='mx-3'>Sign Out</p>
+
                         </div>
                     </Link>
                 </div>
