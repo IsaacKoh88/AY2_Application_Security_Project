@@ -57,12 +57,12 @@ export async function getServerSideProps(context:any) {
         );
 
         /** query email of id in database */
-        const result = await executeQuery({
-            query: 'SELECT email FROM account WHERE id=?',
+        const result = JSON.parse(JSON.stringify(await executeQuery({
+            query: 'CALL selectEmail_Id(?)',
             values: [id],
-        });
+        })));
 
-        /** redirect to 401 if JWT email claim is not in database */
+        /** return page if email claim is in database with correct uuid */
         if (result[0].email === payload['email']) {
             return {
                 props: {}

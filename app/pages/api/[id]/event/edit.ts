@@ -29,11 +29,11 @@ export default async function EditEvent(
 
                 try {
                     const idcheck = JSON.parse(JSON.stringify(await executeQuery({
-                        query: 'SELECT COUNT(*) FROM events WHERE AccountID=? AND ID=?',
-                        values: [req.query.id, eventID],
+                        query: 'CALL selectCountEventID(?)',
+                        values: [eventID],
                     })));
 
-                    if (idcheck[0]['COUNT(*)'] === 1) {
+                    if (idcheck[0][0]['COUNT(*)'] === 1) {
                         /** check category null */
                         if (categoryId === 'None' || categoryId === '' || categoryId === 'null') {
                             categoryId = null

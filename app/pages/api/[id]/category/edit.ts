@@ -22,11 +22,11 @@ export default async function EditCategory(
             if ((categoryID.length === 36) && (categoryName.length <= 255) && (categoryColor === 'red' || categoryColor === 'orange' || categoryColor === 'amber' || categoryColor === 'yellow' || categoryColor === 'lime' || categoryColor === 'green' || categoryColor === 'emerald' || categoryColor === 'teal' || categoryColor === 'cyan' || categoryColor === 'sky' || categoryColor === 'blue' || categoryColor === 'indigo' || categoryColor === 'violet' || categoryColor === 'purple' || categoryColor === 'fuchsia' || categoryColor === 'pink' || categoryColor === 'rose')) {
                 try {
                     const idcheck = JSON.parse(JSON.stringify(await executeQuery({
-                        query: 'SELECT COUNT(*) FROM category WHERE AccountID=? AND ID=?',
-                        values: [req.query.id, categoryID],
+                        query: 'CALL selectCountCategoryID(?)',
+                        values: [categoryID],
                     })));
 
-                    if (idcheck[0]['COUNT(*)'] === 1) {
+                    if (idcheck[0][0]['COUNT(*)'] === 1) {
                         /* insert data into category table */
                         const result = await executeQuery({
                             query: 'CALL updateCategory(?, ?, ?, ?)',

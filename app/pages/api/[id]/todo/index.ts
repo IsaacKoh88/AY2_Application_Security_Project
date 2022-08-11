@@ -19,11 +19,11 @@ export default async function GetEvent(
 
         /* insert data into category table */
         const result = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, Checked FROM todo WHERE AccountID=? LIMIT 50',
+            query: 'CALL selectTodoData_AccountID(?)',
             values: [req.query.id],
         })));
 
-        res.status(200).json(result)
+        res.status(200).json(result[0])
         return
     }
     /* rejects requests that are not GET */

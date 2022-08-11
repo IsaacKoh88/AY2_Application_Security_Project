@@ -24,22 +24,22 @@ export default async function CreateTodo(
             if ((todoName.length <= 255) && (moment(date, 'YYYY-MM-DD', true).isValid())) {
                 try {
                     const totalTodos = JSON.parse(JSON.stringify(await executeQuery({
-                        query: 'SELECT COUNT(*) FROM todo WHERE AccountID=?',
+                        query: 'CALL selectTotalTodos(?)',
                         values: [req.query.id],
                     })));
 
-                    if (totalTodos[0]['COUNT(*)'] < 50) {
+                    if (totalTodos[0][0]['COUNT(*)'] < 50) {
                         var id = uuidv4();
                         var idcheck = JSON.parse(JSON.stringify(await executeQuery({
-                            query: 'SELECT COUNT(*) FROM expense WHERE ID=?',
+                            query: 'CALL selectCountTodoID(?)',
                             values: [id],
                         })));
                         var totalCount = 1
 
-                        while (idcheck[0]['COUNT(*)'] == 1 && totalCount < 100) {              
+                        while (idcheck[0][0]['COUNT(*)'] == 1 && totalCount < 100) {              
                             id = uuidv4()
                             var idcheck = JSON.parse(JSON.stringify(await executeQuery({
-                                query: 'SELECT COUNT(*) FROM expense WHERE ID=?',
+                                query: 'CALL selectCountTodoID(?)',
                                 values: [id],
                             })));
                             totalCount += 1
