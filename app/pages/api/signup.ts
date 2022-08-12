@@ -25,11 +25,14 @@ export default async function SignupHandler(
                 values: [email, hashedPassword],
             });
             console.log(result)
-            res.status(200).json({ message: 'success'})
-        } 
+            res.status(200);
+            res.redirect('/login');
+            
+        }
         catch ( error ) {
             console.log( error );
         }
+        
     }
     /** rejeccts requests that are not POST */
     else if (req.method != 'POST') {

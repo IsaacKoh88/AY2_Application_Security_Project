@@ -3,6 +3,7 @@ import React, { Fragment, useState } from 'react';
 const EditNotes = ({ id, notes, success, close }) => {
     const [notesName, setNoteName] = useState(notes.Name);
     const [description, setDescription] = useState(notes.Description);
+    
     const FormSubmitHandler = async () => {
         const response = await fetch('/api/'+id+'/notes/edit', 
             {

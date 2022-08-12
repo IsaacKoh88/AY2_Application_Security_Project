@@ -86,8 +86,6 @@ const Signup: NextPage = () => {
         setCPassword(e.target.value);
         setIsCPasswordDirty(true);
     }
-    
-    const strength = Object.values(validate).reduce((a, item) => a + item, 0)
     // // This function will be triggered when the password input field changes
     // const inputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     //     const enteredValue = event.target.value.trim();
@@ -156,7 +154,7 @@ const Signup: NextPage = () => {
     }, [cPassword])
 
 
-        //styling
+        //styling in css, really not sure how to convert it to tailwind format.
         const styles = {
             container: {
                 width: 400,
@@ -208,6 +206,8 @@ const Signup: NextPage = () => {
         } as const; 
 
     
+
+    
     return (
         <Fragment>
             <Head>
@@ -222,6 +222,15 @@ const Signup: NextPage = () => {
                     <div className='flex flex-row justify-start items-start h-fit w-[500px] bg-white rounded-2xl p-5 mb-8'>
 
                         <form className='flex flex-col flex-grow' action='/api/signup' method='post'>
+                            <label className='text-lg text-slate-900 ml-0.5 mb-1' htmlFor='username'>Username:</label>
+                            <input 
+                                className='text-slate-900 border focus:border-blue-600 rounded-md p-2 mb-2' 
+                                type='text' 
+                                id='username' 
+                                name='username' 
+                                placeholder='Username' 
+                                required 
+                            />
                             <label className='text-lg text-slate-900 ml-0.5 mb-1' htmlFor='email'>Email:</label>
                             <input 
                                 className='text-slate-900 border focus:border-blue-600 rounded-md p-2 mb-2' 
@@ -288,7 +297,7 @@ const Signup: NextPage = () => {
                                     CONTINUE
                             </button>
                         </form>
-
+                        
                     </div>
                 </div>
 
