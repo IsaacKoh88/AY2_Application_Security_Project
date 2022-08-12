@@ -3,6 +3,8 @@ import React, { Fragment, useState, ReactElement } from 'react'
 import Head from 'next/head'
 import Link from 'next/link';
 import ExpenseHistory from '../../../components/budget/view-expenseHistory';
+import CreateExpense from '../../../components/budget/create-expense';
+import EditExpense from '../../../components/budget/edit-expense';
 import Layout from '../../../components/layouts/authenticated-layout';
 import executeQuery from '../../../utils/db';
 import * as jose from 'jose';
@@ -115,6 +117,8 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
     const [dateButton, setDateButton] = useState('triangle-down')
     const [nameButton, setNameButton] = useState('single-line')
     const [amountButton, setAmountButton] = useState('single-line')
+    const [createExpense, setCreateExpense] = useState(false);
+    const [editExpense, setEditExpense] = useState('');
 
     const previousMonth = async () => {
         var newMonth = dayjs(date).month()-1
@@ -269,6 +273,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
             .then(data => {setExpenses(data.Result)});   
         }
     }
+
     const orderByAmount = async () => {
         if (amountButton == 'triangle-down'){
             setDateButton('single-line') 
@@ -317,6 +322,67 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
             .then(data => {setExpenses(data.Result)});   
         }
     }
+    
+    const handleCreateExpenseSuccess = () => {
+        fetch('/api/'+id+'/expense/historyOrder', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        OrderBy: 'Date Descending',
+                        ID: id,
+                        Month: date
+                    }
+                )
+            }
+        )
+        .then(response => response.json())
+        .then(data => {setExpenses(data.Result), setTotalExpenses(data.totalExpense)});
+
+        handleCreateExpensePopupDisappear()
+    }
+
+    const handleEditExpenseSuccess = () => {
+        fetch('/api/'+id+'/expense/historyOrder', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        OrderBy: 'Date Descending',
+                        ID: id,
+                        Month: date
+                    }
+                )
+            }
+        )
+        .then(response => response.json())
+        .then(data => {setExpenses(data.Result), setTotalExpenses(data.totalExpense)});
+
+        handleEditExpensePopupDisappear()
+    }
+
+    /** Opens create expense popup */
+    const handleCreateExpensePopupAppear = () => {
+        setCreateExpense(true);
+    };
+    /** Closes create expense popup */
+    const handleCreateExpensePopupDisappear = () => {
+        setCreateExpense(false);
+    };
+    /** Opens edit expense popup */
+    const handleEditExpensePopupAppear = (index: string) => {
+        setEditExpense(index);
+    };
+    /** Closes edit expense popup */
+    const handleEditExpensePopupDisappear = () => {
+        setEditExpense('');
+    };
 
     return (
         <Fragment>
@@ -338,10 +404,23 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
                 </div>
                 
                 {expenses.length === 0 ? 
-                    <div className='flex flex-col grow justify-center items-center w-full mb-8'>
-                        {/** display no expenses text if there are no category */}
-                        <p className=''>No Expenses</p>
-                    </div> 
+                    <div>
+                        <div className='flex flex-col grow justify-center items-center w-full mb-8'>
+                            <p className=''>No Expenses</p>
+                        </div> 
+                        <div className='group flex flex-row justify-start items-center px-3 py-2 my-2 w-full'>
+                            <Link href={'/budget'}>
+                                <div className='group cursor-pointer flex justify-center items-center bg-slate-800 hover:bg-slate-700 mt-auto w-fit px-5 py-2 rounded-lg duration-150 ease-in-out mr-5'>
+                                    <p className='text-slate-200 group-hover:text-white duration-150 ease-in-out'>View Budget</p>
+                                </div>
+                            </Link>
+                            <button onClick={() => handleCreateExpensePopupAppear()}>
+                                <div className='group cursor-pointer flex justify-center items-center bg-slate-800 hover:bg-slate-700 mt-auto w-fit px-5 py-2 rounded-lg duration-150 ease-in-out'>
+                                    <p className='text-slate-200 group-hover:text-white duration-150 ease-in-out'>Add Expense</p>
+                                </div>
+                            </button>
+                            </div>
+                    </div>
                     :
                     <div className='flex flex-col grow justify-start items-center w-full'>                           
                         <table className='w-full table-fixed text-center'>
@@ -373,16 +452,23 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
                                     </th>
                                 </tr>
                                 {expenses.map((expense, index) => (
-                                    <ExpenseHistory expense={expense} key={index} />
+                                    <ExpenseHistory expense={expense} editExpense={handleEditExpensePopupAppear} key={index} />
                                 ))}
                             </tbody>
                         </table>
-                        <div className='group cursor-pointer flex flex-row justify-between items-center px-3 py-2 my-2 w-full '>
-                            <Link href={'/budget'}>
-                                <div className='group cursor-pointer flex justify-center items-center bg-slate-800 hover:bg-slate-700 mt-auto w-fit px-5 py-2 rounded-lg duration-150 ease-in-out'>
-                                    <p className='text-slate-200 group-hover:text-white duration-150 ease-in-out'>View Budget</p>
-                                </div>
-                            </Link>
+                        <div className='group flex flex-row justify-between items-center px-3 py-2 my-2 w-full'>
+                            <div className='group flex flex-row justify-start items-center px-3 py-2 my-2 w-fit'>
+                                <Link href={'/budget'}>
+                                    <div className='group cursor-pointer flex justify-center items-center bg-slate-800 hover:bg-slate-700 mt-auto w-fit px-5 py-2 rounded-lg duration-150 ease-in-out mr-5'>
+                                        <p className='text-slate-200 group-hover:text-white duration-150 ease-in-out'>View Budget</p>
+                                    </div>
+                                </Link>
+                                <button onClick={() => handleCreateExpensePopupAppear()}>
+                                    <div className='group cursor-pointer flex justify-center items-center bg-slate-800 hover:bg-slate-700 mt-auto w-fit px-5 py-2 rounded-lg duration-150 ease-in-out'>
+                                        <p className='text-slate-200 group-hover:text-white duration-150 ease-in-out'>Add Expense</p>
+                                    </div>
+                                </button>
+                            </div>
 
                             <div className='text-slate-200 text-xl'>
                                 Total Amount: $
@@ -392,6 +478,20 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
                     </div>
                 }
             </div>
+
+            {/** create expense form */}
+            {createExpense ?
+                <CreateExpense close={handleCreateExpensePopupDisappear} id={id} success={handleCreateExpenseSuccess} />
+                :
+                <></>
+            }
+
+            {/** edit expense form */}
+            {editExpense !== '' ?
+                <EditExpense expense={expenses.find(e => e['ID'] === editExpense)} close={handleEditExpensePopupDisappear} id={id} success={handleEditExpenseSuccess} />
+                :
+                <></>
+            }
         </Fragment>
     );
 };
