@@ -20,7 +20,7 @@ export async function getServerSideProps(context:any) {
         /** if JWT token is valid, redirect to authenticated route */
         return {
             redirect: {
-                destination: '/calendar',
+                destination: '/account',
                 permanent: false
             }
         }
