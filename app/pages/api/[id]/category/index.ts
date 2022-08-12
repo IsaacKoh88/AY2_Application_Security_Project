@@ -19,11 +19,11 @@ export default async function GetCategory(
 
         /* get data from table */
         const result = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'SELECT ID, Name, Color FROM category WHERE AccountID=? LIMIT 50',
+            query: 'CALL selectCategoryData_AccountID(?)',
             values: [req.query.id],
         })));
 
-        res.status(200).json(result)
+        res.status(200).json(result[0])
         return
     }
     /* rejects requests that are not GET */

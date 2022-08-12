@@ -24,8 +24,7 @@ export default async function DeleteNotes(
             values: [req.query.id, notesID],
         });
 
-        res.status(200).json({ message: 'success' })
-        return
+        res.redirect(200, ('/notes/'));
     }
     /* rejects requests that are empty */
     else if (!req.body) {

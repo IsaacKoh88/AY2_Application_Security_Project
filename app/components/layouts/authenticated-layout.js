@@ -1,8 +1,6 @@
 import NavItem from "../nav-items";
 import Link from "next/link";
 import Userfront from "@userfront/core";
-import image from '/../../AY2_Application_Security_Project/app/public/defaultpfp.jpeg';
-
 
 Userfront.init("demo1234");
 
@@ -18,7 +16,6 @@ const Layout = ({ children }) => {
                         <div className='cursor-pointer h-10 w-10 rounded-lg bg-slate-800'></div>
                     </Link>
                 </div>
-                <NavItem href='/dashboard' img='gg-align-left' />
                 <NavItem href='/calendar' img='gg-calendar-dates' />
                 <NavItem href='/notes' img='gg-album' />
                 <NavItem href='/budget' img='gg-credit-card' />
@@ -38,13 +35,14 @@ const Layout = ({ children }) => {
                     </div>*/}
                     <Link href='/account'>
                         <div className='cursor-pointer flex flex-row justify-center items-center h-12 mr-3 hover:text-slate-200 duration-150 ease-in-out'>
-                            <img src={image.src} className='h-12 w-12 mx-3 rounded-full' />
+                            <div className='h-12 w-12 mx-3 rounded-full' />
                             <p className='mx-3'>Username</p>
                         </div>
                     </Link>
                     <Link href='/login'>
                         <div className='cursor-pointer flex flex-row justify-center items-center h-12 mr-3 hover:text-slate-200 duration-150 ease-in-out'>
                             <p className='mx-3'>Sign Out</p>
+
                         </div>
                     </Link>
                 </div>

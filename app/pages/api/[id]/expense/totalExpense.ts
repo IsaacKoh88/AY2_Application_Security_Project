@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import executeQuery from '../../../../utils/db'
 import authorisedValidator from '../../../../utils/authorised-validator';
-import Budget from '../../../budget/[id]';
 
 type Data = {
     totalExpense: number,
@@ -37,13 +36,13 @@ export default async function GetExpense(
 
         const expenseDifference = resultBudget[0].Budget - totalExpense
         if (expenseDifference == 0){
-            var circleStyle = 'flex justify-center items-center bg-indigo-600 h-96 w-96 m-8 rounded-full'
+            var circleStyle = 'blue'
         }
         else if (expenseDifference > 0) {
-            var circleStyle = 'flex justify-center items-center bg-lime-600 h-96 w-96 m-8 rounded-full'
+            var circleStyle = 'green'
         }
         else{
-            var circleStyle = 'flex justify-center items-center bg-red-700 h-96 w-96 m-8 rounded-full'
+            var circleStyle = 'red'
         }
 
         res.status(200).json( { totalExpense: totalExpense, circleStyle: circleStyle } );

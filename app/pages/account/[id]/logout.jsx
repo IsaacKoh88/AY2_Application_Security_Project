@@ -61,49 +61,17 @@ export async function getServerSideProps(context) {
     }    
 }
 
-const logout = ({ id }) => {
+const Logout = ({ id }) => {
     const [password] = useState('');
-
-    {/** Calls API on form submit */}
-    const FormSubmitHandler = async () => {
-        const res = await fetch('/api/' +id+ '/account/logout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id: id, password: password})
-        })
-    }
 
     return (
         <Fragment>
             <div className='flex flex-col justify-start items-center h-screen w-screen text-slate-400 bg-slate-900'>
                 <Navbar />
 
-                {/* <div className='container flex justify-center items-center flex-grow'>
-                    <div className='flex flex-row justify-start items-start h-fit w-[500px] bg-white rounded-2xl p-5 mb-8'>
-
-                        <form className='flex flex-col flex-grow'>
-                            <label className='text-lg text-slate-900 ml-0.5 mb-1' htmlFor='password'>New Password:</label>
-                            <input 
-                                className='text-slate-900 border focus:border-blue-600 rounded-md p-2 mb-2' 
-                                type='password' 
-                                id='password' 
-                                name='password' 
-                                placeholder='Password' 
-                                value={password}
-                                onChange={e => setpassword(e.target.value)}
-                                required
-                            />
-                            <button className='text-white bg-blue-600 rounded-md p-2' type='submit' onClick={FormSubmitHandler}>Sign Up</button>
-                        </form>
-
-                    </div>
-                </div> */}
-
             </div>
         </Fragment>
     );
 };
 
-export default logout;
+export default Logout;

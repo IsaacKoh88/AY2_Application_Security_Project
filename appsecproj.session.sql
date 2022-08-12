@@ -90,7 +90,9 @@ RETURN LOWER(
         @h5
     )
 );
-END -- @block
+END 
+
+-- @block
 -- Consists of stored procedure to inserts data
 DROP PROCEDURE IF EXISTS insertAccountData;
 DROP PROCEDURE IF EXISTS insertCategoryData;
@@ -132,6 +134,27 @@ EXECUTE stmt USING @ID,
 @budget;
 DEALLOCATE PREPARE stmt;
 END;
+
+-- CREATE PROCEDURE insertAccountData (IN id VARCHAR(36), email VARCHAR(255), password VARCHAR(255), address VARCHAR(255), username VARCHAR(255), image VARCHAR(255)) BEGIN
+--     SET @id = id
+--     SET @email = email;
+--     SET @password = password;
+--     SET @address = NULL;
+--     SET @username = NULL;
+--     SET @image = NULL;
+
+--     PREPARE stmt
+--     FROM 'INSERT INTO account VALUES (?, ?, ?, ?, ?, ?)';
+--     EXECUTE stmt USING @id, @email, @password, @username, @address, @image;
+--     DEALLOCATE PREPARE stmt;
+
+--     SET @budget = 1000;
+--     PREPARE stmt
+--     FROM 'INSERT INTO budget VALUES(?, ?)';
+--     EXECUTE stmt USING @id, @budget;
+--     DEALLOCATE PREPARE stmt;
+-- END;
+
 CREATE PROCEDURE insertExpenseData (
     IN AccountID VARCHAR(36),
     Name VARCHAR(255),
@@ -168,55 +191,179 @@ CREATE PROCEDURE insertNotesData (
     notesName VARCHAR(255),
     notesDate DATE,
     description VARCHAR(255)
-) BEGIN
-SET @AccountID = AccountID;
-SET @notesName = notesName;
-SET @notesDate = notesDate;
-SET @description = description;
-SET @notes_id = uuid_v4s();
-PREPARE stmt
-FROM 'SELECT count(*) FROM notes WHERE ID = ? INTO @count';
-EXECUTE stmt USING @notes_id;
-DEALLOCATE PREPARE stmt;
-WHILE (@count = 1) DO
-SET @notes_id = uuid_v4s();
-PREPARE stmt
-FROM 'SELECT count(*) FROM notes WHERE ID = ? INTO @count';
-EXECUTE stmt USING @notes_id;
-DEALLOCATE PREPARE stmt;
-END WHILE;
-PREPARE stmt
-FROM 'INSERT INTO notes VALUES (?, ?, ?, ?, ?)';
-EXECUTE stmt USING @AccountID,
-@notes_id,
-@notesName,
-@notesDate,
-@description;
-DEALLOCATE PREPARE stmt;
+) 
+BEGIN
+    SET @AccountID = AccountID;
+    SET @notesName = notesName;
+    SET @notesDate = notesDate;
+    SET @description = description;
+    SET @notes_id = uuid_v4s();
+    PREPARE stmt
+    FROM 'SELECT count(*) FROM notes WHERE ID = ? INTO @count';
+    EXECUTE stmt USING @notes_id;
+    DEALLOCATE PREPARE stmt;
+    WHILE (@count = 1) DO
+        SET @notes_id = uuid_v4s();
+        PREPARE stmt
+        FROM 'SELECT count(*) FROM notes WHERE ID = ? INTO @count';
+        EXECUTE stmt USING @notes_id;
+        DEALLOCATE PREPARE stmt;
+    END WHILE;
+    PREPARE stmt
+    FROM 'INSERT INTO notes VALUES (?, ?, ?, ?, ?)';
+    EXECUTE stmt USING @AccountID, @notes_id, @notesName, @notesDate, @description;
+    DEALLOCATE PREPARE stmt;
 END;
+
+-- CREATE PROCEDURE insertNotesData (IN accountID VARCHAR(36), id VARCHAR(36), name VARCHAR(255), description VARCHAR(255)) 
+-- BEGIN
+--     SET @accountID = accountID;
+--     SET @id = id;
+--     SET @name = name;
+--     SET @description = description;
+
+--     PREPARE stmt
+--     FROM 'INSERT INTO notes VALUES (?, ?, ?, ?)';
+--     EXECUTE stmt USING @accountID, @id, @name, @description;
+--     DEALLOCATE PREPARE stmt;
+-- END;
+
+
 -- @block
 -- Consists of stored procedure that select data
 DROP PROCEDURE IF EXISTS selectEmail_Id;
 DROP PROCEDURE IF EXISTS selectId_Email;
+DROP PROCEDURE IF EXISTS selectCountAccountID;
+DROP PROCEDURE IF EXISTS selectAccountData_ID;
+DROP PROCEDURE IF EXISTS selectTotalCategories;
+DROP PROCEDURE IF EXISTS selectCountCategoryID;
+DROP PROCEDURE IF EXISTS selectCategoryData_AccountID;
+DROP PROCEDURE IF EXISTS selectTotalEvents;
+DROP PROCEDURE IF EXISTS selectCountEventID;
+DROP PROCEDURE IF EXISTS selectEventData_AccountID_Date;
+DROP PROCEDURE IF EXISTS selectTotalTodos;
+DROP PROCEDURE IF EXISTS selectCountTodoID;
+DROP PROCEDURE IF EXISTS selectTodoData_AccountID;
 DROP PROCEDURE IF EXISTS selectSumExpense_AccountID;
 DROP PROCEDURE IF EXISTS selectSumExpense_AccountID_Month;
 DROP PROCEDURE IF EXISTS selectExpenseData_Month;
 DROP PROCEDURE IF EXISTS selectBudget_AccountID;
 DROP PROCEDURE IF EXISTS selectExpenseHistory;
-CREATE PROCEDURE selectEmail_Id (IN id VARCHAR(36)) BEGIN
-SET @id = id;
-PREPARE stmt
-FROM 'SELECT email FROM account WHERE id=?';
-EXECUTE stmt USING @id;
-DEALLOCATE PREPARE stmt;
+DROP PROCEDURE IF EXISTS selectTotalNotes;
+DROP PROCEDURE IF EXISTS selectCountNoteID;
+DROP PROCEDURE IF EXISTS selectNoteData_AccountID;
+
+CREATE PROCEDURE selectEmail_Id (IN id VARCHAR(36)) 
+BEGIN
+    SET @id = id;
+    PREPARE stmt
+    FROM 'SELECT email FROM account WHERE id=?';
+    EXECUTE stmt USING @id;
+    DEALLOCATE PREPARE stmt;
 END;
-CREATE PROCEDURE selectId_Email (IN email VARCHAR(255)) BEGIN
-SET @email = email;
-PREPARE stmt
-FROM 'SELECT id FROM account WHERE email=?';
-EXECUTE stmt USING @email;
-DEALLOCATE PREPARE stmt;
+CREATE PROCEDURE selectId_Email (IN email VARCHAR(255)) 
+BEGIN
+    SET @email = email;
+    PREPARE stmt
+    FROM 'SELECT id FROM account WHERE email=?';
+    EXECUTE stmt USING @email;
+    DEALLOCATE PREPARE stmt;
 END;
+
+CREATE PROCEDURE selectCountAccountID (IN id VARCHAR(36)) 
+BEGIN
+    SET @id = id;
+    PREPARE stmt
+    FROM 'SELECT COUNT(*) FROM account WHERE ID=?';
+    EXECUTE stmt USING @id;
+    DEALLOCATE PREPARE stmt;
+END;
+CREATE PROCEDURE selectAccountData_AccountID (IN id VARCHAR(36)) 
+BEGIN
+    SET @id = id;
+    PREPARE stmt
+    FROM 'SELECT  username, address, image FROM account WHERE id=?';
+    EXECUTE stmt USING @id;
+    DEALLOCATE PREPARE stmt;
+END;
+
+CREATE PROCEDURE selectTotalCategories (IN accountID VARCHAR(36)) 
+BEGIN
+    SET @accountID = accountID;
+    PREPARE stmt
+    FROM 'SELECT COUNT(*) FROM category WHERE AccountID=?';
+    EXECUTE stmt USING @accountID;
+    DEALLOCATE PREPARE stmt;
+END;
+CREATE PROCEDURE selectCountCategoryID (IN id VARCHAR(36)) 
+BEGIN
+    SET @id = id;
+    PREPARE stmt
+    FROM 'SELECT COUNT(*) FROM category WHERE ID=?';
+    EXECUTE stmt USING @id;
+    DEALLOCATE PREPARE stmt;
+END;
+CREATE PROCEDURE selectCategoryData_AccountID (IN accountID VARCHAR(36)) 
+BEGIN
+    SET @accountID = accountID;
+    PREPARE stmt
+    FROM 'SELECT ID, Name, Color FROM category WHERE AccountID=? LIMIT 50';
+    EXECUTE stmt USING @accountID;
+    DEALLOCATE PREPARE stmt;
+END;
+
+CREATE PROCEDURE selectTotalEvents (IN accountID VARCHAR(36), date DATE) 
+BEGIN
+    SET @accountID = accountID;
+    SET @date = date;
+    PREPARE stmt
+    FROM 'SELECT COUNT(*) FROM events WHERE AccountID=? AND Date=?';
+    EXECUTE stmt USING @accountID, @date;
+    DEALLOCATE PREPARE stmt;
+END;
+CREATE PROCEDURE selectCountEventID (IN id VARCHAR(36)) 
+BEGIN
+    SET @id = id;
+    PREPARE stmt
+    FROM 'SELECT COUNT(*) FROM events WHERE ID=?';
+    EXECUTE stmt USING @id;
+    DEALLOCATE PREPARE stmt;
+END;
+CREATE PROCEDURE selectEventData_AccountID_Date (IN accountID VARCHAR(36), date DATE) 
+BEGIN
+    SET @accountID = accountID;
+    SET @date = date;
+    PREPARE stmt
+    FROM 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, StartTime, EndTime, Description, CategoryID FROM events WHERE AccountID=? AND Date=? LIMIT 50';
+    EXECUTE stmt USING @accountID, @date;
+    DEALLOCATE PREPARE stmt;
+END;
+
+CREATE PROCEDURE selectTotalTodos (IN accountID VARCHAR(36)) 
+BEGIN
+    SET @accountID = accountID;
+    PREPARE stmt
+    FROM 'SELECT COUNT(*) FROM todo WHERE AccountID=?';
+    EXECUTE stmt USING @accountID;
+    DEALLOCATE PREPARE stmt;
+END;
+CREATE PROCEDURE selectCountTodoID (IN id VARCHAR(36)) 
+BEGIN
+    SET @id = id;
+    PREPARE stmt
+    FROM 'SELECT COUNT(*) FROM todo WHERE ID=?';
+    EXECUTE stmt USING @id;
+    DEALLOCATE PREPARE stmt;
+    END;
+CREATE PROCEDURE selectTodoData_AccountID (IN accountID VARCHAR(36)) 
+BEGIN
+    SET @accountID = accountID;
+    PREPARE stmt
+    FROM 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, Checked FROM todo WHERE AccountID=? LIMIT 50';
+    EXECUTE stmt USING @accountID;
+    DEALLOCATE PREPARE stmt;
+END;
+
 CREATE PROCEDURE selectSumExpense_AccountID_Month (IN ID VARCHAR(36), Date DATE) BEGIN
 SET @ID = ID;
 SET @Date = Date;
@@ -256,87 +403,234 @@ FROM 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense w
 EXECUTE stmt USING @AccountID;
 DEALLOCATE PREPARE stmt;
 END;
+
+CREATE PROCEDURE selectTotalNotes (IN accountID VARCHAR(36)) 
+BEGIN
+    SET @accountID = accountID;
+    PREPARE stmt
+    FROM 'SELECT COUNT(*) FROM notes WHERE AccountID=?';
+    EXECUTE stmt USING @accountID;
+    DEALLOCATE PREPARE stmt;
+END;
+CREATE PROCEDURE selectCountNoteID (IN id VARCHAR(36)) 
+BEGIN
+    SET @id = id;
+    PREPARE stmt
+    FROM 'SELECT COUNT(*) FROM notes WHERE ID=?';
+    EXECUTE stmt USING @id;
+    DEALLOCATE PREPARE stmt;
+END;
+CREATE PROCEDURE selectNoteData_AccountID (IN accountID VARCHAR(36)) 
+BEGIN
+    SET @accountID = accountID;
+    PREPARE stmt
+    FROM 'SELECT ID, Name, Description FROM notes WHERE AccountID=? LIMIT 50';
+    EXECUTE stmt USING @accountID;
+    DEALLOCATE PREPARE stmt;
+END;
+
 -- @block
 -- Consists of stored procedure that update data
 DROP PROCEDURE IF EXISTS updateAccount;
+DROP PROCEDURE IF EXISTS updateCategory;
+DROP PROCEDURE IF EXISTS updateEvent;
+DROP PROCEDURE IF EXISTS updateTodo;
+DROP PROCEDURE IF EXISTS updateTodo_check;
 DROP PROCEDURE IF EXISTS updateBudget;
 DROP PROCEDURE IF EXISTS updateExpense;
 DROP PROCEDURE IF EXISTS updateNotes;
+
+
 CREATE PROCEDURE updateAccount (
     IN hashedPassword VARCHAR(255),
     id VARCHAR(36),
     email VARCHAR(255)
-) BEGIN
-SET @hashedPassword = hashedPassword;
-SET @id = id;
-SET @email = email;
-PREPARE stmt
-FROM 'UPDATE account SET password=? WHERE id=? AND email=?';
-EXECUTE stmt using @hashedPassword,
-@id,
-@email;
-DEALLOCATE PREPARE stmt;
+) 
+BEGIN
+    SET @hashedPassword = hashedPassword;
+    SET @id = id;
+    SET @email = email;
+    PREPARE stmt
+    FROM 'UPDATE account SET password=? WHERE id=? AND email=?';
+    EXECUTE stmt using @hashedPassword,
+    @id,
+    @email;
+    DEALLOCATE PREPARE stmt;
 END;
-CREATE PROCEDURE updateNotes (
-    IN notesName VARCHAR(255),
-    notesDate DATE,
-    account_id VARCHAR(36),
-    notes_id VARCHAR(36)
-) BEGIN
-SET @notesName = notesName;
-SET @notesDate = notesDate;
-SET @account_id = account_id;
-SET @notes_id = notes_id;
-PREPARE stmt
-FROM 'UPDATE notes SET name=?, date=? WHERE account_id=? AND notes_id=?';
-EXECUTE stmt using @notesName,
-@notesDate,
-@account_id,
-@notes_id;
-DEALLOCATE PREPARE stmt;
+
+-- CREATE PROCEDURE updateAccount (IN id VARCHAR(36), email VARCHAR(255), hashedPassword VARCHAR(255), username VARCHAR(36), address VARBINARY(255), image VARCHAR(255)) 
+-- BEGIN
+--     SET @id = id;
+--     SET @email = email;
+--     SET @hashedPassword = hashedPassword;
+--     SET @username = username;
+--     SET @address = address;
+--     SET @image = image;    
+    
+--     PREPARE stmt
+--     FROM 'UPDATE account SET password=?, username=?, address=?, image=? WHERE id=? AND email=?';
+--     EXECUTE stmt using @hashedPassword, @username, @address, @image, @id, @email;
+--     DEALLOCATE PREPARE stmt;
+-- END;
+
+CREATE PROCEDURE updateCategory (IN accountID VARCHAR(36), ID VARCHAR(36), categoryName VARCHAR(255), categoryColor VARCHAR(36))
+BEGIN
+    SET @accountID = accountID;
+    SET @ID = ID;
+    SET @categoryName = categoryName;
+    SET @categoryColor = categoryColor;
+    
+    PREPARE stmt FROM 'UPDATE category SET Name=?, Color=? WHERE AccountID=? AND ID=?';
+    EXECUTE stmt USING @categoryName, @categoryColor, @accountID, @ID;
+    DEALLOCATE PREPARE stmt;
 END;
-CREATE PROCEDURE updateBudget (IN AccountID VARCHAR(36), Budget INT) BEGIN
-SET @AccountID = AccountID;
-SET @Budget = Budget;
-PREPARE stmt
-FROM 'UPDATE budget SET Budget=? WHERE AccountID=?';
-EXECUTE stmt using @Budget,
-@AccountID;
-DEALLOCATE PREPARE stmt;
+
+CREATE PROCEDURE updateEvent (IN accountID VARCHAR(36), ID VARCHAR(36), eventName VARCHAR(255), date DATE, startTime TIME, endTime TIME, description VARCHAR(255), categoryID VARCHAR(36))
+BEGIN
+    SET @accountID = accountID;
+    SET @ID = ID;
+    SET @eventName = eventName;
+    SET @date = date;
+    SET @startTime = startTime;
+    SET @endTime = endTime;
+    SET @description = description;
+    SET @categoryID = categoryID;
+
+    PREPARE stmt FROM 'UPDATE events SET Name=?, Date=?, StartTime=?, EndTime=?, Description=?, CategoryID=? WHERE AccountID=? AND ID=?';
+    EXECUTE stmt USING @eventName, @date, @startTime, @endTime, @description, @categoryID, @accountID, @ID;
+    DEALLOCATE PREPARE stmt;
 END;
+
+CREATE PROCEDURE updateTodo (IN accountID VARCHAR(36), ID VARCHAR(36), todoName VARCHAR(255), date DATE)
+BEGIN
+    SET @accountID = accountID;
+    SET @ID = ID;
+    SET @todoName = todoName;
+    SET @date = date;
+
+    PREPARE stmt FROM 'UPDATE todo SET Name=?, Date=? WHERE AccountID=? AND ID=?';
+    EXECUTE stmt USING @todoName, @date, @accountID, @ID;
+    DEALLOCATE PREPARE stmt;
+END;
+
+CREATE PROCEDURE updateTodo_check (IN accountID VARCHAR(36), ID VARCHAR(36), checked TINYINT(1))
+BEGIN
+    SET @accountID = accountID;
+    SET @ID = ID;
+    SET @checked = checked;
+
+    PREPARE stmt FROM 'UPDATE todo SET Checked=? WHERE AccountID=? AND ID=?';
+    EXECUTE stmt USING @checked, @accountID, @ID;
+    DEALLOCATE PREPARE stmt;
+END;
+
+CREATE PROCEDURE updateNotes (IN accountID VARCHAR(36), id VARCHAR(36), name VARCHAR(255), description TEXT) 
+BEGIN
+    SET @accountID = accountID;
+    SET @id = id;
+    SET @name = name;
+    SET @description = description;
+    
+    PREPARE stmt
+    FROM 'UPDATE notes SET Name=?, Description=? WHERE AccountID=? AND ID=?';
+    EXECUTE stmt using @name, @description, @accountID, @id;
+    DEALLOCATE PREPARE stmt;
+END;
+
+CREATE PROCEDURE updateBudget (IN AccountID VARCHAR(36), Budget INT) 
+BEGIN
+    SET @AccountID = AccountID;
+    SET @Budget = Budget;
+    PREPARE stmt
+    FROM 'UPDATE budget SET Budget=? WHERE AccountID=?';
+    EXECUTE stmt using @Budget,
+    @AccountID;
+    DEALLOCATE PREPARE stmt;
+END;
+
 CREATE PROCEDURE updateExpense (
     IN AccountID VARCHAR(36),
     ID VARCHAR(36),
     Name VARCHAR(255),
     Amount DECIMAL(65, 2),
     Date DATE
-) BEGIN
-SET @AccountID = AccountID;
-SET @ID = ID;
-SET @Name = Name;
-SET @Amount = Amount;
-SET @Date = Date;
-PREPARE stmt
-FROM 'UPDATE expense SET Name=?, Amount=?, Date=? WHERE AccountID=? and ID=?';
-EXECUTE stmt using @Name,
-@Amount,
-@Date,
-@AccountID,
-@ID;
-DEALLOCATE PREPARE stmt;
+) 
+BEGIN
+    SET @AccountID = AccountID;
+    SET @ID = ID;
+    SET @Name = Name;
+    SET @Amount = Amount;
+    SET @Date = Date;
+    PREPARE stmt
+    FROM 'UPDATE expense SET Name=?, Amount=?, Date=? WHERE AccountID=? and ID=?';
+    EXECUTE stmt using @Name,
+    @Amount,
+    @Date,
+    @AccountID,
+    @ID;
+    DEALLOCATE PREPARE stmt;
 END;
+
+
+
 -- @block
 -- Consists of stored procedure that delete data
+DROP PROCEDURE IF EXISTS deleteCategoryData;
+DROP PROCEDURE IF EXISTS deleteEventData;
+DROP PROCEDURE IF EXISTS deleteTodoData;
 DROP PROCEDURE IF EXISTS deleteExpenseData;
-CREATE PROCEDURE deleteExpenseData (IN AccountID VARCHAR(36), ID VARCHAR(36)) BEGIN
-SET @AccountID = AccountID;
-SET @ID = ID;
-PREPARE stmt
-FROM 'DELETE FROM expense WHERE AccountID=? and ID=?';
-EXECUTE stmt using @AccountID,
-@ID;
-DEALLOCATE PREPARE stmt;
+DROP PROCEDURE IF EXISTS deleteNotesData;
+
+CREATE PROCEDURE deleteCategoryData (IN AccountID VARCHAR(36), ID VARCHAR(36))
+BEGIN
+    SET @AccountID = AccountID;
+    SET @ID = ID;
+
+    PREPARE stmt FROM 'DELETE FROM category WHERE AccountID=? AND ID=?';
+    EXECUTE stmt using @AccountID, @ID;
+    DEALLOCATE PREPARE stmt;
 END;
+
+CREATE PROCEDURE deleteEventData (IN AccountID VARCHAR(36), ID VARCHAR(36))
+BEGIN
+    SET @AccountID = AccountID;
+    SET @ID = ID;
+
+    PREPARE stmt FROM 'DELETE FROM events WHERE AccountID=? and ID=?';
+    EXECUTE stmt using @AccountID, @ID;
+    DEALLOCATE PREPARE stmt;
+END;
+
+CREATE PROCEDURE deleteTodoData (IN AccountID VARCHAR(36), ID VARCHAR(36))
+BEGIN
+    SET @AccountID = AccountID;
+    SET @ID = ID;
+
+    PREPARE stmt FROM 'DELETE FROM todo WHERE AccountID=? and ID=?';
+    EXECUTE stmt using @AccountID, @ID;
+    DEALLOCATE PREPARE stmt;
+END;
+
+CREATE PROCEDURE deleteExpenseData (IN AccountID VARCHAR(36), ID VARCHAR(36)) 
+BEGIN
+    SET @AccountID = AccountID;
+    SET @ID = ID;
+    PREPARE stmt
+    FROM 'DELETE FROM expense WHERE AccountID=? and ID=?';
+    EXECUTE stmt using @AccountID,
+    @ID;
+    DEALLOCATE PREPARE stmt;
+END;
+
+CREATE PROCEDURE deleteNotesData (IN AccountID VARCHAR(36), ID VARCHAR(36))
+BEGIN
+    SET @AccountID = AccountID;
+    SET @ID = ID;
+
+    PREPARE stmt FROM 'DELETE FROM notes WHERE AccountID=? and ID=?';
+    EXECUTE stmt using @AccountID, @ID;
+    DEALLOCATE PREPARE stmt;
+END
 -- @block
 select *
 from events;

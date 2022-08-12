@@ -23,23 +23,23 @@ export default async function CreateCategory(
             if ((categoryName.length <= 255) && (categoryColor === 'red' || categoryColor === 'orange' || categoryColor === 'amber' || categoryColor === 'yellow' || categoryColor === 'lime' || categoryColor === 'green' || categoryColor === 'emerald' || categoryColor === 'teal' || categoryColor === 'cyan' || categoryColor === 'sky' || categoryColor === 'blue' || categoryColor === 'indigo' || categoryColor === 'violet' || categoryColor === 'purple' || categoryColor === 'fuchsia' || categoryColor === 'pink' || categoryColor === 'rose')) {
                 try {
                     const totalCategories = JSON.parse(JSON.stringify(await executeQuery({
-                        query: 'SELECT COUNT(*) FROM category WHERE AccountID=?',
+                        query: 'CALL selectTotalCategories(?)',
                         values: [req.query.id],
                     })));
 
-                    if (totalCategories[0]['COUNT(*)'] < 50) {
+                    if (totalCategories[0][0]['COUNT(*)'] < 50) {
 
                         var id = uuidv4();
                         var idcheck = JSON.parse(JSON.stringify(await executeQuery({
-                            query: 'SELECT COUNT(*) FROM category WHERE ID=?',
+                            query: 'CALL selectCountCategoryID(?)',
                             values: [id],
                         })));
-                        var totalCount = 0
+                        var totalCount = 1
             
-                        while (idcheck[0]['COUNT(*)'] == 1 && totalCount < 100) {              
+                        while (idcheck[0][0]['COUNT(*)'] == 1 && totalCount < 100) {              
                             id = uuidv4()
                             var idcheck = JSON.parse(JSON.stringify(await executeQuery({
-                                query: 'SELECT COUNT(*) FROM category WHERE ID=?',
+                                query: 'CALL selectCountCategoryID(?)',
                                 values: [id],
                             })));
                             totalCount += 1
