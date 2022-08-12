@@ -52,7 +52,7 @@ export const UiFileInputButton: React.FC<IProps> = (props) => {
         Array.from(event.target.files).forEach((file) => {
             formData.append(event.target.name, file);
         });
-        setimagename(event.target.name)
+        setimagename(event.target.files[0].name)
         props.onChange(formData, image);
 
         formRef.current?.reset();
@@ -60,7 +60,7 @@ export const UiFileInputButton: React.FC<IProps> = (props) => {
 
     return (
         <form ref={formRef}>
-            <button type="button" onClick={onClickHandler}>
+            <button type="button" style={styles.container} onClick={onClickHandler}>
                 {props.label}
             </button>
             <input
@@ -71,11 +71,21 @@ export const UiFileInputButton: React.FC<IProps> = (props) => {
                 ref={fileInputRef}
                 style={{ display: 'none' }}
                 type="file"
+                required
             />
         </form>
     );
 };
+const styles = {
+    container: {
+        backgroundColor: "#334155",
+        padding: "1em",
+        margin: "2px",
+        borderRadius: "10px",
+        marginBottom: "5px"
 
+    }
+} as const;
 UiFileInputButton.defaultProps = {
     acceptedFileTypes: '',
     allowMultipleFiles: false,

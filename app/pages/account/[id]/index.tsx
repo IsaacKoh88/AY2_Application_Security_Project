@@ -107,11 +107,7 @@ export async function getServerSideProps(context: any) {
 
 
 const Account: NextPageWithLayout<accountProps> = (props) => {
-    const [editaccount, setEditAccount] = useState(false);
-    const handleClick = () => {
-        setEditAccount(true)
 
-    };
     /**sets path of image based on profile information */
     const imagepath = '/uploads/' + props.image
     console.log(imagepath)
@@ -132,7 +128,6 @@ const Account: NextPageWithLayout<accountProps> = (props) => {
                                 <div className='block h-[150px] w-[150px] rounded-full hover:opacity-50 relative'>
                                     <Image src={imagepath} layout="fill" alt="profilepic" />
                                 </div>
-                                {/* <img src={imagepath} className="block h-[150px] w-[150px] rounded-[50%] hover:opacity-50" /> */}
                                 <p className="text-white font-bold drop-shadow -translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 opacity-0 hover:opacity-100">Edit</p>
                             </div>
                         </Link>
@@ -144,7 +139,6 @@ const Account: NextPageWithLayout<accountProps> = (props) => {
                     </div>
                     <div className='inline-flex self-end space-x-3'>
                         <Link href={'/account/' + props.id + '/editaccinfo'} ><p className='text-white bg-blue-600 self-end cursor-pointer px-3 py-2 rounded-md'>Edit</p></Link>
-                        {/* <div className='self-center'>{editaccount && <Box />}</div> */}
                         <Link href={'/account/' + props.id + '/changepassword'}>
                             <div className='bg-blue-600 self-end cursor-pointer px-3 py-2 rounded-md'>
                                 <p className='text-white'>Change Password</p>
