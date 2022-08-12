@@ -16,7 +16,6 @@ const Layout = ({ children }) => {
                         <div className='cursor-pointer h-10 w-10 rounded-lg bg-slate-800'></div>
                     </Link>
                 </div>
-                <NavItem href='/dashboard' img='gg-align-left' />
                 <NavItem href='/calendar' img='gg-calendar-dates' />
                 <NavItem href='/notes' img='gg-album' />
                 <NavItem href='/budget' img='gg-credit-card' />

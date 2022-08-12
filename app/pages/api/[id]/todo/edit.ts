@@ -24,15 +24,15 @@ export default async function EditTodo(
 
                 try {
                     const idcheck = JSON.parse(JSON.stringify(await executeQuery({
-                        query: 'SELECT COUNT(*) FROM todo WHERE AccountID=? AND ID=?',
-                        values: [req.query.id, todoID],
+                        query: 'CALL selectCountTodoID(?)',
+                        values: [todoID],
                     })));
 
-                    if (idcheck[0]['COUNT(*)'] === 1) {
+                    if (idcheck[0][0]['COUNT(*)'] === 1) {
                         /* insert data into category table */
                         const result = await executeQuery({
                             query: 'CALL updateTodo(?, ?, ?, ?)',
-                            values: [req.query.id, todoID, todoName, date,],
+                            values: [req.query.id, todoID, todoName, date],
                         });
 
                         res.status(201).json({ message: 'success' })

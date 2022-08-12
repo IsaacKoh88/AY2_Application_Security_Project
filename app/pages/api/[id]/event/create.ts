@@ -29,23 +29,23 @@ export default async function CreateEvent(
             if ((eventName.length <= 255) && (moment(date, 'YYYY-MM-DD', true).isValid()) && (timeregex.test(startTime)) && (timeregex.test(endTime)) && (description.length <= 65535) && (categoryId.length === 36 || categoryId === 'None' || categoryId === '' || categoryId === 'null')) {
                 try {
                     const totalEvents = JSON.parse(JSON.stringify(await executeQuery({
-                        query: 'SELECT COUNT(*) FROM events WHERE AccountID=? AND Date=?',
+                        query: 'CALL selectTotalEvents(?, ?)',
                         values: [req.query.id, date],
                     })));
 
-                    if (totalEvents[0]['COUNT(*)'] < 50) {
+                    if (totalEvents[0][0]['COUNT(*)'] < 50) {
 
                         var id = uuidv4();
                         var idcheck = JSON.parse(JSON.stringify(await executeQuery({
-                            query: 'SELECT COUNT(*) FROM events WHERE ID=?',
+                            query: 'CALL selectCountEventID(?)',
                             values: [id],
                         })));
                         var totalCount = 1
             
-                        while (idcheck[0]['COUNT(*)'] == 1 && totalCount < 100) {              
+                        while (idcheck[0][0]['COUNT(*)'] == 1 && totalCount < 100) {              
                             id = uuidv4()
                             var idcheck = JSON.parse(JSON.stringify(await executeQuery({
-                                query: 'SELECT COUNT(*) FROM events WHERE ID=?',
+                                query: 'CALL selectCountEventID(?)',
                                 values: [id],
                             })));
                             totalCount += 1

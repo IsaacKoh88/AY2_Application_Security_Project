@@ -1,5 +1,5 @@
 import type { NextPageWithLayout } from '../_app';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import React, { Fragment, ReactElement, useState, useEffect } from 'react'
 import Head from 'next/head';
 import SmallCalendar from '../../components/calendar/month'
@@ -16,6 +16,8 @@ import Layout from '../../components/layouts/authenticated-layout';
 import dayjs, { Dayjs } from 'dayjs';
 import executeQuery from '../../utils/db';
 import * as jose from 'jose';
+import useSWR, { useSWRConfig } from 'swr';
+import fetcher from '../../utils/swr-fetcher';
 
 type TodoProps = {
     ID: string,
@@ -40,80 +42,40 @@ type CategoriesProps = {
     Color: string,
 }[]
 
-type CalendarProps = {
-    todo: TodoProps,
-    events: EventsProps,
-    categories: CategoriesProps,
-}
-
-
 export async function getServerSideProps(context:any) {
-    const JWTtoken = context.req.cookies['token'];
-    const id = context.params.id
-
-    /** if JWT does not exist */
-    if (JWTtoken == undefined){
-        return {
-            redirect: {
-                destination: '/401',
-                permanent: false,
-            },
-        }
-    }
-
     try {
+        const JWTtoken = context.req.cookies['token'];
+        const id = context.params.id;
+
         /** check if JWT token is valid */
-        const email = await jose.jwtVerify(JWTtoken, new TextEncoder()
-                    .encode(`qwertyuiop`))
-                    .then(value => {return(value['payload']['email'])});
+        const { payload } = await jose.jwtVerify(
+            JWTtoken, 
+            new TextEncoder().encode(`qwertyuiop`), 
+            {
+                issuer: 'application-security-project'
+            }
+        );
 
-        /** check if email is the same as the one in the id of URL */
-        const result = await executeQuery({
-            query: 'SELECT email FROM account WHERE id=?',
+        /** query email of id in database */
+        const result = JSON.parse(JSON.stringify(await executeQuery({
+            query: 'CALL selectEmail_Id(?)',
             values: [id],
-        });
+        })));
 
-        /** reject if user does not have permission to route */
-        if (result[0].email !== email) {
+        /** return page if email claim is in database with correct uuid */
+        if (result[0].email === payload['email']) {
+            return {
+                props: {}
+            };
+        } else {
             return {
                 redirect: {
                     destination: '/401',
                     permanent: false,
                 },
             };
-        };
-
-        try {
-            const currentDate = dayjs().format('YYYY-MM-DD')
-
-            const resultTodo = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, Checked FROM todo WHERE AccountID=?',
-                values: [id],
-            })));
-
-            const resultEvents = await executeQuery({
-                query: 'SELECT ID, Name, DATE_FORMAT(Date, "%Y-%m-%d") Date, StartTime, EndTime, Description, CategoryID FROM events WHERE AccountID=? AND Date=?',
-                values: [id, currentDate],
-            });
-
-            const resultCategories = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'SELECT ID, Name, Color FROM category WHERE AccountID=?',
-                values: [id],
-            })));
-
-            return{
-                props: {
-                    todo: resultTodo,
-                    events: resultEvents,
-                    categories: resultCategories,
-                }
-            }
-        } 
-        catch (error) {
-            console.log(error)
-        }  
-    } 
-    
+        }
+    }
     catch (error) {
         /** reject if JWT token is invalid */
         return {
@@ -122,19 +84,26 @@ export async function getServerSideProps(context:any) {
                 permanent: false,
             },
         }
-    };  
+    } 
 };
 
-const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
+const Calendar: NextPageWithLayout = () => {
     const id = useRouter().query.id
+    const { mutate } = useSWRConfig()
 
     const [selectedDate, setSelectedDate] = useState(dayjs());
     /** State to store categories */
-    const [categories, setCategories] = useState(props.categories)
+    const { data: categories, error: categoriesError, mutate: categoriesMutate } = useSWR<CategoriesProps>(`/api/${id}/category`, fetcher);
     /** State to store events */
-    const [events, setEvents] = useState(props.events);
+    const { data: events, error: eventsError, mutate: eventsMutate } = useSWR<EventsProps>(`/api/${id}/event/${selectedDate.format('YYYY-MM-DD')}`, fetcher);
     /** State to store todos */
-    const [todos, setTodos] = useState(props.todo)
+    const { data: todos, error: todosError, mutate: todosMutate } = useSWR<TodoProps>(`/api/${id}/todo`, fetcher);
+    /** executes if user is no longer logged in */
+    useEffect(() => {
+        if ((categoriesError) || (eventsError) || (todosError)) {
+            Router.push('/notes')
+        }
+    }, [categoriesError, eventsError, todosError])
 
     /** State to control create event popup */
     const [createEvent, setCreateEvent] = useState(false)
@@ -151,114 +120,44 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
 
     /** Handles create new category success */
     const handleCreateCategorySuccess = async () => {
-        fetch('/api/'+id+'/category')
-        .then(response => response.json())
-        .then(data => setCategories(data));
-
-        handleCreateCategoryPopupDisappear();
+        categoriesMutate();                     // update client categoies data
+        handleCreateCategoryPopupDisappear();   // remove popup
     };
 
     /** Handles edit category success */
     const handleEditCategorySuccess = () => {
-        fetch('/api/'+id+'/event', 
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(
-                    {
-                        date: selectedDate.format('YYYY-MM-DD')
-                    }
-                )
-            }
-        )
-        .then(response => response.json())
-        .then(data => setEvents(data));
-        fetch('/api/'+id+'/category')
-        .then(response => response.json())
-        .then(data => setCategories(data));
-
-        handleEditCategoryPopupDisappear();
+        eventsMutate();                         // update client events data
+        categoriesMutate();                     // update client categories data
+        handleEditCategoryPopupDisappear();     // remove popup
     };
 
     /** Handles create new event success */
     const handleCreateEventSuccess = () => {
-        fetch('/api/'+id+'/event', 
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(
-                    {
-                        date: selectedDate.format('YYYY-MM-DD')
-                    }
-                )
-            }
-        )
-        .then(response => response.json())
-        .then(data => setEvents(data));
-
-        handleCreateEventPopupDisappear();
+        eventsMutate();                         // update client events data
+        handleCreateEventPopupDisappear();      // remove popup
     };
 
     /** Handles edit category success */
     const handleEditEventSuccess = () => {
-        fetch('/api/'+id+'/event', 
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(
-                    {
-                        date: selectedDate.format('YYYY-MM-DD')
-                    }
-                )
-            }
-        )
-        .then(response => response.json())
-        .then(data => setEvents(data));
-
-        handleEditEventPopupDisappear();
+        eventsMutate();                         // update client events data
+        handleEditEventPopupDisappear();        // remove popup
     };
 
     /** Handles edit category success */
     const handleDeleteEventSuccess = () => {
-        fetch('/api/'+id+'/event', 
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(
-                    {
-                        date: selectedDate.format('YYYY-MM-DD')
-                    }
-                )
-            }
-        )
-        .then(response => response.json())
-        .then(data => setEvents(data));
+        eventsMutate();                         // update client events data
     };
 
     /** Handles create new todo success */
     const handleCreateTodoSuccess = () => {
-        fetch('/api/'+id+'/todo')
-        .then(response => response.json())
-        .then(data => setTodos(data));
-
-        handleCreateTodoPopupDisappear();
+        todosMutate();                          // update client todos data
+        handleCreateTodoPopupDisappear();       // remove popup
     };
 
     /** Handles edit category success */
     const handleEditTodoSuccess = () => {
-        fetch('/api/'+id+'/todo')
-        .then(response => response.json())
-        .then(data => setTodos(data));
-
-        handleEditTodoPopupDisappear();
+        todosMutate();                          // update client todos data
+        handleEditTodoPopupDisappear();         // remove popup
     };
 
     /** Handle to-do checked */
@@ -279,42 +178,13 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
             }
         );
 
-        if (response.status === 201) {
-            fetch('/api/'+id+'/todo')
-            .then(response => response.json())
-            .then(data => setTodos(data));
-        } else if (response.status === 400) {
-            alert('Error 400: Request body format error.')
-            fetch('/api/'+id+'/todo')
-            .then(response => response.json())
-            .then(data => setTodos(data));
-        } else if (response.status === 404) {
-            alert('Error 404: Todo item not found')
-            fetch('/api/'+id+'/todo')
-            .then(response => response.json())
-            .then(data => setTodos(data));
-        }
+        todosMutate();                          // update client todos data
     };
 
     /** Handles date selection action */
     const handleSelectDate = (index: Dayjs) => {
-        console.log(index.format('YYYY-MM-DD'))
-        fetch('/api/'+id+'/event', 
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(
-                    {
-                        date: index.format('YYYY-MM-DD')
-                    }
-                )
-            }
-        )
-        .then(response => response.json())
-        .then(data => setEvents(data));
-        setSelectedDate(index);
+        setSelectedDate(index);                 // update selected date state
+        eventsMutate();                         // update client events data
     };
 
     /** Opens create new event popup */
@@ -395,18 +265,21 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
                             <i className='gg-plus group-hover:text-white duration-150 ease-in-out'></i>
                         </div>
                     </div>
-                    {(categories.length === 0) ? 
-                        <div className='flex grow justify-center items-center w-full'>
-                            {/** display no category text if there are no category */}
-                            <p className=''>No Categories</p>
-                        </div> 
+                    {categories? 
+                        (categories.length === 0) ? 
+                            <div className='flex grow justify-center items-center w-full'>
+                                {/** display no category text if there are no category */}
+                                <p className=''>No Categories</p>
+                            </div> 
+                            :
+                            <div className='flex flex-col justify-start items-center w-full overflow-y-scroll pb-4 scrollbar'>
+                                {/** display a card for each category */}
+                                {categories.map((category, index) => (
+                                    <Category category={category} editCategory={handleEditCategoryPopupAppear} key={index} />
+                                ))}
+                            </div>
                         :
-                        <div className='flex flex-col justify-start items-center w-full overflow-y-scroll pb-4 scrollbar'>
-                            {/** display a card for each category */}
-                            {categories.map((category, index) => (
-                                <Category category={category} editCategory={handleEditCategoryPopupAppear} key={index} />
-                            ))}
-                        </div>
+                        <></>
                     }
                 </div>
             </div>
@@ -426,18 +299,21 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
                             <i className='gg-plus group-hover:text-white'></i>
                         </div>
                     </div>
-                    {(events.length === 0) ? 
-                        <div className='flex grow justify-center items-center w-full'>
-                            {/** display no events text if there are no events */}
-                            <p className=''>No Events</p>
-                        </div> 
+                    {events? 
+                        (events.length === 0) ? 
+                            <div className='flex grow justify-center items-center w-full'>
+                                {/** display no events text if there are no events */}
+                                <p className=''>No Events</p>
+                            </div> 
+                            :
+                            <div className='flex flex-col relative justify-start items-center w-full overflow-scroll scrollbar'>
+                                {/** display a card for each event */}
+                                {events.map((event, index) => 
+                                    <Event id={id} event={event} categories={categories} editEvent={handleEditEventPopupAppear} success={handleDeleteEventSuccess} key={index} />
+                                )}
+                            </div>
                         :
-                        <div className='flex flex-col relative justify-start items-center w-full overflow-scroll scrollbar'>
-                            {/** display a card for each event */}
-                            {events.map((event, index) => 
-                                <Event id={id} event={event} categories={categories} editEvent={handleEditEventPopupAppear} success={handleDeleteEventSuccess} key={index} />
-                            )}
-                        </div>
+                        <></>
                     }
                 </div>
 
@@ -454,18 +330,21 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
                             <i className='gg-plus group-hover:text-white'></i>
                         </div>
                     </div>
-                    {(todos.length === 0) ? 
-                        <div className='flex grow justify-center items-center w-full'>
-                            {/** display no to-dos text if there are no to-dos */}
-                            <p className=''>No To-dos</p>
-                        </div> 
+                    {todos?
+                        (todos.length === 0) ? 
+                            <div className='flex grow justify-center items-center w-full'>
+                                {/** display no to-dos text if there are no to-dos */}
+                                <p className=''>No To-dos</p>
+                            </div> 
+                            :
+                            <div className='flex flex-col grow justify-start items-center w-full oveflow-y-scroll'>
+                                {/** display a card for each to-do */}
+                                {todos.map((todo, index) => (
+                                    <Todo todo={todo} changeStatus={handleTodoCheck} editTodo={handleEditTodoPopupAppear} key={index} />
+                                ))}
+                            </div>
                         :
-                        <div className='flex flex-col grow justify-start items-center w-full oveflow-y-scroll'>
-                            {/** display a card for each to-do */}
-                            {todos.map((todo, index) => (
-                                <Todo todo={todo} changeStatus={handleTodoCheck} editTodo={handleEditTodoPopupAppear} key={index} />
-                            ))}
-                        </div>
+                        <></>
                     }
                     <div className='flex flex-col justify-start items-center'></div>
                 </div>
@@ -479,7 +358,7 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
             }
 
             {/** edit event form */}
-            {editEvent !== '' ? 
+            {(editEvent !== '') && (events) ? 
                 <EditEvent id={id} event={events.find(e => e.ID === editEvent)} categories={categories} success={handleEditEventSuccess} close={handleEditEventPopupDisappear} />
                 :
                 <></>
@@ -493,7 +372,7 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
             }
             
             {/** edit todo form */}
-            {editTodo !== '' ? 
+            {(editTodo !== '') && (todos) ? 
                 <EditTodo id={id} todo={todos.find(e => e.ID === editTodo)} success={handleEditTodoSuccess} close={handleEditTodoPopupDisappear} />
                 :
                 <></>
@@ -507,7 +386,7 @@ const Calendar: NextPageWithLayout<CalendarProps> = (props) => {
             }
 
             {/** edit category form */}
-            {editCategory !== '' ? 
+            {(editCategory !== '') && (categories)? 
                 <EditCategory id={id} category={categories.find(e => e.ID === editCategory)} success={handleEditCategorySuccess} close={handleEditCategoryPopupDisappear} />
                 :
                 <></>
