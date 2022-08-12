@@ -7,11 +7,12 @@ import executeQuery from '../../../utils/db';
 import * as jose from 'jose';
 import EditNotes from '../../../components/notes/edit-notes';
 import NotesDisplay from '../../../components/notes/notes';
-
+import Image from 'next/image';
 
 
 type NotesProps = {
     notes: NoteProps,
+    accountID: string,
 }
 
 type NoteProps = {
@@ -67,7 +68,7 @@ export async function getServerSideProps(context:any) {
             console.log(resultNotes)
             return{
                 props: {
-                    notes: resultNotes,
+                    notes: resultNotes, accountID: accountID,
                 }
             }
         } 
@@ -87,7 +88,7 @@ export async function getServerSideProps(context:any) {
     };  
 };
 
-const Notes: NextPageWithLayout<NotesProps> = (props) => {
+const Notes: NextPageWithLayout<NotesProps> = (props, success) => {
     const id = useRouter().query.id
 
     /** State to store events */
@@ -146,6 +147,27 @@ const Notes: NextPageWithLayout<NotesProps> = (props) => {
     const handleEditNotesPopupDisappear = () => {
         setEditNotes('');
     };
+    /** Delete Handler */
+    const DeleteHandler = async () => {
+        const response = await fetch('/api/'+props.accountID+'/notes/delete', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body : JSON.stringify(
+                    {
+                        notesID: props['notes'][0]['ID'],
+                    }
+                )
+            }
+        );
+ 
+        if (response.status === 200) {
+            window.location.replace('/notes');
+        };
+    }
+
 
 
     return (
@@ -164,22 +186,14 @@ const Notes: NextPageWithLayout<NotesProps> = (props) => {
                             <p className='cursor-default text-xl text-slate-200 font-bold'>Notes</p>
                         </div>
                     </div>
-                    {(notes.length === 0) ? 
-                        null
-                        :
-                        <div className='flex flex-col grow justify-start items-center'>
-                            {/** display a card for each event */}
-                            {notes.map((notes, index) => 
-                                <NotesDisplay id={id} notes={notes} EditNotes={handleEditNotesPopupAppear} success={handleDeleteNotesSuccess} key={index} />
-                            )}
-                        </div>
-                    }
 
-                    <p className='flex justify-start items-start text-white w-full mt-1'>{ ['Description'] }</p>
+                    <p>Note Description: </p>
+                    <p className='flex justify-start items-start text-white w-full mt-1'>{ props['notes'][0]['Description'] }</p>
                         <div className='flex flex-row justify-end items-center w-full mt-2 mb-1'>
+
                             <div 
                                 className='cursor-pointer bg-slate-200 px-3 py-2 mr-2 rounded-md'
-                                onClick={() => EditNotes(notes.ID)}
+                                onClick={() => EditNotes(props['notes'][0]['ID'])}
                             >
                                 <p className='text-blue-500 font-semibold duration-150 ease-in-out'>Edit Notes</p>
                             </div>
@@ -215,6 +229,3 @@ Notes.getLayout = function getLayout(Notes: ReactElement) {
 
 export default Notes;
 
-function DeleteHandler(): void {
-    throw new Error('Function not implemented.');
-}

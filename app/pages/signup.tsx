@@ -1,5 +1,5 @@
 import type { NextPage } from 'next'
-import { Fragment } from 'react'
+import { Fragment, SetStateAction } from 'react'
 import Head from 'next/head'
 import { useState, useEffect } from 'react'
 import Navbar from '../components/navbar'
@@ -22,6 +22,16 @@ const Signup: NextPage = () => {
     const [passwordStrength, setPasswordStrength] =
         useState<PasswordStrength>("Very Weak");
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
+    const [cPassword, setCPassword] = useState('');
+    const [showErrorMessage, setShowErrorMessage] = useState(false);
+    const [cPasswordClass, setCPasswordClass] = useState('form-control');
+    const [isCPasswordDirty, setIsCPasswordDirty] = useState(false);
+    const [validate, setValidate] = useState({
+        hasLow: false,
+        hasCap: false,
+        hasNumber: false,
+        has8digit: false
+    });
 
     const testResult  = zxcvbn(password);
     const num = testResult.score * 100/4;
@@ -41,18 +51,23 @@ const Signup: NextPage = () => {
                 return 'none';
         }
     }
-    console.log(num)
 
-    // This function will be triggered when the password input field changes
-    const inputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const enteredValue = event.target.value.trim();
-        setPassword(enteredValue);
-    };
+    const handleCPassword = (e: { target: { value: SetStateAction<string> } }) => {
+        setCPassword(e.target.value);
+        setIsCPasswordDirty(true);
+    }
+    
+    const strength = Object.values(validate).reduce((a, item) => a + item, 0)
+    // // This function will be triggered when the password input field changes
+    // const inputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     const enteredValue = event.target.value.trim();
+    //     setPassword(enteredValue);
+    // };
 
 
 
     useEffect(() => {
-        if (password.length <= 4) {
+        if (cPassword.length <= 4) {
         setPasswordStrength("Very Weak");
         setIsButtonDisabled(true);
         } else if (password.length <= 6) {
@@ -61,14 +76,54 @@ const Signup: NextPage = () => {
         } else if (password.length <= 8) {
         setPasswordStrength("Medium");
         setIsButtonDisabled(true);
-        } else if (password.length <= 12) {
+        } else if (password.length <= 11) {
         setPasswordStrength("Strong");
         setIsButtonDisabled(false);
         } else{
         setPasswordStrength("Very Strong");
         setIsButtonDisabled(false);
         }
+    }, [cPassword]);
+
+
+    useEffect(() => {
+        if (password.match(/\d+/g)) {
+            setValidate((o) => ({ ...o, hasNumber: true }));
+        } else{
+            setValidate((o) => ({ ...o, hasNumber: false }));
+        }
+
+        if (password.match(/[A-Z]+/g)) {
+            setValidate((o) => ({ ...o, hasCap: true }));
+        } else{
+            setValidate((o) => ({ ...o, hasCap: false }));
+        }
+
+        if (password.match(/[a-z]+/g)) {
+            setValidate((o) => ({ ...o, hasLow: true }));
+        } else {
+            setValidate((o) => ({ ...o, hasLow: false }));
+        }
+
+        if (password.length > 8) {
+            setValidate((o) => ({ ...o, has8digit: true }));
+        } else{
+            setValidate((o) => ({ ...o, has8digit: false }));
+        } 
     }, [password]);
+
+
+    useEffect(() => {
+        if (isCPasswordDirty) {
+            if (password === cPassword) {
+                setShowErrorMessage(false);
+                setCPasswordClass('form-control is-valid')
+            } else {
+                setShowErrorMessage(true)
+                setCPasswordClass('form-control is-invalid')
+            }
+        }
+    }, [cPassword])
 
 
         //styling
@@ -148,29 +203,46 @@ const Signup: NextPage = () => {
                             />
                             <label className='text-lg text-slate-900 ml-0.5 mb-1' htmlFor='password'>Password:</label>
                             <input 
-                                className='text-slate-900 border focus:border-blue-600 rounded-md p-2 mb-2' 
+                                className='text-slate-900 border focus:border-blue-600 rounded-md p-2 mb-2 form-control' 
                                 type='password' 
                                 id='password' 
                                 name='password' 
                                 placeholder='Password' 
                                 value={password}
-                                onChange={inputHandler}
+                                // onChange={inputHandler}
+                                onChange={(e) => { setPassword(e.target.value) }}
                                 required
                             />
+                            
+                        
                             <label className='text-lg text-slate-900 ml-0.5 mb-1' htmlFor='confirmpassword'>Confirm Password:</label>
                             <input 
                                 className='text-slate-900 border focus:border-blue-600 rounded-md p-2 mb-4' 
                                 type='password' 
                                 id='confirmpassword' 
-                                name='confirmpassword' 
+                                // name='confirmpassword' 
+                                name= {cPasswordClass}
                                 placeholder='Confirm Password' 
+                                value={cPassword}
+                                onChange={handleCPassword}
                                 required
                             />
+                            {showErrorMessage && isCPasswordDirty? <div> Passwords do not match </div> : ''}
+
+                            {/* {strength > 0 ? (
+                                <progress
+                                    hidden={password.length === 0}
+                                    className={`password strength-${strength}`}
+                                    value={strength}
+                                    max='4'
+                                />
+                            ) : null} */}
+                            
                             <div style={styles.statusBar}>
                                 <div
                                 style={{
                                     ...styles.changePasswordColor,
-                                    width: `${(password.length / 12) * 100}%`,
+                                    width: `${(password.length / 13) * 100}%`,
                                 }}
                                 ></div>
                             </div>

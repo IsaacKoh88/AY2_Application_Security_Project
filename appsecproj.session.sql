@@ -90,7 +90,9 @@ RETURN LOWER(
         @h5
     )
 );
-END -- @block
+END 
+
+-- @block
 -- Consists of stored procedure to inserts data
 DROP PROCEDURE IF EXISTS insertAccountData;
 DROP PROCEDURE IF EXISTS insertCategoryData;
@@ -98,7 +100,7 @@ DROP PROCEDURE IF EXISTS insertEventData;
 DROP PROCEDURE IF EXISTS insertTodoData;
 DROP PROCEDURE IF EXISTS insertExpenseData;
 DROP PROCEDURE IF EXISTS inserTNotesData;
-CREATE PROCEDURE insertAccountData (IN email VARCHAR(255), IN password VARCHAR(255)) BEGIN
+CREATE PROCEDURE insertAccountData (IN email VARCHAR(255), IN password VARCHAR(255), address VARCHAR(255), username VARCHAR(255), image VARCHAR(255)) BEGIN
 SET @email = email;
 SET @password = password;
 SET @address = NULL;

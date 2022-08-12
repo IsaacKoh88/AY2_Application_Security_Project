@@ -197,41 +197,31 @@ const Notes: NextPageWithLayout<NotesProps> = (props) => {
             <div className='flex flex-row grow h-full'>
 
                 {/** Notes events */}
-                <div className='flex flex-col justify-start items-start h-full w-full px-6'>
-                    <div className='flex flex-row justify-center items-center w-full mt-4 mb-2'>
+                <div className='flex flex-col justify-start items-start h-fit w-full px-6'>
+                    <div className='flex flex-row justify-center items-center w-full mt-4 mb-6'>
                         <div className='flex grow justify-center items-center ml-10'>
                             <p className='cursor-default text-xl text-slate-200 font-bold'>Notes</p>
                         </div>
-                        {/* <div 
-                            className='group cursor-pointer flex justify-center items-center hover:bg-slate-800 w-30 h-30 rounded-lg duration-150 ease-in-out'
-                            onClick={() => handleCreateNotesPopupAppear()}
-                        >
-                            <img src= '/add_note.png' />
-                        </div> */}
+                    </div>
+                    <div 
+                        className='group cursor-pointer flex flex-row justify-center items-center hover:bg-slate-800 w-30 h-full rounded-lg duration-150 ease-in-out'
+                        onClick={() => handleCreateNotesPopupAppear()}
+                    >
+                        <picture>
+                            <source srcSet='/add_note.png' type='image/png' />
+                            <img src = 'add_note.png' alt='add note button'/>
+                        </picture>
                     </div>
                     {(notes.length === 0) ? 
                         null
-                        // <div className='flex grow justify-center items-center w-full'>
-                        //     {/** display no notes text if there are no notes */}
-                        //     <p className=''>No Notes</p>
-                        // </div> 
                         :
-                        <div className='flex flex-col grow justify-start items-center'>
+                        <div className='flex flex-col grow justify-start items-center h-full ml-40 mb-20 e-card e-card-horizontal'>
                             {/** display a card for each event */}
                             {notes.map((notes, index) => 
                                 <NotesDisplay id={id} notes={notes} EditNotes={handleEditNotesPopupAppear} success={handleDeleteNotesSuccess} key={index} />
                             )}
                         </div>
                     }
-                        <div 
-                            className='group cursor-pointer flex justify-start items-center hover:bg-slate-800 w-30 h-30 rounded-lg duration-150 ease-in-out'
-                            onClick={() => handleCreateNotesPopupAppear()}
-                        >
-                            <picture>
-                                <source srcSet='/add_note.png' type='image/png' />
-                                <img src = 'add_note.png' alt='add note button'/>
-                            </picture>
-                        </div>
                     <div className='flex flex-col justify-start items-center'></div>
                 </div>
 
