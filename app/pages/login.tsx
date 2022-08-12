@@ -3,7 +3,6 @@ import { Fragment } from 'react'
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Navbar from '../components/navbar'
-import zxcvbn from 'zxcvbn';
 import * as jose from 'jose';
 
 export async function getServerSideProps(context:any) {
