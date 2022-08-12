@@ -63,7 +63,7 @@ export async function getServerSideProps(context:any) {
         })));
 
         /** return page if email claim is in database with correct uuid */
-        if (result[0].email === payload['email']) {
+        if (result[0][0].email === payload['email']) {
             return {
                 props: {}
             };
