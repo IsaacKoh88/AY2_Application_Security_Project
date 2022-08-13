@@ -67,7 +67,7 @@ export async function getServerSideProps(context:any) {
         })));      
 
         const resultExpense = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ? AND DATE_FORMAT(Date, "%m-%y")=DATE_FORMAT(?, "%m-%y") order by Date desc, Name, Amount',
+            query: 'CALL selectExpenseData_DateDesc(?, ?)',
             values: [id, dayjs().format('YYYY-MM-DD')],
         })));
 
@@ -87,7 +87,7 @@ export async function getServerSideProps(context:any) {
                     ID: id,
                     Budget: resultBudget[0][0]['Budget'],
                     TotalExpense: totalExpense,
-                    Expense: resultExpense
+                    Expense: resultExpense[0]
                 }
             }
         } 

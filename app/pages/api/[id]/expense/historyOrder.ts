@@ -49,43 +49,43 @@ export default async function GetExpense(
         /** get expenses based on OrderBy */
         if (OrderBy == 'Date Ascending'){
             var result = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ? AND DATE_FORMAT(Date, "%m-%y")=DATE_FORMAT(?, "%m-%y") order by Date, Name, Amount',
+                query: 'CALL selectExpenseData_DateAsc(?, ?)',
                 values: [ID, Month],
             })));
         }
         else if (OrderBy == 'Date Descending'){
             var result = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ? AND DATE_FORMAT(Date, "%m-%y")=DATE_FORMAT(?, "%m-%y") order by Date desc, Name, Amount',
+                query: 'CALL selectExpenseData_DateDesc(?, ?)',
                 values: [ID, Month],
             })));
         }
         else if (OrderBy == 'Name Ascending'){
             var result = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ? AND DATE_FORMAT(Date, "%m-%y")=DATE_FORMAT(?, "%m-%y") order by Name, Date, Amount',
+                query: 'CALL selectExpenseData_NameAsc(?, ?)',
                 values: [ID, Month],
             })));
         }
         else if (OrderBy == 'Name Descending'){
             var result = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ? AND DATE_FORMAT(Date, "%m-%y")=DATE_FORMAT(?, "%m-%y") order by Name desc, Date, Amount',
+                query: 'CALL selectExpenseData_NameDesc(?, ?)',
                 values: [ID, Month],
             })));
         }
         else if (OrderBy == 'Amount Ascending'){
             var result = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ? AND DATE_FORMAT(Date, "%m-%y")=DATE_FORMAT(?, "%m-%y") order by Amount, Date, Name',
+                query: 'CALL selectExpenseData_AmountAsc(?, ?)',
                 values: [ID, Month],
             })));
         }
         else if (OrderBy == 'Amount Descending'){
             var result = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ? AND DATE_FORMAT(Date, "%m-%y")=DATE_FORMAT(?, "%m-%y") order by Amount desc, Date, Name',
+                query: 'CALL selectExpenseData_AmountDesc(?, ?)',
                 values: [ID, Month],
             })));
         }
         else{
             res.status(500).json({Result:[], totalExpense: totalExpense})
         }
-        res.status(200).json({ Result: result, totalExpense: totalExpense } )
+        res.status(200).json({ Result: result[0], totalExpense: totalExpense } )
     };
 };

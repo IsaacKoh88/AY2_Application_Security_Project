@@ -212,6 +212,12 @@ DROP PROCEDURE IF EXISTS selectCountTodoID;
 DROP PROCEDURE IF EXISTS selectTodoData_AccountID;
 DROP PROCEDURE IF EXISTS selectTotalExpenses;
 DROP PROCEDURE IF EXISTS selectCountExpenseID;
+DROP PROCEDURE IF EXISTS selectExpenseData_DateDesc;
+DROP PROCEDURE IF EXISTS selectExpenseData_DateAsc;
+DROP PROCEDURE IF EXISTS selectExpenseData_NameDesc;
+DROP PROCEDURE IF EXISTS selectExpenseData_NameAsc;
+DROP PROCEDURE IF EXISTS selectExpenseData_AmountDesc;
+DROP PROCEDURE IF EXISTS selectExpenseData_AmountAsc;
 DROP PROCEDURE IF EXISTS selectSumExpense_AccountID;
 DROP PROCEDURE IF EXISTS selectSumExpense_AccountID_Month;
 DROP PROCEDURE IF EXISTS selectExpenseData_Month;
@@ -350,31 +356,58 @@ BEGIN
     EXECUTE stmt USING @id;
     DEALLOCATE PREPARE stmt;
 END;
-CREATE PROCEDURE selectSumExpense_AccountID_Month (IN ID VARCHAR(36), Date DATE) BEGIN
-SET @ID = ID;
-SET @Date = Date;
-PREPARE stmt
-FROM 'SELECT sum(amount) TotalExpense FROM expense WHERE AccountId = ? AND DATE_FORMAT(Date, "%Y-%m") = DATE_FORMAT(?, "%Y-%m")';
-EXECUTE stmt USING @ID,
-@Date;
-DEALLOCATE PREPARE stmt;
+CREATE PROCEDURE selectExpenseData_DateDesc (IN ID VARCHAR(36), Date DATE) BEGIN
+    SET @ID = ID;
+    SET @Date = Date;
+    PREPARE stmt FROM 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ? AND DATE_FORMAT(Date, "%m-%y")=DATE_FORMAT(?, "%m-%y") order by Date desc, Name, Amount LIMIT 300';
+    EXECUTE stmt USING @ID, @Date;
+    DEALLOCATE PREPARE stmt;
 END;
+CREATE PROCEDURE selectExpenseData_DateAsc (IN ID VARCHAR(36), Date DATE) BEGIN
+    SET @ID = ID;
+    SET @Date = Date;
+    PREPARE stmt FROM 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ? AND DATE_FORMAT(Date, "%m-%y")=DATE_FORMAT(?, "%m-%y") order by Date, Name, Amount LIMIT 300';
+    EXECUTE stmt USING @ID, @Date;
+    DEALLOCATE PREPARE stmt;
+END;
+CREATE PROCEDURE selectExpenseData_NameDesc (IN ID VARCHAR(36), Date DATE) BEGIN
+    SET @ID = ID;
+    SET @Date = Date;
+    PREPARE stmt FROM 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ? AND DATE_FORMAT(Date, "%m-%y")=DATE_FORMAT(?, "%m-%y") order by Name desc, Date, Amount LIMIT 300';
+    EXECUTE stmt USING @ID, @Date;
+    DEALLOCATE PREPARE stmt;
+END;
+CREATE PROCEDURE selectExpenseData_NameAsc (IN ID VARCHAR(36), Date DATE) BEGIN
+    SET @ID = ID;
+    SET @Date = Date;
+    PREPARE stmt FROM 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ? AND DATE_FORMAT(Date, "%m-%y")=DATE_FORMAT(?, "%m-%y") order by Name, Date, Amount LIMIT 300';
+    EXECUTE stmt USING @ID, @Date;
+    DEALLOCATE PREPARE stmt;
+END;
+CREATE PROCEDURE selectExpenseData_AmountDesc (IN ID VARCHAR(36), Date DATE) BEGIN
+    SET @ID = ID;
+    SET @Date = Date;
+    PREPARE stmt FROM 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ? AND DATE_FORMAT(Date, "%m-%y")=DATE_FORMAT(?, "%m-%y") order by Amount desc, Date, Name LIMIT 300';
+    EXECUTE stmt USING @ID, @Date;
+    DEALLOCATE PREPARE stmt;
+END;
+CREATE PROCEDURE selectExpenseData_AmountAsc (IN ID VARCHAR(36), Date DATE) BEGIN
+    SET @ID = ID;
+    SET @Date = Date;
+    PREPARE stmt FROM 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ? AND DATE_FORMAT(Date, "%m-%y")=DATE_FORMAT(?, "%m-%y") order by Amount, Date, Name LIMIT 300';
+    EXECUTE stmt USING @ID, @Date;
+    DEALLOCATE PREPARE stmt;
+END;
+
 CREATE PROCEDURE selectExpenseData_Month (IN AccountID VARCHAR(36), Date Date) BEGIN
 SET @AccountID = AccountID;
 SET @Date = Date;
 PREPARE stmt
 FROM 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ? AND DATE_FORMAT(Date, "%Y-%m") = DATE_FORMAT(?, "%Y-%m") LIMIT 300';
-EXECUTE stmt USING @AccountID,
-@Date;
+EXECUTE stmt USING @AccountID, @Date;
 DEALLOCATE PREPARE stmt;
 END;
-CREATE PROCEDURE selectSumExpense_AccountID (IN ID VARCHAR(36)) BEGIN
-SET @ID = ID;
-PREPARE stmt
-FROM 'SELECT sum(amount) TotalExpense FROM expense WHERE AccountId = ?';
-EXECUTE stmt USING @ID;
-DEALLOCATE PREPARE stmt;
-END;
+
 CREATE PROCEDURE selectBudget_AccountID (IN AccountID VARCHAR(36)) BEGIN
 SET @AccountID = AccountID;
 PREPARE stmt

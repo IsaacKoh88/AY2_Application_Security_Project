@@ -68,7 +68,7 @@ export async function getServerSideProps(context:any) {
         })));
 
         const resultExpense = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'CALL selectExpenseData_Month(?, ?)',
+            query: 'CALL selectExpenseData_DateDesc(?, ?)',
             values: [id, dayjs().format('YYYY-MM-DD')],
         })));
 

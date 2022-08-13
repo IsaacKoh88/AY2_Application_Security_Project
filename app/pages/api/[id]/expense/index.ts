@@ -32,7 +32,7 @@ export default async function GetExpense(
 
         /** get expenses */
         const result = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'CALL selectExpenseData_Month(?, ?)',
+            query: 'CALL selectExpenseData_DateDesc(?, ?)',
             values: [req.query.id, date],
         })));
 

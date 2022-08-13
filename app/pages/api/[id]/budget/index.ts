@@ -28,7 +28,7 @@ export default async function GetBudget(
 
         /* get budget */
         const result = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'SELECT Budget FROM budget WHERE AccountID=?',
+            query: 'CALL selectBudget_AccountID(?)',
             values: [req.query.id],
         })));
 
@@ -53,7 +53,7 @@ export default async function GetBudget(
             var circleStyle = 'red'
         }
 
-        res.status(200).json({ Budget: result[0].Budget, circleStyle: circleStyle })
+        res.status(200).json({ Budget: result[0][0].Budget, circleStyle: circleStyle })
 
     };
 };

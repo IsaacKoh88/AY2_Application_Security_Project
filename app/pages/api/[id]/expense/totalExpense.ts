@@ -34,7 +34,7 @@ export default async function GetExpense(
         })));
 
         const resultBudget = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'SELECT Budget FROM budget WHERE AccountID=?',
+            query: 'CALL selectBudget_AccountID(?)',
             values: [req.query.id],
         })));
 
@@ -43,7 +43,7 @@ export default async function GetExpense(
             totalExpense = result[0][0]['TotalExpense']
         }
 
-        const expenseDifference = resultBudget[0].Budget - totalExpense
+        const expenseDifference = resultBudget[0][0].Budget - totalExpense
         if (expenseDifference == 0){
             var circleStyle = 'blue'
         }
