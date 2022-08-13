@@ -1,4 +1,7 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment } from 'react';
+import { useState } from 'react'
+
+
 
 const EditNotes = ({ id, notes, success, close }) => {
     const [noteName, setNoteName] = useState(notes.Name);
