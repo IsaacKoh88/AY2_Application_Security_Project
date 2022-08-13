@@ -18,7 +18,7 @@ import executeQuery from '../../utils/connections/db';
 import * as jose from 'jose';
 import useSWR from 'swr';
 import fetcher from '../../utils/swr/swr-fetcher';
-import redisClient from '../../utils/connections/redis';
+import tokenBlacklistCheck from '../../utils/check-blacklist-token';
 
 type TodoProps = {
     ID: string,
@@ -58,11 +58,7 @@ export async function getServerSideProps(context:any) {
         );
 
         /** check if JWT token is blacklisted */
-        await redisClient.connect();
-        const keyBlacklisted = await redisClient.exists('bl_'+context.req.cookies['token']);
-        await redisClient.disconnect();
-
-        if (keyBlacklisted) {
+        if (await tokenBlacklistCheck(context.req.cookies['token'])) {
             return {
                 redirect: {
                     destination: '/login',

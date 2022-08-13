@@ -27,16 +27,16 @@ const LogoutHandler = async (
     try {
         /** adds jwt to redis blacklist */
         if (req.cookies['token']) {
-            await redisClient.connect();
-            await redisClient.set(
-                ('bl_' + req.cookies['token']), 
-                req.cookies['token'], 
-                {
-                    EX: 60*60,
-                    NX: true
-                }
-            );
-            await redisClient.disconnect();
+            await redisClient.executeIsolated(async isolatedClient => {
+                await isolatedClient.set(
+                    ('bl_'+req.cookies['token']), 
+                    req.cookies['token']!,
+                    {
+                        EX: 60*60,
+                        NX: true
+                    }
+                );
+            })
             res.status(200).json({ message: 'success' })
             return
         } else {

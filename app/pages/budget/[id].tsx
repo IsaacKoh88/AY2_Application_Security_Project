@@ -9,7 +9,7 @@ import Layout from '../../components/layouts/authenticated-layout';
 import dayjs from 'dayjs';
 import executeQuery from '../../utils/connections/db';
 import * as jose from 'jose';
-import redisClient from '../../utils/connections/redis';
+import tokenBlacklistCheck from '../../utils/check-blacklist-token';
 
 type ExpenseProps = {
     ID: string;
@@ -48,11 +48,7 @@ export async function getServerSideProps(context:any) {
                     .then(value => {return(value['payload']['email'])});
 
         /** check if JWT token is blacklisted */
-        await redisClient.connect();
-        const keyBlacklisted = await redisClient.exists('bl_'+context.req.cookies['token']);
-        await redisClient.disconnect();
-
-        if (keyBlacklisted) {
+        if (await tokenBlacklistCheck(context.req.cookies['token'])) {
             return {
                 redirect: {
                     destination: '/login',

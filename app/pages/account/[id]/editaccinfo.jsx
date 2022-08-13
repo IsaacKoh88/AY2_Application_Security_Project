@@ -2,7 +2,7 @@ import { Fragment } from 'react'
 import Head from 'next/head'
 import Navbar from '../../../components/navbar'
 import executeQuery from '../../../utils/connections/db'
-import redisClient from '../../../utils/connections/redis'
+import tokenBlacklistCheck from '../../../utils/check-blacklist-token'
 import { useState } from 'react'
 import * as jose from 'jose'
 import React, { Component } from 'react'
@@ -29,11 +29,7 @@ export async function getServerSideProps(context) {
             .then(value => { return (value['payload']['email']) });
 
         /** check if JWT token is blacklisted */
-        await redisClient.connect();
-        const keyBlacklisted = await redisClient.exists('bl_'+context.req.cookies['token']);
-        await redisClient.disconnect();
-
-        if (keyBlacklisted) {
+        if (await tokenBlacklistCheck(context.req.cookies['token'])) {
             return {
                 redirect: {
                     destination: '/login',

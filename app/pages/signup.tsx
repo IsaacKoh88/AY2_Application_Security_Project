@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import Navbar from '../components/navbar'
 import zxcvbn from 'zxcvbn';
 import * as jose from 'jose';
-import redisClient from '../utils/connections/redis'
+import tokenBlacklistCheck from '../utils/check-blacklist-token'
 
 export async function getServerSideProps(context:any) {
     try {
@@ -21,11 +21,7 @@ export async function getServerSideProps(context:any) {
         );
 
         /** check if JWT token is blacklisted */
-        await redisClient.connect();
-        const keyBlacklisted = await redisClient.exists('bl_'+context.req.cookies['token']);
-        await redisClient.disconnect();
-
-        if (keyBlacklisted) {
+        if (await tokenBlacklistCheck(context.req.cookies['token'])) {
             throw 401
         }
 

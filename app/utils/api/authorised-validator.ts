@@ -3,6 +3,7 @@ import executeQuery from '../connections/db';
 import inputFormat from "../input-format";
 import * as jose from 'jose';
 import redisClient from '../connections/redis';
+import tokenBlacklistCheck from "../check-blacklist-token";
 
 const authorisedValidator = async (
     req: NextApiRequest,
@@ -10,11 +11,7 @@ const authorisedValidator = async (
     try {
         const JWTtoken:string = req.cookies['token']!;
 
-        await redisClient.connect();
-        const keyBlacklisted = await redisClient.exists('bl_'+req.cookies['token']);
-        await redisClient.disconnect();
-
-        if (keyBlacklisted) {
+        if (await tokenBlacklistCheck(req.cookies['token']!)) {
             throw 401
         }
 
