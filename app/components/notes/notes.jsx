@@ -1,38 +1,28 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Fragment } from 'react';
-import Image from 'next/image';
 
-const NotesDisplay = ({ id, notes, EditNotes, success }) => {
-    // const [expand, setExpand] = useState(false);
-
-    // /** toggle event description display */
-    // const handleClickDetails = () => {
-    //     setExpand(!expand);
-    // };
-
-    // console.log(notes)
+const NotesDisplay = ({ id, notes, EditNotes }) => {
     return (
-
         <Fragment>
-            <Image
-                src = '/note.png'
-                alt = 'note button'
-                width = {500}
-                height = {500}
-            />
-            <Link href={'/notesinfo/' + id + '/' + notes.ID}>
-                <div className='group cursor-pointer flex flex-col justify-start items-center w-fit mb-1 px-3 py-0 my-0 rounded-lg transition-max-h duration-300 ease-in-out overflow-hidden'>
-                    <picture>
-                        <source srcSet='/note.png' type='image/png' />
-                        <img src = 'note.png' alt='note button' />
-                    </picture>
-                    <div className='flex flex-row justify-center items-center w-full'>
-                        <p className='font-semibold duration-300 ease-linear'>{notes.Name}</p>
+            <div className='cursor-pointer group flex flex-col justify-center items-center bg-slate-800/50 hover:bg-slate-800/100 h-60 w-52 m-3 rounded-lg duration-150'>
+                <Link href={`/notes/${id}/${notes.ID}`}>
+                    <div className='flex-grow pt-2 px-2'></div>
+                </Link>
+                <div className='flex flex-row justify-between items-center w-full'>
+                    <Link href={`/notes/${id}/${notes.ID}`}>
+                        <p className='font-semibold group-hover:text-white pt-1 pl-3.5 pr-2 pb-2 duration-150'>{ notes.Name }</p>
+                    </Link>
+                    <div className='pt-1 pb-2 pr-2'>
+                        <div 
+                            className='flex justify-center items-center bg-transparent hover:bg-slate-700 h-7 w-7 rounded'
+                            onClick={() => EditNotes(notes.ID)}
+                        >
+                            <i className='gg-more group-hover:text-white duration-150 ease-in-out'></i>
+                        </div>
                     </div>
-
                 </div>
-            </Link>
+            </div>
         </Fragment>
     );
 };

@@ -16,28 +16,31 @@ export default async function CreateNotes(
         /** check user authorisation */
         await authorisedValidator(req, res); 
 
-        /** deconstruct body data */
-        const { notesName, description} = req.body;
-
-        console.log(req.query.id)
-
         /** generate uuidv4 */
         const id = uuidv4();
 
-        /* insert data into notes table */
-        const result = await executeQuery({
-            query: 'INSERT INTO notes VALUES(?, ?, ?, ?)',
-            values: [req.query.id, id, notesName, description],
-        });
+        /** generate base data */
+        const notesName = 'Untitled';
+        const description = '';
 
-        res.statusCode = 201;
-        res.end('Error');
-        return
+        try {
+            /* insert data into notes table */
+            const result = await executeQuery({
+                query: 'INSERT INTO notes VALUES(?, ?, ?, ?)',
+                values: [req.query.id, id, notesName, description],
+            });
+
+            res.status(201).json({ message: 'success' })
+            return
+        }
+        catch (error) {
+            res.status(500)
+            return
+        }
     }
     /* rejects requests that are empty */
     else if (!req.body) {
         res.statusCode = 405;
-        res.end('Error');
         return
     }
 }

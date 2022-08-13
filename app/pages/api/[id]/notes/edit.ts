@@ -18,11 +18,19 @@ export default async function EditNotes(
         /** deconstruct body data */
         const { notesID, notesName, description } = req.body;
 
-        /* insert data into notes table */
-        const result = await executeQuery({
-            query: 'UPDATE notes SET Name=?, description=? WHERE AccountID=? AND ID=?',
-            values: [notesName, description, req.query.id, notesID],
-        });
+        if (description) {
+            /* insert data into notes table */
+            const result = await executeQuery({
+                query: 'UPDATE notes SET Name=?, description=? WHERE AccountID=? AND ID=?',
+                values: [notesName, description, req.query.id, notesID],
+            });
+        } else {
+            /* insert data into notes table */
+            const result = await executeQuery({
+                query: 'UPDATE notes SET Name=? WHERE AccountID=? AND ID=?',
+                values: [notesName, req.query.id, notesID],
+            });
+        }
 
         res.status(201).json({ message: 'success' })
         return

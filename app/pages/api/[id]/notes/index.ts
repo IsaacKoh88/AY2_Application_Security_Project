@@ -12,15 +12,15 @@ export default async function GetEvent(
     res: NextApiResponse<Data>
 ) {
     /* accepts only GET requests and non-empty requests */
-    if ((req.method == 'POST') && (req.cookies['token'])) {
+    if ((req.method == 'GET') && (req.cookies['token'])) {
         /** check user authorisation */
         await authorisedValidator(req, res);
 
         /* insert data into notes table */
-        const result = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'SELECT ID, Name, Description FROM notes WHERE AccountID=?',
+        const result = await executeQuery({
+            query: 'SELECT ID, Name FROM notes WHERE AccountID=?',
             values: [req.query.id],
-        })));
+        });
 
         res.status(200).json(result)
         return
