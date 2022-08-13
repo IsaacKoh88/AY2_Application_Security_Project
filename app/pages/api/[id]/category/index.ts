@@ -1,12 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import executeQuery from '../../../../utils/db'
-import authorisedValidator from '../../../../utils/authorised-validator';
+import executeQuery from '../../../../utils/connections/db'
+import authorisedValidator from '../../../../utils/api/authorised-validator';
+import apiErrorHandler from '../../../../utils/api/api-error-handler';
 
 type Data = {
     ID: string,
     Name: string,
     Color: string
-}[]
+}[] | {
+    message: string
+}
 
 export default async function GetCategory(
     req: NextApiRequest,
@@ -14,8 +17,14 @@ export default async function GetCategory(
 ) {
     /* accepts only GET requests and non-empty requests */
     if ((req.method == 'GET') && (req.cookies['token'])) {
-        /** check user authorisation */
-        await authorisedValidator(req, res);
+        try {
+            /** check user authorisation */
+            await authorisedValidator(req);
+        }
+        catch (error) {
+            apiErrorHandler(error, res);
+            return
+        }
 
         /* get data from table */
         const result = JSON.parse(JSON.stringify(await executeQuery({

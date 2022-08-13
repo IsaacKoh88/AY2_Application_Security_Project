@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import executeQuery from '../../../../utils/db'
-import authorisedValidator from '../../../../utils/authorised-validator';
+import executeQuery from '../../../../utils/connections/db'
+import authorisedValidator from '../../../../utils/api/authorised-validator';
+import apiErrorHandler from '../../../../utils/api/api-error-handler';
 
 type Data = {
     message: string
@@ -12,8 +13,14 @@ export default async function EditBudget(
 ) {
     /* accepts only POST requests and non-empty requests */
     if ((req.method == 'POST') && (req.body) && (req.cookies['token'])) {
-        /** check user authorisation */
-        await authorisedValidator(req, res);
+        try {
+            /** check user authorisation */
+            await authorisedValidator(req);
+        }
+        catch (error) {
+            apiErrorHandler(error, res);
+            return
+        }
 
         /** deconstruct body data */
         const { accountID, budget } = req.body;

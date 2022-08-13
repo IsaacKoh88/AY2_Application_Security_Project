@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server';
-import executeQuery from './utils/db';
+import executeQuery from './utils/connections/db';
 import * as jose from 'jose';;
 
 // This function can be marked `async` if using `await` inside

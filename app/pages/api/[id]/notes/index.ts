@@ -1,28 +1,44 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import executeQuery from '../../../../utils/db'
-import authorisedValidator from '../../../../utils/authorised-validator';
+import executeQuery from '../../../../utils/connections/db'
+import authorisedValidator from '../../../../utils/api/authorised-validator';
+import getValidator from '../../../../utils/api/get-validator';
+import apiErrorHandler from '../../../../utils/api/api-error-handler';
+import inputFormat from '../../../../utils/input-format';
 
 type Data = {
     ID: string,
     Name: string,
-}[]
+}[] | {
+    message: string
+}
 
 export default async function GetEvent(
     req: NextApiRequest,
     res: NextApiResponse<Data>
 ) {
-    /* accepts only GET requests and non-empty requests */
-    if ((req.method == 'POST') && (req.cookies['token'])) {
+    try {
         /** check user authorisation */
-        await authorisedValidator(req, res);
+        await authorisedValidator(req);
 
-        /* insert data into notes table */
-        const result = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'SELECT ID, Name, Description FROM notes WHERE AccountID=?',
-            values: [req.query.id],
-        })));
+        /** check if request is POST */
+        await getValidator(req);
 
-        res.status(200).json(result)
+        /** validate if request params are correct */
+        if (!new inputFormat().validateuuid(req.query.id)) {
+            throw 400
+        }
+    }
+    catch (error) {
+        apiErrorHandler(error, res);
         return
-    };
+    }
+
+    /* insert data into notes table */
+    const result = JSON.parse(JSON.stringify(await executeQuery({
+        query: 'CALL selectNoteName_AccountID(?)',
+        values: [req.query.id],
+    })));
+
+    res.status(200).json(result[0])
+    return
 };

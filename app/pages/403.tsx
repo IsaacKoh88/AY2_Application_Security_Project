@@ -3,7 +3,7 @@ import { Fragment } from 'react'
 import Head from 'next/head'
 import Navbar from '../components/navbar'
 import Link from 'next/link'
-import executeQuery from '../utils/db';
+import executeQuery from '../utils/connections/db';
 import * as jose from 'jose';
 import Image from 'next/image'
 

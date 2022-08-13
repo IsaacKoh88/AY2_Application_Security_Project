@@ -5,7 +5,6 @@ import executeQuery from '../../../utils/db'
 import { useState } from 'react'
 import * as jose from 'jose'
 import React, { Component } from 'react'
-import axios from 'axios';
 import { UiFileInputButton } from '../../../components/UiFileInputButton';
 import { uploadFileRequest } from '../../../components/upload.services';
 export async function getServerSideProps(context) {
@@ -63,66 +62,6 @@ export async function getServerSideProps(context) {
     }
 }
 
-// class App extends Component {
-//     // Initially, no file is selected
-//     state = { selectedFile: null };
-
-//     // On file select (from the pop up)
-//     // Update the state 
-//     onFileChange = event => { this.setState({ selectedFile: event.target.files[0] }); };
-
-//     // On file upload (click the upload button)
-//     onFileUpload = () => {
-//         // Create an object of formData
-//         const formData = new FormData();
-//         // Update the formData object
-//         formData.append("myFile", this.state.selectedFile, this.state.selectedFile.name);
-
-//         // Details of the uploaded file
-//         console.log(this.state.selectedFile);
-//         console.log(formData);
-//         // Request made to the backend api
-//         // Send formData object
-//         axios.post("api/uploadfile", formData);
-//     };
-
-//     // File content to be displayed after
-//     // file upload is complete
-//     fileData = () => {
-//         if (this.state.selectedFile) {
-//             return (
-//                 <div>
-//                     <h2>File Details:</h2>
-//                     <p>File Name: {this.state.selectedFile.name}</p>
-//                     <p>File Type: {this.state.selectedFile.type}</p>
-//                     <p> Last Modified:{" "} {this.state.selectedFile.lastModifiedDate.toDateString()} </p>
-//                 </div>
-//             );
-//         } else {
-//             return (
-//                 <div>
-//                     <br />
-//                     <h4>Choose before Pressing the Upload button</h4>
-//                 </div>
-//             );
-//         }
-//     };
-
-//     render() {
-//         return (
-//             <div>
-//                 <h1>GeeksforGeeks</h1>
-//                 <h3>File Upload using React!</h3>
-//                 <div><input type="file" onChange={this.onFileChange} /><button onClick={this.onFileUpload}> Upload!</button>
-//                 </div>
-//                 {this.fileData()}
-//             </div>
-//         );
-//     }
-// }
-
-// export default App;
-
 const ChangePFP = ({ id }) => {
 
     {/** Calls API on form submit */ }
@@ -136,7 +75,6 @@ const ChangePFP = ({ id }) => {
         })
     }
     const [Image, setImage] = useState('')
-
     const [username, SetUsername] = useState('')
     const [address, SetAddress] = useState('')
 
@@ -146,8 +84,9 @@ const ChangePFP = ({ id }) => {
             console.log(`Current progress:`, Math.round((event.loaded * 100) / event.total));
         });
 
-        setImage(imagename)
-        console.log(imagename)
+        setImage(response.data[0])
+        console.log("magename", imagename)
+        console.log("image", Image)
 
         console.log('response', response);
     };
@@ -165,19 +104,10 @@ const ChangePFP = ({ id }) => {
 
                 <div className='container flex justify-center items-center flex-grow'>
                     <div className='flex flex-col justify-start bg-slate-800 items-start h-fit w-[500px] bg-white rounded-2xl p-5 mb-8'>
-                        <UiFileInputButton label="Upload Single File" onChange={onChange} />
+                        <p className='text-lg text-slate-900 ml-0.5 mb-1 font-bold text-white'>New Profile Picture: </p>
+                        <UiFileInputButton label="Upload Image" uploadFileName="theFiles" onChange={onChange} />
 
                         <form className='flex flex-col flex-grow w-full'>
-                            {/* <label className='text-lg text-slate-900 ml-0.5 mb-1 font-bold text-white' htmlFor="profilepic">New Profile Picture:</label>
-                            <input
-                                className='text-white hover:text-slate-800 bg-slate-700 text-opacity-50 focus:border-blue-600 rounded-lg p-2 mb-2'
-                                type='file'
-                                id='profilepic'
-                                name='profilepic'
-                                accept="image/*"
-                                onChange={e => onFileUpload(e)}
-                            //required
-                            /> */}
                             <label className='text-lg text-slate-900 ml-0.5 mb-1 font-bold text-white' htmlFor="newuser">New Username:</label>
                             <input
                                 type='text'
@@ -187,7 +117,7 @@ const ChangePFP = ({ id }) => {
                                 placeholder='New Username'
                                 value={username}
                                 onChange={e => SetUsername(e.target.value)}
-                            //required
+                                required
                             />
                             <label className='text-lg text-slate-900 ml-0.5 mb-1 font-bold text-white' htmlFor="newaddress">Set Address:</label>
                             <input
@@ -198,10 +128,9 @@ const ChangePFP = ({ id }) => {
                                 placeholder='New Address'
                                 value={address}
                                 onChange={e => SetAddress(e.target.value)}
-                            //required
+                                required
                             />
                             <button className='text-white bg-blue-600 rounded-md p-2' type='submit' onClick={FormSubmitHandler}>Submit</button>
-                            {/* <img src={this.state.image} /> */}
                         </form>
 
                     </div>

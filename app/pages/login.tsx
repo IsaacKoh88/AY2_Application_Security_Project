@@ -35,28 +35,6 @@ export async function getServerSideProps(context:any) {
 }
 
 const Login: NextPage = () => {
-
-    //
-    const [isButtonEnabled] = useState<boolean>(true);
-
-    //styling
-    const styles = {
-        button: {
-            padding: "15px 30px",
-            cursor: "pointer",
-            background: "#1E88E5",
-            color: "#fff",
-            fontWeight: "bold",
-            border: "none",
-            borderRadius: "30px",
-        },
-        loginButton: {
-            cursor: "pointer",
-            opacity: 1,
-        },
-    }
-
-
     return (
         <Fragment>
             <Head>
@@ -89,13 +67,7 @@ const Login: NextPage = () => {
 
                             />
                             {/* <button className='text-white bg-blue-600 rounded-md p-2' type='submit'>Login</button> */}
-                            <button
-                                style={
-                                    isButtonEnabled
-                                        ? { ...styles.button, ...styles.loginButton }
-                                        : styles.button
-                                    }
-                                >
+                            <button className='cursor-pointer bg-blue-600 py-4 px-7 rounded-3xl text-white font-bold'>
                                     CONTINUE
                             </button>
 

@@ -100,60 +100,26 @@ DROP PROCEDURE IF EXISTS insertEventData;
 DROP PROCEDURE IF EXISTS insertTodoData;
 DROP PROCEDURE IF EXISTS insertExpenseData;
 DROP PROCEDURE IF EXISTS inserTNotesData;
-CREATE PROCEDURE insertAccountData (IN email VARCHAR(255), IN password VARCHAR(255)) BEGIN
-SET @email = email;
-SET @password = password;
-SET @address = NULL;
-SET @username = NULL;
-SET @image = NULL;
-SET @ID = uuid_v4s();
-PREPARE stmt
-FROM 'SELECT count(*) FROM account where id=? INTO @count';
-EXECUTE stmt USING @ID;
-DEALLOCATE PREPARE stmt;
-WHILE (@count = 1) DO
-SET @ID = uuid_v4s();
-PREPARE stmt
-FROM 'SELECT count(*) FROM account where id=? INTO @count';
-EXECUTE stmt USING @ID;
-DEALLOCATE PREPARE stmt;
-END WHILE;
-PREPARE stmt
-FROM 'INSERT INTO account VALUES (?, ?, ?, ?, ?, ?)';
-EXECUTE stmt USING @ID,
-@email,
-@password,
-@username,
-@address,
-@image;
-DEALLOCATE PREPARE stmt;
-SET @budget = 1000;
-PREPARE stmt
-FROM 'INSERT INTO budget VALUES(?, ?)';
-EXECUTE stmt USING @ID,
-@budget;
-DEALLOCATE PREPARE stmt;
+
+CREATE PROCEDURE insertAccountData (IN id VARCHAR(36), email VARCHAR(255), password VARCHAR(255)) BEGIN
+    SET @id = id;
+    SET @email = email;
+    SET @password = password;
+    SET @address = NULL;
+    SET @username = NULL;
+    SET @image = NULL;
+
+    PREPARE stmt
+    FROM 'INSERT INTO account VALUES (?, ?, ?, ?, ?, ?)';
+    EXECUTE stmt USING @id, @email, @password, @username, @address, @image;
+    DEALLOCATE PREPARE stmt;
+
+    SET @budget = 1000;
+    PREPARE stmt
+    FROM 'INSERT INTO budget VALUES(?, ?)';
+    EXECUTE stmt USING @id, @budget;
+    DEALLOCATE PREPARE stmt;
 END;
-
--- CREATE PROCEDURE insertAccountData (IN id VARCHAR(36), email VARCHAR(255), password VARCHAR(255), address VARCHAR(255), username VARCHAR(255), image VARCHAR(255)) BEGIN
---     SET @id = id
---     SET @email = email;
---     SET @password = password;
---     SET @address = NULL;
---     SET @username = NULL;
---     SET @image = NULL;
-
---     PREPARE stmt
---     FROM 'INSERT INTO account VALUES (?, ?, ?, ?, ?, ?)';
---     EXECUTE stmt USING @id, @email, @password, @username, @address, @image;
---     DEALLOCATE PREPARE stmt;
-
---     SET @budget = 1000;
---     PREPARE stmt
---     FROM 'INSERT INTO budget VALUES(?, ?)';
---     EXECUTE stmt USING @id, @budget;
---     DEALLOCATE PREPARE stmt;
--- END;
 
 CREATE PROCEDURE insertExpenseData (
     IN AccountID VARCHAR(36),
@@ -252,6 +218,8 @@ DROP PROCEDURE IF EXISTS selectExpenseHistory;
 DROP PROCEDURE IF EXISTS selectTotalNotes;
 DROP PROCEDURE IF EXISTS selectCountNoteID;
 DROP PROCEDURE IF EXISTS selectNoteData_AccountID;
+DROP PROCEDURE IF EXISTS selectNoteName_AccountID;
+DROP PROCEDURE IF EXISTS selectNoteNameDesription_AccountID_ID;
 
 CREATE PROCEDURE selectEmail_Id (IN id VARCHAR(36)) 
 BEGIN
@@ -278,11 +246,11 @@ BEGIN
     EXECUTE stmt USING @id;
     DEALLOCATE PREPARE stmt;
 END;
-CREATE PROCEDURE selectAccountData_AccountID (IN id VARCHAR(36)) 
+CREATE PROCEDURE selectAccountData_ID (IN id VARCHAR(36)) 
 BEGIN
     SET @id = id;
     PREPARE stmt
-    FROM 'SELECT  username, address, image FROM account WHERE id=?';
+    FROM 'SELECT username, address, image FROM account WHERE id=?';
     EXECUTE stmt USING @id;
     DEALLOCATE PREPARE stmt;
 END;
@@ -428,10 +396,28 @@ BEGIN
     EXECUTE stmt USING @accountID;
     DEALLOCATE PREPARE stmt;
 END;
+CREATE PROCEDURE selectNoteName_AccountID (IN accountID VARCHAR(36)) 
+BEGIN
+    SET @accountID = accountID;
+    PREPARE stmt
+    FROM 'SELECT ID, Name FROM notes WHERE AccountID=?';
+    EXECUTE stmt USING @accountID;
+    DEALLOCATE PREPARE stmt;
+END;
+CREATE PROCEDURE selectNoteNameDesription_AccountID_ID (IN accountID VARCHAR(36), id VARCHAR(36)) 
+BEGIN
+    SET @accountID = accountID;
+    SET @id = id;
+    PREPARE stmt
+    FROM 'SELECT Name, Description FROM notes WHERE AccountID = ? AND ID = ?';
+    EXECUTE stmt USING @accountID, @id;
+    DEALLOCATE PREPARE stmt;
+END;
 
 -- @block
 -- Consists of stored procedure that update data
-DROP PROCEDURE IF EXISTS updateAccount;
+DROP PROCEDURE IF EXISTS updateAccountPassword;
+DROP PROCEDURE IF EXISTS updateAccountInfo;
 DROP PROCEDURE IF EXISTS updateCategory;
 DROP PROCEDURE IF EXISTS updateEvent;
 DROP PROCEDURE IF EXISTS updateTodo;
@@ -441,37 +427,28 @@ DROP PROCEDURE IF EXISTS updateExpense;
 DROP PROCEDURE IF EXISTS updateNotes;
 
 
-CREATE PROCEDURE updateAccount (
-    IN hashedPassword VARCHAR(255),
-    id VARCHAR(36),
-    email VARCHAR(255)
-) 
+CREATE PROCEDURE updateAccountPassword (IN hashedPassword VARCHAR(255), id VARCHAR(36), email VARCHAR(255)) 
 BEGIN
     SET @hashedPassword = hashedPassword;
     SET @id = id;
     SET @email = email;
-    PREPARE stmt
-    FROM 'UPDATE account SET password=? WHERE id=? AND email=?';
-    EXECUTE stmt using @hashedPassword,
-    @id,
-    @email;
+    
+    PREPARE stmt FROM 'UPDATE account SET password=? WHERE id=? AND email=?';
+    EXECUTE stmt using @hashedPassword, @id, @email,
     DEALLOCATE PREPARE stmt;
 END;
 
--- CREATE PROCEDURE updateAccount (IN id VARCHAR(36), email VARCHAR(255), hashedPassword VARCHAR(255), username VARCHAR(36), address VARBINARY(255), image VARCHAR(255)) 
--- BEGIN
---     SET @id = id;
---     SET @email = email;
---     SET @hashedPassword = hashedPassword;
---     SET @username = username;
---     SET @address = address;
---     SET @image = image;    
+CREATE PROCEDURE updateAccountInfo (IN id VARCHAR(36), username VARCHAR(36), address VARBINARY(255), image VARCHAR(255)) 
+BEGIN
+    SET @id = id;
+    SET @username = username;
+    SET @address = address;
+    SET @image = image;    
     
---     PREPARE stmt
---     FROM 'UPDATE account SET password=?, username=?, address=?, image=? WHERE id=? AND email=?';
---     EXECUTE stmt using @hashedPassword, @username, @address, @image, @id, @email;
---     DEALLOCATE PREPARE stmt;
--- END;
+    PREPARE stmt FROM 'UPDATE account SET username=?, address=?, image=? WHERE id=?';
+    EXECUTE stmt using @username, @address, @image, @id;
+    DEALLOCATE PREPARE stmt;
+END;
 
 CREATE PROCEDURE updateCategory (IN accountID VARCHAR(36), ID VARCHAR(36), categoryName VARCHAR(255), categoryColor VARCHAR(36))
 BEGIN
@@ -534,6 +511,18 @@ BEGIN
     PREPARE stmt
     FROM 'UPDATE notes SET Name=?, Description=? WHERE AccountID=? AND ID=?';
     EXECUTE stmt using @name, @description, @accountID, @id;
+    DEALLOCATE PREPARE stmt;
+END;
+
+CREATE PROCEDURE updateNotesName (IN accountID VARCHAR(36), id VARCHAR(36), name VARCHAR(255)) 
+BEGIN
+    SET @accountID = accountID;
+    SET @id = id;
+    SET @name = name;
+    
+    PREPARE stmt
+    FROM 'UPDATE notes SET Name=? WHERE AccountID=? AND ID=?';
+    EXECUTE stmt using @name, @accountID, @id;
     DEALLOCATE PREPARE stmt;
 END;
 

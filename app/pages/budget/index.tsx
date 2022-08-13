@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import executeQuery from "../../utils/db";
+import executeQuery from "../../utils/connections/db";
 import * as jose from 'jose';
 
 export async function getServerSideProps(context:any) {
@@ -22,10 +22,10 @@ export async function getServerSideProps(context:any) {
                     .then(value => {return(value['payload']['email'])});
 
         /** check if email is the same as the one in the id of URL */
-        const result = await executeQuery({
+        const result = JSON.parse(JSON.stringify(await executeQuery({
             query: 'CALL selectId_Email(?)',
             values: [email],
-        });
+        })));
 
         if (result[0][0] !== undefined) {
             /** redirect user to their calendar page if credentials are correct */

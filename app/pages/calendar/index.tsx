@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import executeQuery from "../../utils/db";
+import executeQuery from "../../utils/connections/db";
 import * as jose from 'jose';
 
 export async function getServerSideProps(context:any) {

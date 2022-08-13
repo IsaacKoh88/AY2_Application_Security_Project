@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import executeQuery from '../../utils/db';
+import executeQuery from '../../utils/connections/db';
 import generateJWT from '../../utils/generate-jwt';
-import setCookie from '../../utils/set-cookie';
+import setCookie from '../../utils/api/set-cookie';
 import * as argon2 from 'argon2';
 
 const LoginHandler = async (

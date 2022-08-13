@@ -14,10 +14,10 @@ import CreateCategory from '../../components/calendar/create-category';
 import EditCategory from '../../components/calendar/edit-category';
 import Layout from '../../components/layouts/authenticated-layout';
 import dayjs, { Dayjs } from 'dayjs';
-import executeQuery from '../../utils/db';
+import executeQuery from '../../utils/connections/db';
 import * as jose from 'jose';
-import useSWR, { useSWRConfig } from 'swr';
-import fetcher from '../../utils/swr-fetcher';
+import useSWR from 'swr';
+import fetcher from '../../utils/swr/swr-fetcher';
 
 type TodoProps = {
     ID: string,
@@ -89,7 +89,6 @@ export async function getServerSideProps(context:any) {
 
 const Calendar: NextPageWithLayout = () => {
     const id = useRouter().query.id
-    const { mutate } = useSWRConfig()
 
     const [selectedDate, setSelectedDate] = useState(dayjs());
     /** State to store categories */
