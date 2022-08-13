@@ -1,13 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import executeQuery from '../../../../utils/db'
 import authorisedValidator from '../../../../utils/authorised-validator';
-import { createCipheriv, createDecipheriv, randomBytes, scrypt } from 'crypto';
-import { promisify } from 'util';
-import * as jose from 'jose';
-import * as argon2 from 'argon2';
-import multer from 'multer';
-//import axios, { AxiosRequestConfig } from 'axios';
-// import CryptoJS from 'crypto-js';
+import apiErrorHandler from '../../../../utils/api-error-handler';
 import { encrypt } from '../../../../utils/encryption.js';
 
 
@@ -21,8 +15,14 @@ export default async function EditAccount(
 ) {
     /* accepts only POST requests and non-empty requests */
     if ((req.method == 'POST') && (req.body) && (req.cookies['token'])) {
-        /** check user authorisation */
-        await authorisedValidator(req, res);
+        try {
+            /** check user authorisation */
+            await authorisedValidator(req);
+        }
+        catch (error) {
+            apiErrorHandler(error, res);
+            return
+        }
 
         /** deconstruct body data */
         const { id, username, address, image } = req.body;

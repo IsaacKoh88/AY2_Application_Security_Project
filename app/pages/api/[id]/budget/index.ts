@@ -1,11 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import executeQuery from '../../../../utils/db'
 import authorisedValidator from '../../../../utils/authorised-validator';
+import apiErrorHandler from '../../../../utils/api-error-handler';
 import dayjs from 'dayjs';
 
 type Data = {
     Budget: number,
     circleStyle: string,
+} | {
+    message: string
 }
 
 export default async function GetBudget(
@@ -14,8 +17,14 @@ export default async function GetBudget(
 ) {
     /* accepts only GET requests and non-empty requests */
     if ((req.method == 'POST') && (req.cookies['token'])) {
-        /** check user authorisation */
-        await authorisedValidator(req, res);
+        try {
+            /** check user authorisation */
+            await authorisedValidator(req);
+        }
+        catch (error) {
+            apiErrorHandler(error, res);
+            return
+        }
 
         /* get budget */
         const result = JSON.parse(JSON.stringify(await executeQuery({

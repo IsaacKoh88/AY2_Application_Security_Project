@@ -4,15 +4,18 @@ import * as jose from 'jose';
 
 const authorisedValidator = async (
     req: NextApiRequest,
-    res: NextApiResponse,
 ) => {
     const JWTtoken:string = req.cookies['token']!;
 
     try {
         /* check if JWT token is valid, then get the email */
-        const email = await jose.jwtVerify(JWTtoken, new TextEncoder()
-                    .encode(`qwertyuiop`))
-                    .then(value => {return value['payload']['email']});
+        const email = await jose.jwtVerify(
+            JWTtoken, 
+            new TextEncoder().encode(`qwertyuiop`), 
+            {
+                issuer: 'application-security-project'
+            })
+            .then(value => {return value['payload']['email']});
         
         /* get uuid from email */
         const resultID = await executeQuery({
@@ -21,16 +24,12 @@ const authorisedValidator = async (
         });
 
         if (resultID[0].id !== req.query.id) {
-            res.statusCode = 403;
-            res.end('Error');
-            return
+            throw 403
         }
     } 
     /* reject if JWT token is invalid */
     catch (error) {
-        res.statusCode = 403;
-        res.end('Error');
-        return
+        throw 401
     };
 };
 

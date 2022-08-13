@@ -1,10 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import executeQuery from '../../../../utils/db'
 import authorisedValidator from '../../../../utils/authorised-validator';
+import apiErrorHandler from '../../../../utils/api-error-handler';
 
 type Data = {
     totalExpense: number,
     circleStyle: string
+} | {
+    message: string
 }
 
 export default async function GetExpense(
@@ -13,8 +16,14 @@ export default async function GetExpense(
 ) {
     /* accepts only GET requests and non-empty requests */
     if ((req.method == 'POST') && (req.cookies['token'])) {
-        /** check user authorisation */
-        await authorisedValidator(req, res);
+        try {
+            /** check user authorisation */
+            await authorisedValidator(req);
+        }
+        catch (error) {
+            apiErrorHandler(error, res);
+            return
+        }
 
         const { date } = req.body;
 

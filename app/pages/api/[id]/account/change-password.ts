@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import executeQuery from '../../../../utils/db'
+import authorisedValidator from '../../../../utils/authorised-validator';
+import apiErrorHandler from '../../../../utils/api-error-handler';
 import * as jose from 'jose';
 import * as argon2 from 'argon2';
 
@@ -13,6 +15,16 @@ export default async function ChangePasswordHandler(
 ) {
     /* accepts only POST requests and non-empty requests */
     if ((req.method == 'POST') && (req.body)) {
+        /**
+        try {
+            /** check user authorisation 
+            await authorisedValidator(req);
+        }
+        catch (error) {
+            apiErrorHandler(error, res);
+            return
+        }*/
+
         /* deconstructs request body */
         const { id, password } = req.body;
 

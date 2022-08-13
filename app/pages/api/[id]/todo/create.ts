@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import executeQuery from '../../../../utils/db';
 import authorisedValidator from '../../../../utils/authorised-validator';
+import apiErrorHandler from '../../../../utils/api-error-handler';
 import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 
@@ -14,8 +15,14 @@ export default async function CreateTodo(
 ) {
     /* accepts only POST requests and non-empty requests */
     if ((req.method == 'POST') && (req.body) && (req.cookies['token'])) {
-        /** check user authorisation */
-        await authorisedValidator(req, res); 
+        try {
+            /** check user authorisation */
+            await authorisedValidator(req);
+        }
+        catch (error) {
+            apiErrorHandler(error, res);
+            return
+        }
 
         try {
             /** deconstruct body data */

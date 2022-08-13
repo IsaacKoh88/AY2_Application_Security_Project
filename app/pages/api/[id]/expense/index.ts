@@ -1,13 +1,16 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import executeQuery from '../../../../utils/db'
 import authorisedValidator from '../../../../utils/authorised-validator';
+import apiErrorHandler from '../../../../utils/api-error-handler';
 
 type Data = {
     ID: string,
     Name: string,
     Amount: number,
     Date: string
-}[]
+}[] | {
+    message: string
+}
 
 export default async function GetExpense(
     req: NextApiRequest,
@@ -15,8 +18,14 @@ export default async function GetExpense(
 ) {
     /* accepts only GET requests and non-empty requests */
     if ((req.method == 'POST') && (req.cookies['token'])) {
-        /** check user authorisation */
-        await authorisedValidator(req, res);
+        try {
+            /** check user authorisation */
+            await authorisedValidator(req);
+        }
+        catch (error) {
+            apiErrorHandler(error, res);
+            return
+        }
 
         /** deconstruct request body */
         const { date } = req.body;

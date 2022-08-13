@@ -1,11 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import executeQuery from '../../../../utils/db'
 import authorisedValidator from '../../../../utils/authorised-validator';
+import apiErrorHandler from '../../../../utils/api-error-handler';
 
 type Data = {
     ID: string,
     Name: string,
-}[]
+}[] | {
+    message: string
+}
 
 export default async function GetEvent(
     req: NextApiRequest,
@@ -13,8 +16,14 @@ export default async function GetEvent(
 ) {
     /* accepts only GET requests and non-empty requests */
     if ((req.method == 'GET') && (req.cookies['token'])) {
-        /** check user authorisation */
-        await authorisedValidator(req, res);
+        try {
+            /** check user authorisation */
+            await authorisedValidator(req);
+        }
+        catch (error) {
+            apiErrorHandler(error, res);
+            return
+        }
 
         /* insert data into notes table */
         const result = await executeQuery({
