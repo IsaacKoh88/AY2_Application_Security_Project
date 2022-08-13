@@ -34,7 +34,7 @@ export default async function CreateCategory(
                         values: [req.query.id],
                     })));
 
-                    if (totalCategories[0][0]['COUNT(*)'] < 50) {
+                    if (totalCategories[0][0]['COUNT(*)'] <= 50) {
 
                         var id = uuidv4();
                         var idcheck = JSON.parse(JSON.stringify(await executeQuery({
@@ -69,7 +69,7 @@ export default async function CreateCategory(
                     }
                     /** more than 50 categories */
                     else {
-                        res.statusCode = 304;
+                        res.statusCode = 400;
                         res.end('Too many categories created, please remove some before adding more');
                     }
                 }

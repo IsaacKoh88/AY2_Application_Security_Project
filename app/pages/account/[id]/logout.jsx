@@ -1,7 +1,7 @@
 import { Fragment } from 'react'
 import Head from 'next/head'
 import Navbar from '../../../components/navbar'
-import executeQuery from '../../../utils/db'
+import executeQuery from '../../../utils/connections/db'
 import { useState } from 'react'
 import * as jose from 'jose'
 

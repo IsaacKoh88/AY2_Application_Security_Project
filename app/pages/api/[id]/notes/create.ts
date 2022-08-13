@@ -41,7 +41,7 @@ export default async function CreateNotes(
             values: [req.query.id],
         })));
 
-        if (totalEvents[0][0]['COUNT(*)'] < 50) {
+        if (totalEvents[0][0]['COUNT(*)'] <= 50) {
             var id = uuidv4();
             var idcheck = JSON.parse(JSON.stringify(await executeQuery({
                 query: 'CALL selectCountNoteID(?)',
@@ -72,6 +72,10 @@ export default async function CreateNotes(
                 res.status(201).json({ message: 'success' })
                 return
             }
+        }
+        else {
+            res.statusCode = 400;
+            res.end('You have reached the limit of 50 notes, please remove some notess before adding more');
         }
     }
     catch (error) {

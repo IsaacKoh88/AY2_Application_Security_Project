@@ -210,11 +210,12 @@ DROP PROCEDURE IF EXISTS selectEventData_AccountID_Date;
 DROP PROCEDURE IF EXISTS selectTotalTodos;
 DROP PROCEDURE IF EXISTS selectCountTodoID;
 DROP PROCEDURE IF EXISTS selectTodoData_AccountID;
+DROP PROCEDURE IF EXISTS selectTotalExpenses;
+DROP PROCEDURE IF EXISTS selectCountExpenseID;
 DROP PROCEDURE IF EXISTS selectSumExpense_AccountID;
 DROP PROCEDURE IF EXISTS selectSumExpense_AccountID_Month;
 DROP PROCEDURE IF EXISTS selectExpenseData_Month;
 DROP PROCEDURE IF EXISTS selectBudget_AccountID;
-DROP PROCEDURE IF EXISTS selectExpenseHistory;
 DROP PROCEDURE IF EXISTS selectTotalNotes;
 DROP PROCEDURE IF EXISTS selectCountNoteID;
 DROP PROCEDURE IF EXISTS selectNoteData_AccountID;
@@ -332,6 +333,23 @@ BEGIN
     DEALLOCATE PREPARE stmt;
 END;
 
+CREATE PROCEDURE selectTotalExpenses (IN accountID VARCHAR(36), date DATE) 
+BEGIN
+    SET @accountID = accountID;
+    SET @date = date;
+    PREPARE stmt
+    FROM 'SELECT COUNT(*) FROM expense WHERE AccountID=? AND DATE_FORMAT(Date, "%m-%y")=DATE_FORMAT(?, "%m-%y")';
+    EXECUTE stmt USING @accountID, @date;
+    DEALLOCATE PREPARE stmt;
+END;
+CREATE PROCEDURE selectCountExpenseID (IN id VARCHAR(36)) 
+BEGIN
+    SET @id = id;
+    PREPARE stmt
+    FROM 'SELECT COUNT(*) FROM expense WHERE ID=?';
+    EXECUTE stmt USING @id;
+    DEALLOCATE PREPARE stmt;
+END;
 CREATE PROCEDURE selectSumExpense_AccountID_Month (IN ID VARCHAR(36), Date DATE) BEGIN
 SET @ID = ID;
 SET @Date = Date;
@@ -345,7 +363,7 @@ CREATE PROCEDURE selectExpenseData_Month (IN AccountID VARCHAR(36), Date Date) B
 SET @AccountID = AccountID;
 SET @Date = Date;
 PREPARE stmt
-FROM 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ? AND DATE_FORMAT(Date, "%Y-%m") = DATE_FORMAT(?, "%Y-%m")';
+FROM 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ? AND DATE_FORMAT(Date, "%Y-%m") = DATE_FORMAT(?, "%Y-%m") LIMIT 300';
 EXECUTE stmt USING @AccountID,
 @Date;
 DEALLOCATE PREPARE stmt;
@@ -361,13 +379,6 @@ CREATE PROCEDURE selectBudget_AccountID (IN AccountID VARCHAR(36)) BEGIN
 SET @AccountID = AccountID;
 PREPARE stmt
 FROM 'SELECT Budget FROM budget WHERE AccountId = ?';
-EXECUTE stmt USING @AccountID;
-DEALLOCATE PREPARE stmt;
-END;
-CREATE PROCEDURE selectExpenseHistory (IN AccountID VARCHAR(36)) BEGIN
-SET @AccountID = AccountID;
-PREPARE stmt
-FROM 'select ID, Name, Amount, DATE_FORMAT(Date, "%Y-%m-%d") Date from expense where AccountId = ? order by Date desc, Name, Amount';
 EXECUTE stmt USING @AccountID;
 DEALLOCATE PREPARE stmt;
 END;
@@ -400,7 +411,7 @@ CREATE PROCEDURE selectNoteName_AccountID (IN accountID VARCHAR(36))
 BEGIN
     SET @accountID = accountID;
     PREPARE stmt
-    FROM 'SELECT ID, Name FROM notes WHERE AccountID=?';
+    FROM 'SELECT ID, Name FROM notes WHERE AccountID=? LIMIT 50';
     EXECUTE stmt USING @accountID;
     DEALLOCATE PREPARE stmt;
 END;
@@ -409,7 +420,7 @@ BEGIN
     SET @accountID = accountID;
     SET @id = id;
     PREPARE stmt
-    FROM 'SELECT Name, Description FROM notes WHERE AccountID = ? AND ID = ?';
+    FROM 'SELECT Name, Description FROM notes WHERE AccountID = ? AND ID = ? LIMIT 50';
     EXECUTE stmt USING @accountID, @id;
     DEALLOCATE PREPARE stmt;
 END;

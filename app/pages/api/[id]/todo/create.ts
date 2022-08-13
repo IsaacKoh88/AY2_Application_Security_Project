@@ -35,7 +35,7 @@ export default async function CreateTodo(
                         values: [req.query.id],
                     })));
 
-                    if (totalTodos[0][0]['COUNT(*)'] < 50) {
+                    if (totalTodos[0][0]['COUNT(*)'] <= 100) {
                         var id = uuidv4();
                         var idcheck = JSON.parse(JSON.stringify(await executeQuery({
                             query: 'CALL selectCountTodoID(?)',
@@ -68,7 +68,7 @@ export default async function CreateTodo(
                     }
                     /** more than 50 categories */
                     else {
-                        res.statusCode = 304;
+                        res.statusCode = 400;
                         res.end('Too many Todos created, please remove some before adding more');
                     }
                 }

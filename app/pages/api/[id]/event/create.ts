@@ -40,7 +40,7 @@ export default async function CreateEvent(
                         values: [req.query.id, date],
                     })));
 
-                    if (totalEvents[0][0]['COUNT(*)'] < 50) {
+                    if (totalEvents[0][0]['COUNT(*)'] <= 50) {
 
                         var id = uuidv4();
                         var idcheck = JSON.parse(JSON.stringify(await executeQuery({
@@ -80,7 +80,7 @@ export default async function CreateEvent(
                     }
                     /** more than 50 events */
                     else {
-                        res.statusCode = 304;
+                        res.statusCode = 400;
                         res.end('You have reached the limit of 50 events that day, please remove some events before adding more');
                     }
                 }

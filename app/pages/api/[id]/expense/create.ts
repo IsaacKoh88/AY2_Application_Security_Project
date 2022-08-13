@@ -35,34 +35,46 @@ export default async function CreateExpense(
         }
 
         try {
-            var id = uuidv4();
-            var idcheck = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'SELECT COUNT(*) FROM expense WHERE ID=?',
-                values: [id],
+            const totalTodos = JSON.parse(JSON.stringify(await executeQuery({
+                query: 'CALL selectTotalExpenses(?, ?)',
+                values: [req.query.id, date],
             })));
-            var totalCount = 1
 
-            while (idcheck[0]['COUNT(*)'] == 1 && totalCount < 100) {              
-                id = uuidv4()
+            if (totalTodos[0][0]['COUNT(*)'] <= 100) {
+
+                var id = uuidv4();
                 var idcheck = JSON.parse(JSON.stringify(await executeQuery({
-                    query: 'SELECT COUNT(*) FROM expense WHERE ID=?',
+                    query: 'CALL selectCountExpenseID(?)',
                     values: [id],
                 })));
-                totalCount += 1
-            }
-            if (totalCount >= 100) {
-                res.status(500).json({message: 'Too many uuids checked, please try again'})
-                return
+                var totalCount = 1
+
+                while (idcheck[0][0]['COUNT(*)'] == 1 && totalCount < 100) {              
+                    id = uuidv4()
+                    var idcheck = JSON.parse(JSON.stringify(await executeQuery({
+                        query: 'CALL selectCountExpenseID(?)',
+                        values: [id],
+                    })));
+                    totalCount += 1
+                }
+                if (totalCount >= 100) {
+                    res.status(500).json({message: 'Too many uuids checked, please try again'})
+                    return
+                }
+                else {
+                    /* insert data into expense table */
+                    const result = await executeQuery({
+                        query: 'CALL insertExpenseData(?, ?, ?, ?, ?)',
+                        values: [accountID, id, expenseName, amount, date],
+                    });
+
+                    res.status(201).json({ message: 'success' })
+                    return
+                }
             }
             else {
-                /* insert data into expense table */
-                const result = await executeQuery({
-                    query: 'CALL insertExpenseData(?, ?, ?, ?, ?)',
-                    values: [accountID, id, expenseName, amount, date],
-                });
-
-                res.status(201).json({ message: 'success' })
-                return
+                res.statusCode = 400;
+                res.end('Too many expenses created for the selected month, please remove some before adding more');
             }
         }
         /** unexpected error */
