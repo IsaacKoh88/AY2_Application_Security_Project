@@ -100,60 +100,26 @@ DROP PROCEDURE IF EXISTS insertEventData;
 DROP PROCEDURE IF EXISTS insertTodoData;
 DROP PROCEDURE IF EXISTS insertExpenseData;
 DROP PROCEDURE IF EXISTS inserTNotesData;
-CREATE PROCEDURE insertAccountData (IN email VARCHAR(255), IN password VARCHAR(255)) BEGIN
-SET @email = email;
-SET @password = password;
-SET @address = NULL;
-SET @username = NULL;
-SET @image = NULL;
-SET @ID = uuid_v4s();
-PREPARE stmt
-FROM 'SELECT count(*) FROM account where id=? INTO @count';
-EXECUTE stmt USING @ID;
-DEALLOCATE PREPARE stmt;
-WHILE (@count = 1) DO
-SET @ID = uuid_v4s();
-PREPARE stmt
-FROM 'SELECT count(*) FROM account where id=? INTO @count';
-EXECUTE stmt USING @ID;
-DEALLOCATE PREPARE stmt;
-END WHILE;
-PREPARE stmt
-FROM 'INSERT INTO account VALUES (?, ?, ?, ?, ?, ?)';
-EXECUTE stmt USING @ID,
-@email,
-@password,
-@username,
-@address,
-@image;
-DEALLOCATE PREPARE stmt;
-SET @budget = 1000;
-PREPARE stmt
-FROM 'INSERT INTO budget VALUES(?, ?)';
-EXECUTE stmt USING @ID,
-@budget;
-DEALLOCATE PREPARE stmt;
+
+CREATE PROCEDURE insertAccountData (IN id VARCHAR(36), email VARCHAR(255), password VARCHAR(255)) BEGIN
+    SET @id = id;
+    SET @email = email;
+    SET @password = password;
+    SET @address = NULL;
+    SET @username = NULL;
+    SET @image = NULL;
+
+    PREPARE stmt
+    FROM 'INSERT INTO account VALUES (?, ?, ?, ?, ?, ?)';
+    EXECUTE stmt USING @id, @email, @password, @username, @address, @image;
+    DEALLOCATE PREPARE stmt;
+
+    SET @budget = 1000;
+    PREPARE stmt
+    FROM 'INSERT INTO budget VALUES(?, ?)';
+    EXECUTE stmt USING @id, @budget;
+    DEALLOCATE PREPARE stmt;
 END;
-
--- CREATE PROCEDURE insertAccountData (IN id VARCHAR(36), email VARCHAR(255), password VARCHAR(255), address VARCHAR(255), username VARCHAR(255), image VARCHAR(255)) BEGIN
---     SET @id = id
---     SET @email = email;
---     SET @password = password;
---     SET @address = NULL;
---     SET @username = NULL;
---     SET @image = NULL;
-
---     PREPARE stmt
---     FROM 'INSERT INTO account VALUES (?, ?, ?, ?, ?, ?)';
---     EXECUTE stmt USING @id, @email, @password, @username, @address, @image;
---     DEALLOCATE PREPARE stmt;
-
---     SET @budget = 1000;
---     PREPARE stmt
---     FROM 'INSERT INTO budget VALUES(?, ?)';
---     EXECUTE stmt USING @id, @budget;
---     DEALLOCATE PREPARE stmt;
--- END;
 
 CREATE PROCEDURE insertExpenseData (
     IN AccountID VARCHAR(36),
