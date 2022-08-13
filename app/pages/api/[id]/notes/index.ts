@@ -17,12 +17,12 @@ export default async function GetEvent(
         await authorisedValidator(req, res);
 
         /* insert data into notes table */
-        const result = await executeQuery({
-            query: 'SELECT ID, Name FROM notes WHERE AccountID=?',
+        const result = JSON.parse(JSON.stringify(await executeQuery({
+            query: 'CALL selectNoteName_AccountID(?)',
             values: [req.query.id],
-        });
+        })));
 
-        res.status(200).json(result)
+        res.status(200).json(result[0])
         return
     };
 };

@@ -21,14 +21,14 @@ export default async function EditNotes(
         if (description) {
             /* insert data into notes table */
             const result = await executeQuery({
-                query: 'UPDATE notes SET Name=?, description=? WHERE AccountID=? AND ID=?',
-                values: [notesName, description, req.query.id, notesID],
+                query: 'CALL updateNotes(?, ?, ?, ?)',
+                values: [req.query.id, notesID, notesName, description],
             });
         } else {
             /* insert data into notes table */
             const result = await executeQuery({
-                query: 'UPDATE notes SET Name=? WHERE AccountID=? AND ID=?',
-                values: [notesName, req.query.id, notesID],
+                query: 'CALL updateNotesName(?, ?, ?)',
+                values: [req.query.id, notesID, notesName],
             });
         }
 
