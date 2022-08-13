@@ -8,6 +8,7 @@ import Layout from '../../../components/layouts/authenticated-layout';
 import * as jose from 'jose'
 import { decrypt } from '../../../utils/encryption.js';
 import Image from 'next/image';
+import redisClient from '../../../utils/connections/redis';
 
 
 type accountProps = {
@@ -37,6 +38,20 @@ export async function getServerSideProps(context: any) {
         const email = await jose.jwtVerify(JWTtoken, new TextEncoder()
             .encode(`qwertyuiop`))
             .then(value => { return (value['payload']['email']) });
+
+        /** check if JWT token is blacklisted */
+        await redisClient.connect();
+        const keyBlacklisted = await redisClient.exists('bl_'+context.req.cookies['token']);
+        await redisClient.disconnect();
+
+        if (keyBlacklisted) {
+            return {
+                redirect: {
+                    destination: '/login',
+                    permanent: false,
+                },
+            };
+        }
 
         const result = JSON.parse(JSON.stringify(await executeQuery({
             query: 'CALL selectEmail_Id(?)',

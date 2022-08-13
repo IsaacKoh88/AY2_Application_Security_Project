@@ -1,11 +1,19 @@
 import NavItem from "../nav-items";
 import Link from "next/link";
-import Userfront from "@userfront/core";
-
-Userfront.init("demo1234");
+import { useRouter } from "next/router";
 
 {/**Define logout button component */ }
 const Layout = ({ children }) => {
+    const router = useRouter()
+
+    const handleLogout = async () => {
+        const response = await fetch('/api/logout');
+
+        if (response.status === 200) {
+            router.push('/');
+        }
+    }
+
     return (
         <div className='flex flex-row h-screen w-screen text-slate-400 bg-slate-900'>
 
@@ -39,11 +47,12 @@ const Layout = ({ children }) => {
                             <p className='mx-3'>Username</p>
                         </div>
                     </Link>
-                    <Link href='/logout'>
-                        <div className='cursor-pointer flex flex-row justify-center items-center h-12 mr-3 hover:text-slate-200 duration-150 ease-in-out'>
-                            <p className='mx-3'>Sign Out</p>
-                        </div>
-                    </Link>
+                    <div 
+                        className='cursor-pointer flex flex-row justify-center items-center h-12 mr-3 hover:text-slate-200 duration-150 ease-in-out'
+                        onClick={() => handleLogout()}
+                    >
+                        <p className='mx-3'>Sign Out</p>
+                    </div>
                 </div>
 
                 {/** page contents */}

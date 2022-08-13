@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import executeQuery from "../../utils/connections/db";
 import * as jose from 'jose';
+import redisClient from "../../utils/connections/redis";
 
 export async function getServerSideProps(context:any) {
     const JWTtoken = context.req.cookies['token'];
@@ -20,6 +21,20 @@ export async function getServerSideProps(context:any) {
         const email = await jose.jwtVerify(JWTtoken, new TextEncoder()
                     .encode(`qwertyuiop`))
                     .then(value => {return(value['payload']['email'])});
+
+        /** check if JWT token is blacklisted */
+        await redisClient.connect();
+        const keyBlacklisted = await redisClient.exists('bl_'+context.req.cookies['token']);
+        await redisClient.disconnect();
+
+        if (keyBlacklisted) {
+            return {
+                redirect: {
+                    destination: '/login',
+                    permanent: false,
+                },
+            };
+        }
 
         /** check if email is the same as the one in the id of URL */
         const result = JSON.parse(JSON.stringify(await executeQuery({

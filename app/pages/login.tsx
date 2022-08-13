@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Navbar from '../components/navbar'
 import * as jose from 'jose';
+import redisClient from '../utils/connections/redis'
 
 export async function getServerSideProps(context:any) {
     try {
@@ -17,6 +18,15 @@ export async function getServerSideProps(context:any) {
                 issuer: 'application-security-project'
             }
         );
+
+        /** check if JWT token is blacklisted */
+        await redisClient.connect();
+        const keyBlacklisted = await redisClient.exists('bl_'+context.req.cookies['token']);
+        await redisClient.disconnect();
+
+        if (keyBlacklisted) {
+            throw 401
+        }
 
         /** if JWT token is valid, redirect to authenticated route */
         return {

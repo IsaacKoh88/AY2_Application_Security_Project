@@ -10,6 +10,7 @@ import NotesDisplay from '../../../components/notes/notes';
 import Image from 'next/image';
 import useSWR from 'swr';
 import fetcher from '../../../utils/swr/swr-fetcher';
+import redisClient from '../../../utils/connections/redis';
 
 type NotesProps = {
     ID: string,
@@ -29,6 +30,20 @@ export async function getServerSideProps(context:any) {
                 issuer: 'application-security-project'
             }
         );
+
+        /** check if JWT token is blacklisted */
+        await redisClient.connect();
+        const keyBlacklisted = await redisClient.exists('bl_'+context.req.cookies['token']);
+        await redisClient.disconnect();
+
+        if (keyBlacklisted) {
+            return {
+                redirect: {
+                    destination: '/login',
+                    permanent: false,
+                },
+            };
+        }
 
         /** query email of id in database */
         const result = JSON.parse(JSON.stringify(await executeQuery({

@@ -10,9 +10,11 @@ services:
     depends_on:
       - next-app
       - mysql-server
+      - redis-server
     ports:
       - 80:8080
       - 443:8443
+    restart: on-failure
 
   # Builds application server docker image
   next-app: 
@@ -27,7 +29,17 @@ services:
       DB_NAME: appsecdb
     depends_on:
       - mysql-server
+      - redis-server
     restart: on-failure
+
+  # Pulls redis server docker image
+  redis-server:
+    image: redis:latest
+    container_name: redis-server
+    volumes:
+      - ./redis/data/:/data/
+    ports:
+      - 6379:6379
 
   # Pulls mysql server docker image
   mysql-server:
@@ -37,3 +49,4 @@ services:
       - ./database/:/var/lib/mysql/
     ports: 
       - 3306:3306
+    restart: on-failure

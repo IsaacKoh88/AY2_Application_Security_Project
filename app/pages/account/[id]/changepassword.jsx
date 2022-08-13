@@ -2,6 +2,7 @@ import { Fragment } from 'react'
 import Head from 'next/head'
 import Navbar from '../../../components/navbar'
 import executeQuery from '../../../utils/connections/db'
+import redisClient from '../../../utils/connections/redis'
 import { useState } from 'react'
 import * as jose from 'jose'
 
@@ -24,6 +25,20 @@ export async function getServerSideProps(context) {
         const email = await jose.jwtVerify(JWTtoken, new TextEncoder()
                     .encode(`qwertyuiop`))
                     .then(value => {return(value['payload']['email'])});
+
+                    /** check if JWT token is blacklisted */
+        await redisClient.connect();
+        const keyBlacklisted = await redisClient.exists('bl_'+context.req.cookies['token']);
+        await redisClient.disconnect();
+
+        if (keyBlacklisted) {
+            return {
+                redirect: {
+                    destination: '/login',
+                    permanent: false,
+                },
+            };
+        }
 
         {/* check if email is the same as the one in the id of URL */}
         const result = JSON.parse(JSON.stringify(await executeQuery({

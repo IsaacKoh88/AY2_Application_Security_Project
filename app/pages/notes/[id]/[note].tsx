@@ -5,6 +5,7 @@ import Head from 'next/head'
 import Layout from '../../../components/layouts/authenticated-layout';
 import executeQuery from '../../../utils/connections/db';
 import * as jose from 'jose';
+import redisClient from '../../../utils/connections/redis';
 
 type NoteProps = {
     Name: string,
@@ -25,6 +26,20 @@ export async function getServerSideProps(context:any) {
             }
         );
 
+        /** check if JWT token is blacklisted */
+        await redisClient.connect();
+        const keyBlacklisted = await redisClient.exists('bl_'+context.req.cookies['token']);
+        await redisClient.disconnect();
+
+        if (keyBlacklisted) {
+            return {
+                redirect: {
+                    destination: '/login',
+                    permanent: false,
+                },
+            };
+        }
+
         /** query email of id in database */
         const result = JSON.parse(JSON.stringify(await executeQuery({
             query: 'CALL selectEmail_Id(?)',
@@ -40,7 +55,6 @@ export async function getServerSideProps(context:any) {
                     query: 'CALL selectNoteNameDesription_AccountID_ID(? ,?)',
                     values: [id, noteID]
                 })))
-                console.log(noteData[0][0]);
 
                 if (noteData[0][0] !== undefined) {
                     return {
