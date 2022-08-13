@@ -18,11 +18,11 @@ export default async function GetAccount(
 
         /* get data from table */
         const result = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'SELECT email FROM account WHERE id=?',
+            query: 'CALL selectEmail_Id(?)',
             values: [req.query.id],
         })));
 
-        res.status(200).json(result)
+        res.status(200).json(result[0])
         return
     }
     else if (req.method !== 'GET') {

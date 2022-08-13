@@ -278,11 +278,11 @@ BEGIN
     EXECUTE stmt USING @id;
     DEALLOCATE PREPARE stmt;
 END;
-CREATE PROCEDURE selectAccountData_AccountID (IN id VARCHAR(36)) 
+CREATE PROCEDURE selectAccountData_ID (IN id VARCHAR(36)) 
 BEGIN
     SET @id = id;
     PREPARE stmt
-    FROM 'SELECT  username, address, image FROM account WHERE id=?';
+    FROM 'SELECT username, address, image FROM account WHERE id=?';
     EXECUTE stmt USING @id;
     DEALLOCATE PREPARE stmt;
 END;
@@ -431,7 +431,8 @@ END;
 
 -- @block
 -- Consists of stored procedure that update data
-DROP PROCEDURE IF EXISTS updateAccount;
+DROP PROCEDURE IF EXISTS updateAccountPassword;
+DROP PROCEDURE IF EXISTS updateAccountInfo;
 DROP PROCEDURE IF EXISTS updateCategory;
 DROP PROCEDURE IF EXISTS updateEvent;
 DROP PROCEDURE IF EXISTS updateTodo;
@@ -441,37 +442,28 @@ DROP PROCEDURE IF EXISTS updateExpense;
 DROP PROCEDURE IF EXISTS updateNotes;
 
 
-CREATE PROCEDURE updateAccount (
-    IN hashedPassword VARCHAR(255),
-    id VARCHAR(36),
-    email VARCHAR(255)
-) 
+CREATE PROCEDURE updateAccountPassword (IN hashedPassword VARCHAR(255), id VARCHAR(36), email VARCHAR(255)) 
 BEGIN
     SET @hashedPassword = hashedPassword;
     SET @id = id;
     SET @email = email;
-    PREPARE stmt
-    FROM 'UPDATE account SET password=? WHERE id=? AND email=?';
-    EXECUTE stmt using @hashedPassword,
-    @id,
-    @email;
+    
+    PREPARE stmt FROM 'UPDATE account SET password=? WHERE id=? AND email=?';
+    EXECUTE stmt using @hashedPassword, @id, @email,
     DEALLOCATE PREPARE stmt;
 END;
 
--- CREATE PROCEDURE updateAccount (IN id VARCHAR(36), email VARCHAR(255), hashedPassword VARCHAR(255), username VARCHAR(36), address VARBINARY(255), image VARCHAR(255)) 
--- BEGIN
---     SET @id = id;
---     SET @email = email;
---     SET @hashedPassword = hashedPassword;
---     SET @username = username;
---     SET @address = address;
---     SET @image = image;    
+CREATE PROCEDURE updateAccountInfo (IN id VARCHAR(36), username VARCHAR(36), address VARBINARY(255), image VARCHAR(255)) 
+BEGIN
+    SET @id = id;
+    SET @username = username;
+    SET @address = address;
+    SET @image = image;    
     
---     PREPARE stmt
---     FROM 'UPDATE account SET password=?, username=?, address=?, image=? WHERE id=? AND email=?';
---     EXECUTE stmt using @hashedPassword, @username, @address, @image, @id, @email;
---     DEALLOCATE PREPARE stmt;
--- END;
+    PREPARE stmt FROM 'UPDATE account SET username=?, address=?, image=? WHERE id=?';
+    EXECUTE stmt using @username, @address, @image, @id;
+    DEALLOCATE PREPARE stmt;
+END;
 
 CREATE PROCEDURE updateCategory (IN accountID VARCHAR(36), ID VARCHAR(36), categoryName VARCHAR(255), categoryColor VARCHAR(36))
 BEGIN

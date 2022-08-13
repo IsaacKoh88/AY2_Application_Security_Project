@@ -37,19 +37,20 @@ export async function getServerSideProps(context: any) {
         const email = await jose.jwtVerify(JWTtoken, new TextEncoder()
             .encode(`qwertyuiop`))
             .then(value => { return (value['payload']['email']) });
-        const result = await executeQuery({
+
+        const result = JSON.parse(JSON.stringify(await executeQuery({
             query: 'CALL selectEmail_Id(?)',
             values: [id],
-        });
+        })));
 
         if (result[0][0].email === email) {
             const accvalues = await executeQuery({
-                query: 'SELECT username, address, image FROM account WHERE id=?',
+                query: 'CALL selectAccountData_ID(?)',
                 values: [id]
             });
-            var username = accvalues[0]['username']
-            var address = accvalues[0]['address']
-            var image = accvalues[0]['image']
+            var username = accvalues[0][0]['username']
+            var address = accvalues[0][0]['address']
+            var image = accvalues[0][0]['image']
             //console.log(address)
             console.log('imagename', image)
 

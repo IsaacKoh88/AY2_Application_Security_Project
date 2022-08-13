@@ -37,7 +37,7 @@ export default async function ChangePasswordHandler(
 
             /* connects to mysql database and queries it */ 
             const result = await executeQuery({
-                query: 'CALL updateAccount(?, ?, ?)',
+                query: 'CALL updateAccountPassword(?, ?, ?)',
                 values: [hashedPassword, id, email],
             });
             res.status(200).json({ message: 'success'})

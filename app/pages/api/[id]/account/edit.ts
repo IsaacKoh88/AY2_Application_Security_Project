@@ -7,7 +7,7 @@ import * as jose from 'jose';
 import * as argon2 from 'argon2';
 import multer from 'multer';
 //import axios, { AxiosRequestConfig } from 'axios';
-import CryptoJS from 'crypto-js';
+// import CryptoJS from 'crypto-js';
 import { encrypt } from '../../../../utils/encryption.js';
 
 
@@ -30,10 +30,10 @@ export default async function EditAccount(
         /**encrypts address before sending to database */
         const encryptedAddr = encrypt(address)
 
-        const result = await executeQuery({
-            query: 'UPDATE account SET username=?, address=?, image=? WHERE id=?',
-            values: [username, encryptedAddr, image, id],
-        });
+        const result = JSON.parse(JSON.stringify(await executeQuery({
+            query: 'CALL updateAccountInfo(?, ?, ?, ?)',
+            values: [id, username, encryptedAddr, image],
+        })));
 
 
         res.status(200).json(result)
