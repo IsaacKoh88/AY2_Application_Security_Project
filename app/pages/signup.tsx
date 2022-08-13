@@ -52,6 +52,10 @@ const Signup: NextPage = () => {
     const [passwordStrength, setPasswordStrength] =
         useState<PasswordStrength>("Very Weak");
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
+    const [buttonStyle, setButtonStyle] = useState('y');
+    const [buttonOpacity, setButtonOpacity] = useState('opacity-30');
+    const [passwordColor, setPasswordColor] = useState('bg-lime-100');
+    const [passwordLength, setPasswordLength] = useState('w-0');
     const [cPassword, setCPassword] = useState('');
     const [showErrorMessage, setShowErrorMessage] = useState(false);
     const [cPasswordClass, setCPasswordClass] = useState('form-control');
@@ -63,24 +67,26 @@ const Signup: NextPage = () => {
         has8digit: false
     });
 
-    const testResult  = zxcvbn(password);
-    const num = testResult.score * 100/4;
-    const funcProgressColor = () => {
-        switch(testResult.score) {
-            case 0:
-                return '#FF0000';
-            case 1:
-                return '#F33A6A';
-            case 2:
-                return '#EA11111';
-            case 3:
-                return '#FFAD00';
-            case 4:
-                return '#00B500';
-            default:
-                return 'none';
-        }
-    }
+    
+    // const testResult  = zxcvbn(password);
+    //     const num = testResult.score * 100/4;
+    //     console.log('t',testResult.score)
+    // const funcProgressColor = () => {
+    //     switch(testResult.score) {
+    //         case 0:
+    //             return '#FF0000';
+    //         case 1:
+    //             return '#F33A6A';
+    //         case 2:
+    //             return '#EA11111';
+    //         case 3:
+    //             return '#FFAD00';
+    //         case 4:
+    //             return '#00B500';
+    //         default:
+    //             return 'none';
+    //     }
+    // }
 
     const handleCPassword = (e: { target: { value: SetStateAction<string> } }) => {
         setCPassword(e.target.value);
@@ -93,26 +99,58 @@ const Signup: NextPage = () => {
     // };
 
 
-
     useEffect(() => {
-        if (cPassword.length <= 4) {
+        var length = password.length
+        console.log(length === 0)
+        if (length === 0)  {
+            setPasswordLength('w-0')
+        }
+        else{
+            setPasswordLength('w-'+length+'/12')
+        }
+
+        const testResult  = zxcvbn(password);
+        const num = testResult.score * 100/4;
+
+        if (testResult.score === 0) {
+            setPasswordColor('bg-red-600')
+
+        }
+        else if (testResult.score === 1 || testResult.score === 2) {
+            setPasswordColor('bg-red-400')
+
+        }
+        else if (testResult.score === 3) {
+            setPasswordColor('bg-amber-400')
+
+        }
+        else if (testResult.score === 4) {
+            setPasswordColor('bg-lime-400')
+
+        }
+
+        if (password.length <= 4) {
         setPasswordStrength("Very Weak");
         setIsButtonDisabled(true);
+        setButtonOpacity('opacity-30')
         } else if (password.length <= 6) {
         setPasswordStrength("Weak");
         setIsButtonDisabled(true);
+        setButtonOpacity('opacity-30')
         } else if (password.length <= 8) {
         setPasswordStrength("Medium");
         setIsButtonDisabled(true);
+        setButtonOpacity('opacity-30')
         } else if (password.length <= 11) {
         setPasswordStrength("Strong");
         setIsButtonDisabled(false);
+        setButtonOpacity('0')
         } else{
         setPasswordStrength("Very Strong");
         setIsButtonDisabled(false);
+        setButtonOpacity('0')
         }
-    }, [cPassword]);
-
+    }, [password]);
 
     useEffect(() => {
         if (password.match(/\d+/g)) {
@@ -141,71 +179,17 @@ const Signup: NextPage = () => {
     }, [password]);
 
 
-    useEffect(() => {
-        if (isCPasswordDirty) {
-            if (password === cPassword) {
-                setShowErrorMessage(false);
-                setCPasswordClass('form-control is-valid')
-            } else {
-                setShowErrorMessage(true)
-                setCPasswordClass('form-control is-invalid')
-            }
-        }
-    }, [cPassword])
-
-
-        //styling in css, really not sure how to convert it to tailwind format.
-        const styles = {
-            container: {
-                width: 400,
-                padding: "30px 90px",
-                margin: "50px auto",
-                backgroundColor: "#f4ff81",
-                borderRadius: "10px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-            },
-            password: {
-                width: 300,
-                padding: "8px 10px",
-                border: "1px solid #444",
-                borderRadius: "10px",
-                outline: "none",
-            },
-            statusBar: {
-                width: 460,
-                height: 13,
-                marginTop: 10,
-                background: "#fff",
-                border: "1px solid #444",
-                borderRadius: "5px",
-            },
-            message: {
-                padding: "20px 0",
-            },
-            button: {
-                padding: "15px 30px",
-                cursor: "pointer",
-                background: "#1E88E5",
-                color: "#fff",
-                fontWeight: "bold",
-                border: "none",
-                borderRadius: "30px",
-            },
-            disabledButton: {
-                cursor: "not-allowed",
-                opacity: 0.3,
-            },
-            changePasswordColor: {
-                width: `${num}%`,
-                background: funcProgressColor(),
-                height: '10px',
-                maxWidth: "100%",
-            }
-        } as const; 
-
-    
+    // useEffect(() => {
+    //     if (isCPasswordDirty) {
+    //         if (password === cPassword) {
+    //             setShowErrorMessage(false);
+    //             setCPasswordClass('form-control is-valid')
+    //         } else {
+    //             setShowErrorMessage(true)
+    //             setCPasswordClass('form-control is-invalid')
+    //         }
+    //     }
+    // }, [cPassword])
 
     
     return (
@@ -276,24 +260,15 @@ const Signup: NextPage = () => {
                                     max='4'
                                 />
                             ) : null} */}
-                            
-                            <div style={styles.statusBar}>
-                                <div
-                                style={{
-                                    ...styles.changePasswordColor,
-                                    width: `${(password.length / 13) * 100}%`,
-                                }}
-                                ></div>
+
+                            <div className='w-460 h-13 border border-stone-700 rounded mt-3'>
+                                <div className={`max-w-100% h-2.5 ${passwordLength} ${passwordColor}`}></div>
                             </div>
-                            <div style={styles.message}>{passwordStrength}</div>
+                            <div className='py-5'>{passwordStrength}</div>
                             <button
-                                style={
-                                    isButtonDisabled
-                                        ? { ...styles.button, ...styles.disabledButton }
-                                        : styles.button
-                                    }
-                                    disabled={isButtonDisabled}
-                                >
+                                className={`cursor-pointer bg-blue-600 py-4 px-7 rounded-3xl text-white font-bold ${buttonOpacity}`}
+                                disabled={isButtonDisabled}
+                            >
                                     CONTINUE
                             </button>
                         </form>
