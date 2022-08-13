@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest } from "next";
 import executeQuery from '../connections/db';
 import * as jose from 'jose';
 
