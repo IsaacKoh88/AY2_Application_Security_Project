@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import executeQuery from '../../../../utils/db'
-import authorisedValidator from '../../../../utils/authorised-validator';
-import apiErrorHandler from '../../../../utils/api-error-handler';
+import executeQuery from '../../../../utils/connections/db'
+import authorisedValidator from '../../../../utils/api/authorised-validator';
+import apiErrorHandler from '../../../../utils/api/api-error-handler';
 import { v4 as uuidv4 } from 'uuid';
 
 type Data = {

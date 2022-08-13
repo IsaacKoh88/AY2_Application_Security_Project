@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import executeQuery from './db';
+import executeQuery from '../connections/db';
 import * as jose from 'jose';
 
 const authorisedValidator = async (

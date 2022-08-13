@@ -2,7 +2,7 @@ import type { NextPageWithLayout } from '../../_app';
 import React, { Fragment, ReactElement, useState } from 'react'
 import Head from 'next/head'
 import Navbar from '../../../components/navbar'
-import executeQuery from '../../../utils/db'
+import executeQuery from '../../../utils/connections/db'
 import Link from 'next/link'
 import Layout from '../../../components/layouts/authenticated-layout';
 import * as jose from 'jose'

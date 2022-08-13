@@ -3,13 +3,13 @@ import { useRouter } from 'next/router';
 import React, { Fragment, ReactElement, useState, useEffect } from 'react'
 import Head from 'next/head'
 import Layout from '../../../components/layouts/authenticated-layout';
-import executeQuery from '../../../utils/db';
+import executeQuery from '../../../utils/connections/db';
 import * as jose from 'jose';
 import EditNotes from '../../../components/notes/edit-notes';
 import NotesDisplay from '../../../components/notes/notes';
 import Image from 'next/image';
 import useSWR from 'swr';
-import fetcher from '../../../utils/swr-fetcher';
+import fetcher from '../../../utils/swr/swr-fetcher';
 
 type NotesProps = {
     ID: string,
