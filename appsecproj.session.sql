@@ -218,6 +218,8 @@ DROP PROCEDURE IF EXISTS selectExpenseHistory;
 DROP PROCEDURE IF EXISTS selectTotalNotes;
 DROP PROCEDURE IF EXISTS selectCountNoteID;
 DROP PROCEDURE IF EXISTS selectNoteData_AccountID;
+DROP PROCEDURE IF EXISTS selectNoteName_AccountID;
+DROP PROCEDURE IF EXISTS selectNoteNameDesription_AccountID_ID;
 
 CREATE PROCEDURE selectEmail_Id (IN id VARCHAR(36)) 
 BEGIN
@@ -394,6 +396,23 @@ BEGIN
     EXECUTE stmt USING @accountID;
     DEALLOCATE PREPARE stmt;
 END;
+CREATE PROCEDURE selectNoteName_AccountID (IN accountID VARCHAR(36)) 
+BEGIN
+    SET @accountID = accountID;
+    PREPARE stmt
+    FROM 'SELECT ID, Name FROM notes WHERE AccountID=?';
+    EXECUTE stmt USING @accountID;
+    DEALLOCATE PREPARE stmt;
+END;
+CREATE PROCEDURE selectNoteNameDesription_AccountID_ID (IN accountID VARCHAR(36), id VARCHAR(36)) 
+BEGIN
+    SET @accountID = accountID;
+    SET @id = id;
+    PREPARE stmt
+    FROM 'SELECT Name, Description FROM notes WHERE AccountID = ? AND ID = ?';
+    EXECUTE stmt USING @accountID, @id;
+    DEALLOCATE PREPARE stmt;
+END;
 
 -- @block
 -- Consists of stored procedure that update data
@@ -492,6 +511,18 @@ BEGIN
     PREPARE stmt
     FROM 'UPDATE notes SET Name=?, Description=? WHERE AccountID=? AND ID=?';
     EXECUTE stmt using @name, @description, @accountID, @id;
+    DEALLOCATE PREPARE stmt;
+END;
+
+CREATE PROCEDURE updateNotesName (IN accountID VARCHAR(36), id VARCHAR(36), name VARCHAR(255)) 
+BEGIN
+    SET @accountID = accountID;
+    SET @id = id;
+    SET @name = name;
+    
+    PREPARE stmt
+    FROM 'UPDATE notes SET Name=? WHERE AccountID=? AND ID=?';
+    EXECUTE stmt using @name, @accountID, @id;
     DEALLOCATE PREPARE stmt;
 END;
 

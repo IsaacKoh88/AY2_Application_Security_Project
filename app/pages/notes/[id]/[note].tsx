@@ -37,14 +37,14 @@ export async function getServerSideProps(context:any) {
                 const noteID = context.params.note;
 
                 const noteData = JSON.parse(JSON.stringify(await executeQuery({
-                    query: 'SELECT Name, Description FROM notes WHERE accountID = ? AND ID = ?',
+                    query: 'CALL selectNoteNameDesription_AccountID_ID(? ,?)',
                     values: [id, noteID]
                 })))
-                console.log(noteData[0]);
+                console.log(noteData[0][0]);
 
-                if (noteData[0] !== undefined) {
+                if (noteData[0][0] !== undefined) {
                     return {
-                        props: noteData[0]
+                        props: noteData[0][0]
                     };
                 } else {
                     return {
