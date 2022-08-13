@@ -13,7 +13,7 @@ const EditNotes = ({ id, notes, success, close }) => {
                 body: JSON.stringify(
                     {
                         notesID : notes.ID,
-                        notesName: notesName
+                        notesName: noteName
                     }
                 )
             }

@@ -5,11 +5,6 @@ import Head from 'next/head'
 import Layout from '../../../components/layouts/authenticated-layout';
 import executeQuery from '../../../utils/db';
 import * as jose from 'jose';
-import EditNotes from '../../../components/notes/edit-notes';
-import NotesDisplay from '../../../components/notes/notes';
-import Image from 'next/image';
-import useSWR from 'swr';
-import fetcher from '../../../utils/swr-fetcher';
 
 type NoteProps = {
     Name: string,
