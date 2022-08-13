@@ -1,4 +1,4 @@
-import { CustomError } from '../utils/custom-error';
+import { CustomError } from './custom-error';
 
 interface Error {
     status?: number,

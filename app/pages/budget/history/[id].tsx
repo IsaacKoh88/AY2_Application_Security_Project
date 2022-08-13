@@ -6,7 +6,7 @@ import ExpenseHistory from '../../../components/budget/view-expenseHistory';
 import CreateExpense from '../../../components/budget/create-expense';
 import EditExpense from '../../../components/budget/edit-expense';
 import Layout from '../../../components/layouts/authenticated-layout';
-import executeQuery from '../../../utils/db';
+import executeQuery from '../../../utils/connections/db';
 import * as jose from 'jose';
 import dayjs from 'dayjs';
 
