@@ -134,12 +134,16 @@ const Notes: NextPageWithLayout = () => {
                                             <NotesDisplay id={id} notes={note} EditNotes={handleEditNotesPopupAppear} key={index} />
                                         ))}
                                 <div 
-                                    className='cursor-pointer group flex flex-col justify-center items-center bg-slate-800/50 hover:bg-slate-800/100 h-60 w-52 p-2 m-3 rounded-lg duration-150'
+                                    className='cursor-pointer group flex flex-col justify-center items-center bg-slate-800/50 hover:bg-slate-800/100 h-60 w-52 m-3 rounded-lg duration-150'
                                     onClick={() => handleCreateNote()}
                                 >
-                                    <div className='flex-grow'></div>
-                                    <div className='flex flex-row justify-center items-center mt-1 w-full'>
-                                        <p className='font-semibold group-hover:text-white pl-1.5 duration-150'>Create Note</p>
+                                    <div className='flex flex-grow justify-center items-center w-full pt-2 px-2'>
+                                        <div className='relative h-3/4 w-3/4'>
+                                            <Image src='/add_note.png' layout='fill' alt='Create Note' />
+                                        </div>
+                                    </div>
+                                    <div className='flex flex-row justify-center items-center mt-1 px-2 pb-2 w-full'>
+                                        <p className='font-semibold group-hover:text-white duration-150'>Create Note</p>
                                     </div>
                                 </div>
                             </Fragment>

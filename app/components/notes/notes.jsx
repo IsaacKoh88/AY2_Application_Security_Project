@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Fragment } from 'react';
+import Image from 'next/image';
 
 const NotesDisplay = ({ id, notes, EditNotes }) => {
     return (
         <Fragment>
             <div className='cursor-pointer group flex flex-col justify-center items-center bg-slate-800/50 hover:bg-slate-800/100 h-60 w-52 m-3 rounded-lg duration-150'>
                 <Link href={`/notes/${id}/${notes.ID}`}>
-                    <div className='flex-grow pt-2 px-2'></div>
+                    <div className='flex flex-grow justify-center items-center w-full pt-2 px-2'>
+                        <div className='relative h-3/4 w-3/4'>
+                            <Image src='/note.png' layout='fill' alt='Create Note' />
+                        </div>
+                    </div>
                 </Link>
                 <div className='flex flex-row justify-between items-center w-full'>
                     <Link href={`/notes/${id}/${notes.ID}`}>
