@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import executeQuery from '../../../../utils/connections/db'
 import authorisedValidator from '../../../../utils/api/authorised-validator';
+import postValidator from '../../../../utils/api/post-validator';
+import inputFormat from '../../../../utils/input-format';
 import apiErrorHandler from '../../../../utils/api/api-error-handler';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -12,96 +14,84 @@ export default async function CreateCategory(
     req: NextApiRequest,
     res: NextApiResponse<Data>
 ) {
-    /* accepts only POST requests and non-empty requests */
-    if ((req.method == 'POST') && (req.body) && (req.cookies['token'])) {
+    try {
+        /** check user authorisation */
+        await authorisedValidator(req);
+
+        /** check if request is POST */
+        await postValidator(req);
+
+        /** validate if request params are correct */
+        if (!new inputFormat().validateuuid(req.query.id)) {
+            throw 400;
+        };
         try {
-            /** check user authorisation */
-            await authorisedValidator(req);
+            if (!new inputFormat().validatetext255requried(req.body.categoryName)) {
+                throw 400;
+            }
+            if (!new inputFormat().validatecolor(req.body.categoryColor)) {
+                throw 400;
+            }
+        } catch {
+            throw 400;
         }
-        catch (error) {
-            apiErrorHandler(error, res);
-            return
-        }
+    }
+    catch (error) {
+        apiErrorHandler(error, res);
+        return
+    }
 
-        try {
-            /** deconstruct body data */
-            const { categoryName, categoryColor } = req.body;
+    /** deconstruct body data */
+    const { categoryName, categoryColor } = req.body;
 
-            if ((categoryName.length <= 255) && (categoryColor === 'red' || categoryColor === 'orange' || categoryColor === 'amber' || categoryColor === 'yellow' || categoryColor === 'lime' || categoryColor === 'green' || categoryColor === 'emerald' || categoryColor === 'teal' || categoryColor === 'cyan' || categoryColor === 'sky' || categoryColor === 'blue' || categoryColor === 'indigo' || categoryColor === 'violet' || categoryColor === 'purple' || categoryColor === 'fuchsia' || categoryColor === 'pink' || categoryColor === 'rose')) {
-                try {
-                    const totalCategories = JSON.parse(JSON.stringify(await executeQuery({
-                        query: 'CALL selectTotalCategories(?)',
-                        values: [req.query.id],
-                    })));
+    try {
+        const totalCategories = JSON.parse(JSON.stringify(await executeQuery({
+            query: 'CALL selectTotalCategories(?)',
+            values: [req.query.id],
+        })));
 
-                    if (totalCategories[0][0]['COUNT(*)'] <= 50) {
+        if (totalCategories[0][0]['COUNT(*)'] <= 50) {
 
-                        var id = uuidv4();
-                        var idcheck = JSON.parse(JSON.stringify(await executeQuery({
-                            query: 'CALL selectCountCategoryID(?)',
-                            values: [id],
-                        })));
-                        var totalCount = 1
+            var id = uuidv4();
+            var idcheck = JSON.parse(JSON.stringify(await executeQuery({
+                query: 'CALL selectCountCategoryID(?)',
+                values: [id],
+            })));
+            var totalCount = 1
+
+            while (idcheck[0][0]['COUNT(*)'] == 1 && totalCount < 100) {              
+                id = uuidv4()
+                var idcheck = JSON.parse(JSON.stringify(await executeQuery({
+                    query: 'CALL selectCountCategoryID(?)',
+                    values: [id],
+                })));
+                totalCount += 1
+            }
             
-                        while (idcheck[0][0]['COUNT(*)'] == 1 && totalCount < 100) {              
-                            id = uuidv4()
-                            var idcheck = JSON.parse(JSON.stringify(await executeQuery({
-                                query: 'CALL selectCountCategoryID(?)',
-                                values: [id],
-                            })));
-                            totalCount += 1
-                        }
-                        
-                        if (totalCount >= 100) {
-                            res.status(500).json({message: 'Too many uuids checked, please try again'})
-                            return
-                        }
-                        else {
-                            /* insert data into category table */
-                            const result = await executeQuery({
-                                query: 'CALL insertCategoryData(?, ?, ?, ?)',
-                                values: [req.query.id, id, categoryName, categoryColor],
-                            });
-            
-                            res.status(201).json({ message: 'success' })
-                            return
-                        }
-                    }
-                    /** more than 50 categories */
-                    else {
-                        res.statusCode = 400;
-                        res.end('Too many categories created, please remove some before adding more');
-                    }
-                }
-                /** unexpected error */
-                catch {
-                    res.statusCode = 500;
-                    res.end('Unexpected Error');
-                }
+            if (totalCount >= 100) {
+                res.status(500).json({message: 'Too many uuids checked, please try again'})
+                return
+            }
+            else {
+                /* insert data into category table */
+                const result = await executeQuery({
+                    query: 'CALL insertCategoryData(?, ?, ?, ?)',
+                    values: [req.query.id, id, categoryName, categoryColor],
+                });
+
+                res.status(201).json({ message: 'success' })
+                return
             }
         }
-        /** if request body components do not fit requirements */
-        catch {
-            res.statusCode = 400;
-            res.end('Request format error');
+        /** more than 50 categories */
+        else {
+            res.status(409).json({ message: 'Too many categories created, please remove some before adding more' })
+            return
         }
     }
-    /* rejects requests that are not POST */
-    else if (req.method !== 'POST') {
-        res.statusCode = 405;
-        res.end('Error');
-        return
-    }
     /** if request body components do not fit requirements */
-    else if (!req.body) {
-        res.statusCode = 400;
-        res.end('Request format error');
-        return
-    }
-    /** if user is not authenticated */
-    else if (!req.cookies['token']) {
-        res.statusCode = 401;
-        res.end('Unauthorised');
+    catch {
+        res.status(500).json({ message: 'Internal server error' })
         return
     }
 }
