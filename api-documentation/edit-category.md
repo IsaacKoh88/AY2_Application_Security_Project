@@ -34,5 +34,6 @@
 | 401 | Unsuccessful request, JWT token invalid |
 | 403 | Unsuccessful request, not authorised to request change of category controlled by another user |
 | 405 | Unsuccessful request, request did not use `POST` method |
+| 409 | Unsuccessful request, too many categories created for specified user |
 | 429 | Unsuccessful request, too many requests from IP, thus rate limited |
 | 500 | Unsuccessful request, internal server issue (likely due to error in mysql connection) |
