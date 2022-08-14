@@ -19,10 +19,10 @@ export default async function SignupHandler(
         await postValidator(req);
 
         /** validate if request params are correct */
-        if (!new inputFormat().validateuuid(req.query.id)) {
-            throw 400;
-        };
         try {
+            if (!new inputFormat().validatetext255requried(req.body.username)) {
+                throw 400;
+            }
             if (!new inputFormat().validateemail(req.body.email)) {
                 throw 400;
             }
@@ -39,7 +39,7 @@ export default async function SignupHandler(
     }
 
     /** deconstructs request body */
-    const { email, password } = req.body;
+    const { username, email, password } = req.body;
 
     /** hash password */
     const hashedPassword = await argon2.hash(password);
@@ -68,8 +68,8 @@ export default async function SignupHandler(
         else {
             /* insert data into account table */
             const result = await executeQuery({
-                query: 'CALL insertAccountData(?, ?, ?)',
-                values: [id, email, hashedPassword],
+                query: 'CALL insertAccountData(?, ?, ?, ?)',
+                values: [id, username, email, hashedPassword],
             });
             console.log(result)
             res.status(200);

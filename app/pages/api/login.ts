@@ -16,13 +16,7 @@ const LoginHandler = async (
         await postValidator(req);
 
         /** validate if request params are correct */
-        if (!new inputFormat().validateuuid(req.query.id)) {
-            throw 400;
-        };
         try {
-            if (!new inputFormat().validateuuid(req.body.id)) {
-                throw 400;
-            }
             if (!new inputFormat().validateemail(req.body.email)) {
                 throw 400;
             }

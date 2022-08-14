@@ -101,12 +101,12 @@ DROP PROCEDURE IF EXISTS insertTodoData;
 DROP PROCEDURE IF EXISTS insertExpenseData;
 DROP PROCEDURE IF EXISTS inserTNotesData;
 
-CREATE PROCEDURE insertAccountData (IN id VARCHAR(36), email VARCHAR(255), password VARCHAR(255)) BEGIN
+CREATE PROCEDURE insertAccountData (IN id VARCHAR(36), username VARCHAR(255), email VARCHAR(255), password VARCHAR(255)) BEGIN
     SET @id = id;
     SET @email = email;
     SET @password = password;
     SET @address = NULL;
-    SET @username = NULL;
+    SET @username = username;
     SET @image = NULL;
 
     PREPARE stmt
