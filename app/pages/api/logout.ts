@@ -19,11 +19,6 @@ const LogoutHandler = async (
 
         /** check if request is GET */
         await getValidator(req);
-
-        /** validate if request params are correct */
-        if (!new inputFormat().validateuuid(req.query.id)) {
-            throw 400;
-        };
     }
     catch (error) {
         apiErrorHandler(error, res);
