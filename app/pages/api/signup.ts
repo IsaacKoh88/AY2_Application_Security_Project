@@ -72,7 +72,7 @@ export default async function SignupHandler(
                 values: [id, username, email, hashedPassword],
             });
             console.log(result)
-            res.status(200);
+            res.status(201);
             res.redirect('/login');
         }
     }

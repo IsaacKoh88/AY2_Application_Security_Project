@@ -22,7 +22,7 @@ const apiErrorHandler = (
 
     if (error === 405) {
         /** Wrong API method */
-        return res.status(403).json({ message: 'Method Not Allowed' })
+        return res.status(405).json({ message: 'Method Not Allowed' })
     }
 
     /** Default to 500 internal server error */
