@@ -111,7 +111,21 @@ const Calendar: NextPageWithLayout = () => {
     /** executes if user is no longer logged in */
     useEffect(() => {
         if ((categoriesError) || (eventsError) || (todosError)) {
-            Router.push('/')
+            if ((categoriesError.status === 401) || (eventsError.status === 401) || (todosError.status === 401)) {
+                alert(401)
+                Router.push('/login');
+            } else if ((categoriesError.status === 400) || (eventsError.status === 400) || (todosError.status === 400)) {
+                alert(400);
+                Router.reload();
+            } else if ((categoriesError.status === 403) || (eventsError.status === 403) || (todosError.status === 403)) {
+                alert(403);
+                Router.reload();
+            } else if ((categoriesError.status === 429) || (eventsError.status === 429) || (todosError.status === 429)) {
+                alert(429);
+            } else if ((categoriesError.status === 500) || (eventsError.status === 500) || (todosError.status === 500)) {
+                alert(500);
+                Router.reload();
+            } 
         }
     }, [categoriesError, eventsError, todosError])
 
@@ -188,14 +202,42 @@ const Calendar: NextPageWithLayout = () => {
             }
         );
 
-        todosMutate();                          // update client todos data
+        if (response.status === 201) {
+            todosMutate();                      // update client todos data
+        } else if (response.status === 400) {
+            Router.reload();
+        } else if (response.status === 401) {
+            Router.push('/login');
+        } else if (response.status === 403) {
+            Router.reload();
+        } else if (response.status === 404) {
+            todosMutate();                      // update client todos data
+        } else if (response.status === 429) {
+            alert(429)
+        } else if (response.status === 500) {
+            Router.reload();
+        }
     };
 
     /** Handle delete all done to-do */
     const handleDeleteTodoDone = async () => {
         const response = await fetch('/api/'+id+'/todo/delete-done');
 
-        todosMutate();
+        if (response.status === 200) {
+            todosMutate();                      // update client todos data
+        } else if (response.status === 400) {
+            alert('Error 400: Request body format error.')
+            Router.reload();
+        } else if (response.status === 401) {
+            Router.push('/login');
+        } else if (response.status === 403) {
+            alert('Error 403: Unauthorised.')
+            Router.reload();
+        } else if (response.status === 429) {
+            alert('Error 429: Rate limited.')
+        } else if (response.status === 500) {
+            Router.reload();
+        }
     }
 
     /** Handles date selection action */
@@ -350,7 +392,7 @@ const Calendar: NextPageWithLayout = () => {
                             className='group cursor-pointer flex justify-center items-center hover:bg-slate-800 w-10 h-10 rounded-lg duration-150 ease-in-out'
                             onClick={() => handleDeleteTodoDone()}
                         >
-                            <i className='gg-plus group-hover:text-white'></i>
+                            <i className='gg-trash group-hover:text-white'></i>
                         </div>
                     </div>
                     {todos?

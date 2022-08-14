@@ -33,9 +33,17 @@ const EditEvent = ({ id, event, categories, success, close }) => {
             success();
         } else if (response.status === 400) {
             alert('Error 400: Request body format error.');
-        } else if (response.status === 404) {
-            alert('Error 404: Category not found');
-            success();
+        } else if (response.status === 500) {
+            alert('Error 500: Internal server error.');
+        } else if (response.status === 409) {
+            alert('Error 409: Too many events created on that date.');
+        } else if (response.status === 401) {
+            router.push('/login');
+        } else if (response.status === 403) {
+            alert('Error 403: Unauthorised.')
+            router.reload();
+        } else if (response.status === 429) {
+            alert('Error 429: Rate limited.')
         }
     }
 

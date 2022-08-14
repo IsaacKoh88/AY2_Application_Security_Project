@@ -1,9 +1,11 @@
 import React, { Fragment, useState } from 'react';
 import colors from '../../utils/colors';
+import { useRouter } from 'next/router';
 
 const CreateCategory = ({ id, success, close }) => {
     const [categoryName, setCategoryName] = useState('');
     const [categoryColor, setCategoryColor] = useState('red');
+    const router = useRouter();
 
     const FormSubmitHandler = async () => {
         const response = await fetch('/api/'+id+'/category/create', 
@@ -27,9 +29,15 @@ const CreateCategory = ({ id, success, close }) => {
             alert('Error 400: Request body format error.');
         } else if (response.status === 500) {
             alert('Error 500: Internal server error.');
-        } else if (response.status === 304) {
-            alert('Error 304: Too many categroies created, please remove some before adding more.');
-            close();
+        } else if (response.status === 409) {
+            alert('Error 409: Too many categories created');
+        } else if (response.status === 401) {
+            router.push('/login');
+        } else if (response.status === 403) {
+            alert('Error 403: Unauthorised.')
+            router.reload();
+        } else if (response.status === 429) {
+            alert('Error 429: Rate limited.')
         }
     }
 
