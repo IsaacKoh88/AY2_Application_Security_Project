@@ -145,7 +145,7 @@ const ChangePFP = ({ id }) => {
                             <button className='text-white bg-blue-600 rounded-md p-2' type='submit' onClick={FormSubmitHandler}>Submit</button>
                         </form>
                         <Link href='/account'>
-                            <button className='text-white bg-blue-600 rounded-md p-2'>Back to account</button>
+                            <button className='self-center text-white bg-blue-600 rounded-md m-2 p-2'>Back to account</button>
                         </Link>
 
                     </div>
