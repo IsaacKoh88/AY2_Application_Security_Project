@@ -5,6 +5,7 @@ import executeQuery from '../../../utils/connections/db'
 import tokenBlacklistCheck from '../../../utils/check-blacklist-token'
 import { useState } from 'react'
 import * as jose from 'jose'
+import Layout from '../../../components/layouts/authenticated-layout';
 
 export async function getServerSideProps(context) {
     const JWTtoken = context.req.cookies['token'];

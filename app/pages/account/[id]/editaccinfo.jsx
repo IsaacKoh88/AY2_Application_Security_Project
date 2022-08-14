@@ -7,6 +7,7 @@ import { useState } from 'react'
 import * as jose from 'jose'
 import React, { Component } from 'react'
 import Link from "next/link";
+import Layout from '../../../components/layouts/authenticated-layout';
 import { UiFileInputButton } from '../../../components/UiFileInputButton';
 import { uploadFileRequest } from '../../../components/upload.services';
 export async function getServerSideProps(context) {
