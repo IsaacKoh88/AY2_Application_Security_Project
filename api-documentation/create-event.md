@@ -31,7 +31,7 @@
 
 | Response Status | Response Meaning |
 |-|-|
-| 200 | Successful create event request |
+| 201 | Successful create event request |
 | 400 | Unsuccessful request, request parameters does not fit requirements above |
 | 401 | Unsuccessful request, JWT token invalid |
 | 403 | Unsuccessful request, not authorised to create event under another user |

@@ -33,7 +33,7 @@
 
 | Response Status | Response Meaning |
 |-|-|
-| 200 | Successful edit event request |
+| 201 | Successful edit event request |
 | 400 | Unsuccessful request, request parameters does not fit requirements above |
 | 401 | Unsuccessful request, JWT token invalid |
 | 403 | Unsuccessful request, not authorised to request change of event controlled by another user |
