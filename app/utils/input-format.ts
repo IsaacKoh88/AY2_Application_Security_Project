@@ -1,3 +1,5 @@
+import moment from "moment";
+
 class inputFormat {
     uuid: RegExp;
     text255requiredinput: RegExp;
@@ -71,7 +73,11 @@ class inputFormat {
 
     validatedate(data: any) {
         if (typeof data === 'string') {
-            return this.daterequiredinput.test(data);
+            if (this.daterequiredinput.test(data)) {
+                return moment(data, 'YYYY-MM-DD', true).isValid()
+            } else {
+                return false;
+            }
         } else {
             return false;
         };

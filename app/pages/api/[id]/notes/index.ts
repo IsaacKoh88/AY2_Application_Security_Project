@@ -33,12 +33,17 @@ export default async function GetEvent(
         return
     }
 
-    /* insert data into notes table */
-    const result = JSON.parse(JSON.stringify(await executeQuery({
-        query: 'CALL selectNoteName_AccountID(?)',
-        values: [req.query.id],
-    })));
+    try {
+        /* insert data into notes table */
+        const result = JSON.parse(JSON.stringify(await executeQuery({
+            query: 'CALL selectNoteName_AccountID(?)',
+            values: [req.query.id],
+        })));
 
-    res.status(200).json(result[0])
-    return
+        res.status(200).json(result[0])
+        return
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal server error' })
+    }
 };

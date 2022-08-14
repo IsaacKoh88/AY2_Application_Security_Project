@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import executeQuery from '../../../../utils/connections/db'
 import authorisedValidator from '../../../../utils/api/authorised-validator';
+import postValidator from '../../../../utils/api/post-validator';
+import inputFormat from '../../../../utils/input-format';
 import apiErrorHandler from '../../../../utils/api/api-error-handler';
 
 type Data = {
@@ -11,59 +13,56 @@ export default async function DeleteTodo(
     req: NextApiRequest,
     res: NextApiResponse<Data>
 ) {
-    /* accepts only POST requests and non-empty requests */
-    if ((req.method == 'POST') && (req.body) && (req.cookies['token'])) {
+    try {
+        /** check user authorisation */
+        await authorisedValidator(req);
+
+        /** check if request is POST */
+        await postValidator(req);
+
+        /** validate if request params are correct */
+        if (!new inputFormat().validateuuid(req.query.id)) {
+            throw 400;
+        };
         try {
-            /** check user authorisation */
-            await authorisedValidator(req);
+            if (!new inputFormat().validateuuid(req.body.todoID)) {
+                throw 400;
+            }
+        } catch {
+            throw 400;
         }
-        catch (error) {
-            apiErrorHandler(error, res);
+    }
+    catch (error) {
+        apiErrorHandler(error, res);
+        return
+    }
+
+    /** deconstruct body data */
+    const { todoID } = req.body;
+
+    try {
+        const idcheck = JSON.parse(JSON.stringify(await executeQuery({
+            query: 'CALL selectCountTodoID(?)',
+            values: [todoID],
+        })));
+        if (idcheck[0][0]['COUNT(*)'] === 1) {
+            /* insert data into category table */
+            const result = await executeQuery({
+                query: 'CALL deleteTodoData(?, ?)',
+                values: [req.query.id, todoID],
+            });
+
+            res.status(200).json({ message: 'success' })
             return
         }
-
-        try {
-            /** deconstruct body data */
-            const { todoID } = req.body;
-
-            if (todoID.length === 36) {
-                /* insert data into category table */
-                const result = await executeQuery({
-                    query: 'CALL deleteTodoData(?, ?)',
-                    values: [req.query.id, todoID],
-                });
-
-                res.status(200).json({ message: 'success' })
-                return
-            }
-            /** if request body components do not fit requirements */
-            else {
-                res.statusCode = 400;
-                res.end('Request format error');
-            }
-        }
-        /** if request body components do not fit requirements */
-        catch {
-            res.statusCode = 400;
-            res.end('Request format error');
+        /** event ID does not exist */
+        else {
+            res.status(404).json({ message: 'Todo not found' })
+            return
         }
     }
-    /* rejects requests that are empty */
-    else if (req.method !== 'POST') {
-        res.statusCode = 405;
-        res.end('Error');
-        return
-    }
-    /** if request body components do not fit requirements */
-    else if (!req.body) {
-        res.statusCode = 400;
-        res.end('Request format error');
-        return
-    }
-    /** if user is not authenticated */
-    else if (!req.cookies['token']) {
-        res.statusCode = 401;
-        res.end('Unauthorised');
+    catch {
+        res.status(500).json({ message: 'Internal server error' })
         return
     }
 }

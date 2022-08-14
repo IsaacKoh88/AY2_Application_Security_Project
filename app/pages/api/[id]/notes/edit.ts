@@ -26,15 +26,12 @@ export default async function EditNotes(
         };
         try {
             if (!new inputFormat().validateuuid(req.body.notesID)) {
-                console.log('id')
                 throw 400;
             }
             if (!new inputFormat().validatetext255requried(req.body.notesName)) {
-                console.log('name')
                 throw 400;
             }
             if ((req.body.description) && (!new inputFormat().validatetextblock(req.body.description))) {
-                console.log('description')
                 throw 400;
             }
         } catch {
@@ -49,20 +46,25 @@ export default async function EditNotes(
     /** deconstruct body data */
     const { notesID, notesName, description } = req.body;
 
-    if (description) {
-        /* insert data into notes table */
-        const result = await executeQuery({
-            query: 'CALL updateNotes(?, ?, ?, ?)',
-            values: [req.query.id, notesID, notesName, description],
-        });
-    } else {
-        /* insert data into notes table */
-        const result = await executeQuery({
-            query: 'CALL updateNotesName(?, ?, ?)',
-            values: [req.query.id, notesID, notesName],
-        });
+    try {
+        if (description) {
+            /* insert data into notes table */
+            const result = await executeQuery({
+                query: 'CALL updateNotes(?, ?, ?, ?)',
+                values: [req.query.id, notesID, notesName, description],
+            });
+        } else {
+            /* insert data into notes table */
+            const result = await executeQuery({
+                query: 'CALL updateNotesName(?, ?, ?)',
+                values: [req.query.id, notesID, notesName],
+            });
+        }
+    
+        res.status(201).json({ message: 'success' });
+        return
     }
-
-    res.status(201).json({ message: 'success' })
-    return
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
 }
