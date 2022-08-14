@@ -51,7 +51,7 @@ export default async function CreateTodo(
             values: [req.query.id],
         })));
 
-        if (totalTodos[0][0]['COUNT(*)'] <= 100) {
+        if (totalTodos[0][0]['COUNT(*)'] < 100) {
             var id = uuidv4();
             var idcheck = JSON.parse(JSON.stringify(await executeQuery({
                 query: 'CALL selectCountTodoID(?)',

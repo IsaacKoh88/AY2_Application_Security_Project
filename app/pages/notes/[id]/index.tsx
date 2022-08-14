@@ -144,33 +144,35 @@ const Notes: NextPageWithLayout = () => {
                         </div>
                     </div>
 
-                    <div className='flex flex-row justify-start items-start flex-wrap'>
-                        {notes?
-                            <Fragment>
-                                {(notes.length === 0) ? 
-                                    null
-                                    :
-                                        /** display a card for each event */
-                                        (notes.map((note, index) => 
-                                            <NotesDisplay id={id} notes={note} EditNotes={handleEditNotesPopupAppear} key={index} />
-                                        ))}
-                                <div 
-                                    className='cursor-pointer group flex flex-col justify-center items-center bg-slate-800/50 hover:bg-slate-800/100 h-60 w-52 m-3 rounded-lg duration-150'
-                                    onClick={() => handleCreateNote()}
-                                >
-                                    <div className='flex flex-grow justify-center items-center w-full pt-2 px-2'>
-                                        <div className='relative h-3/4 w-3/4'>
-                                            <Image src='/add_note.png' layout='fill' alt='Create Note' />
+                    <div className='flex justify-start items-start w-full h-full overflow-y-scroll scrollbar'>
+                        <div className='flex flex-row justify-start items-start flex-wrap'>
+                            {notes?
+                                <Fragment>
+                                    {(notes.length === 0) ? 
+                                        null
+                                        :
+                                            /** display a card for each event */
+                                            (notes.map((note, index) => 
+                                                <NotesDisplay id={id} notes={note} EditNotes={handleEditNotesPopupAppear} key={index} />
+                                            ))}
+                                    <div 
+                                        className='cursor-pointer group flex flex-col justify-center items-center bg-slate-800/50 hover:bg-slate-800/100 h-60 w-52 m-3 rounded-lg duration-150'
+                                        onClick={() => handleCreateNote()}
+                                    >
+                                        <div className='flex flex-grow justify-center items-center w-full pt-2 px-2'>
+                                            <div className='relative h-3/4 w-3/4'>
+                                                <Image src='/add_note.png' layout='fill' alt='Create Note' />
+                                            </div>
+                                        </div>
+                                        <div className='flex flex-row justify-center items-center mt-1 px-2 pb-2 w-full'>
+                                            <p className='font-semibold group-hover:text-white duration-150'>Create Note</p>
                                         </div>
                                     </div>
-                                    <div className='flex flex-row justify-center items-center mt-1 px-2 pb-2 w-full'>
-                                        <p className='font-semibold group-hover:text-white duration-150'>Create Note</p>
-                                    </div>
-                                </div>
-                            </Fragment>
-                            :
-                            <></>
-                        }
+                                </Fragment>
+                                :
+                                <></>
+                            }
+                        </div>
                     </div>
                 </div>
 

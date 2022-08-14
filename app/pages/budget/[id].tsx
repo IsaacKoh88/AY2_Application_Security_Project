@@ -370,7 +370,7 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
                         <p className=''>No Expenses</p>
                     </div> 
                     :
-                    <div className='flex flex-col grow justify-start items-center w-full overflow-auto'>
+                    <div className='flex flex-col grow justify-start items-center w-full overflow-y-overflow scrollbar'>
                         {expenses.map((expense, index) => (
                             <Expense expense={expense} editExpense={handleEditExpensePopupAppear} key={index} />
                         ))}

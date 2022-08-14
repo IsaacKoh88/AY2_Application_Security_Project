@@ -50,7 +50,7 @@ export default async function CreateCategory(
             values: [req.query.id],
         })));
 
-        if (totalCategories[0][0]['COUNT(*)'] <= 50) {
+        if (totalCategories[0][0]['COUNT(*)'] < 50) {
 
             var id = uuidv4();
             var idcheck = JSON.parse(JSON.stringify(await executeQuery({

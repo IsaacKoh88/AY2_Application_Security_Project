@@ -402,11 +402,13 @@ const Calendar: NextPageWithLayout = () => {
                                 <p className=''>No To-dos</p>
                             </div> 
                             :
-                            <div className='flex flex-col grow justify-start items-center w-full oveflow-y-scroll'>
-                                {/** display a card for each to-do */}
-                                {todos.map((todo, index) => (
-                                    <Todo todo={todo} changeStatus={handleTodoCheck} editTodo={handleEditTodoPopupAppear} key={index} />
-                                ))}
+                            <div className='flex flex-col justify-start items-center w-full h-full overflow-y-scroll scrollbar'>
+                                <div className='flex flex-col justify-start items-center w-full'>
+                                    {/** display a card for each to-do */}
+                                    {todos.map((todo, index) => (
+                                        <Todo todo={todo} changeStatus={handleTodoCheck} editTodo={handleEditTodoPopupAppear} key={index} />
+                                    ))}
+                                </div>
                             </div>
                         :
                         <></>
