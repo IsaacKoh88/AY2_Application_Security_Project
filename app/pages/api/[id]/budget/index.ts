@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import executeQuery from '../../../../utils/connections/db'
 import authorisedValidator from '../../../../utils/api/authorised-validator';
+import postValidator from '../../../../utils/api/post-validator';
+import inputFormat from '../../../../utils/input-format';
 import apiErrorHandler from '../../../../utils/api/api-error-handler';
 import dayjs from 'dayjs';
 
@@ -15,17 +17,24 @@ export default async function GetBudget(
     req: NextApiRequest,
     res: NextApiResponse<Data>
 ) {
-    /* accepts only GET requests and non-empty requests */
-    if ((req.method == 'POST') && (req.cookies['token'])) {
-        try {
-            /** check user authorisation */
-            await authorisedValidator(req);
-        }
-        catch (error) {
-            apiErrorHandler(error, res);
-            return
-        }
+    try {
+        /** check user authorisation */
+        await authorisedValidator(req);
 
+        /** check if request is POST */
+        await postValidator(req);
+
+        /** validate if request params are correct */
+        if (!new inputFormat().validateuuid(req.query.id)) {
+            throw 400;
+        };
+    }
+    catch (error) {
+        apiErrorHandler(error, res);
+        return
+    }
+
+    try {
         /* get budget */
         const result = JSON.parse(JSON.stringify(await executeQuery({
             query: 'CALL selectBudget_AccountID(?)',
@@ -54,6 +63,10 @@ export default async function GetBudget(
         }
 
         res.status(200).json({ Budget: result[0][0].Budget, circleStyle: circleStyle })
-
-    };
+        return
+    }
+    catch {
+        res.status(500).json({ message: 'Internal server error' })
+        return
+    }
 };
