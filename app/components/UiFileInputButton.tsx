@@ -60,7 +60,7 @@ export const UiFileInputButton: React.FC<IProps> = (props) => {
 
     return (
         <form ref={formRef}>
-            <button type="button" style={styles.container} onClick={onClickHandler}>
+            <button type="button" className='bg-slate-700 p-4 m-0.5 mb-1 rounded-lg' onClick={onClickHandler}>
                 {props.label}
             </button>
             <input
@@ -69,23 +69,14 @@ export const UiFileInputButton: React.FC<IProps> = (props) => {
                 name={props.uploadFileName}
                 onChange={onChangeHandler}
                 ref={fileInputRef}
-                style={{ display: 'none' }}
+                className ='hidden'
                 type="file"
                 required
             />
         </form>
     );
 };
-const styles = {
-    container: {
-        backgroundColor: "#334155",
-        padding: "1em",
-        margin: "2px",
-        borderRadius: "10px",
-        marginBottom: "5px"
 
-    }
-} as const;
 UiFileInputButton.defaultProps = {
     acceptedFileTypes: '',
     allowMultipleFiles: false,
