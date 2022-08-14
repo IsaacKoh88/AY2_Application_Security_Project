@@ -18,6 +18,6 @@
 |-|-|
 | 201 | Successful signup request, account created, redirects to https://localhost/login |
 | 400 | Unsuccessful signup request, request parameters does not conform to requirements above |
-| 429 | Unsuccessful signup request, too many requests from IP, thus rate limited |
 | 405 | Unsuccessful signup request, request did not use `POST` method |
+| 429 | Unsuccessful signup request, too many requests from IP, thus rate limited |
 | 500 | Unsuccessful signup request, internal server issue (likely due to error in mysql connection) |
