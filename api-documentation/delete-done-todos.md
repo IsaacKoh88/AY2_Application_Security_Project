@@ -20,7 +20,7 @@
 
 | Response Status | Response Meaning |
 |-|-|
-| 200 | Successful request, returns todos data of queried user |
+| 200 | Successful delete done todos request |
 | 400 | Unsuccessful request, request parameters does not fit requirements above |
 | 401 | Unsuccessful request, JWT token invalid |
 | 403 | Unsuccessful request, not authorised to request data from another user |
