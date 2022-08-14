@@ -74,8 +74,7 @@ export default async function CreateNotes(
             }
         }
         else {
-            res.statusCode = 400;
-            res.end('You have reached the limit of 50 notes, please remove some notess before adding more');
+            res.status(409).json({ message: 'Too many notes created, please delete some.' })
         }
     }
     catch (error) {

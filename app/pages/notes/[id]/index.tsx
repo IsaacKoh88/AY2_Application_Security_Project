@@ -74,6 +74,7 @@ export async function getServerSideProps(context:any) {
 
 const Notes: NextPageWithLayout = () => {
     const id = useRouter().query.id
+    const Router = useRouter();
 
     /** State to store notes */
     const { data: notes, error: notesError, mutate: notesMutate } = useSWR<NotesProps>(`/api/${id}/notes`, fetcher);
@@ -92,7 +93,21 @@ const Notes: NextPageWithLayout = () => {
         );
 
         if (response.status === 201) {
-            notesMutate();
+            notesMutate();                      // update client notes data
+        } else if (response.status === 400) {
+            alert('Error 400: Request body format error.')
+            Router.reload();
+        } else if (response.status === 401) {
+            Router.push('/login');
+        } else if (response.status === 403) {
+            alert('Error 403: Unauthorised.')
+            Router.reload();
+        } else if (response.status === 429) {
+            alert('Error 429: Rate limited.')
+        } else if (response.status === 409) {
+            alert('Error 409: Too many notes created.')
+        } else if (response.status === 500) {
+            Router.reload();
         }
     };
 
