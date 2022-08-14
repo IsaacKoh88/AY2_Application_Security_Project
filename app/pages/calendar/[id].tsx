@@ -302,7 +302,7 @@ const Calendar: NextPageWithLayout = () => {
     return (
         <Fragment>
             <Head>
-                <title>Account Details</title> 
+                <title>Calendar</title> 
                 <meta name="viewport" content="initial-scale=1.0, width=device-width" />
             </Head>
 

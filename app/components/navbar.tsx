@@ -7,7 +7,7 @@ const Navbar: NextPage = () => {
             <div className='container flex justify-between content-center h-full'>
                 <div className='flex justify-center content-center h-full'>
                     <Link href='/'>
-                        <p className='text-white font-medium text-xl pb-0.5 m-auto cursor-pointer select-none'>Lifestyle Management Project</p>
+                        <p className='text-white font-medium text-xl pb-0.5 m-auto cursor-pointer select-none'>Lifestyle Management</p>
                     </Link>
                 </div>
 
