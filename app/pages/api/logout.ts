@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import authorisedValidator from '../../utils/api/authorised-validator';
 import getValidator from '../../utils/api/get-validator';
+import inputFormat from '../../utils/input-format';
 import apiErrorHandler from '../../utils/api/api-error-handler';
 import redisClient from '../../utils/connections/redis';
 

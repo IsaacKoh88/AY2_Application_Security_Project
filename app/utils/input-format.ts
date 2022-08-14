@@ -87,7 +87,7 @@ class inputFormat {
 
     validateamount(data: any) {
         if (typeof data === 'number') {
-            return this.timerequiredinput.test(String(data));
+            return this.amountrequiredinput.test(String(data));
         } else {
             return false;
         };

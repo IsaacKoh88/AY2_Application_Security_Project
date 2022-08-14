@@ -1,5 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import executeQuery from '../../utils/connections/db';
+import postValidator from '../../utils/api/post-validator';
+import inputFormat from '../../utils/input-format';
+import apiErrorHandler from '../../utils/api/api-error-handler';
 import generateJWT from '../../utils/generate-jwt';
 import setCookie from '../../utils/api/set-cookie';
 import * as argon2 from 'argon2';
@@ -8,48 +11,57 @@ const LoginHandler = async (
     req: NextApiRequest,
     res: NextApiResponse
 ) => {
-    /** accepts only POST requests and non-empty requests */
-    if ((req.method == 'POST') && (req.body)) {
-        /** deconstructs request body */
-        const { email, password } = req.body;
+    try {
+        /** check if request is POST */
+        await postValidator(req);
 
+        /** validate if request params are correct */
         try {
-            /** connects to mysql database and queries it */
-            const result = await executeQuery({
-                query: 'SELECT id, email, password FROM account WHERE email=?',
-                values: [email],
-            });
-
-            /** if row exists in database and password is verified */
-            if ((result[0] !== undefined) && (await argon2.verify(result[0].password, password))) {
-                /** generates jwt token */
-                const jwtToken = await generateJWT(email);
-                // Calling our pure function using the `res` object, it will add the `set-cookie` header
-                setCookie(res, 'token', jwtToken);
-                res.redirect(307, ('/account/' + result[0].id));
+            if (!new inputFormat().validateemail(req.body.email)) {
+                throw 400;
             }
-            else {
-                res.statusCode = 401;
-                res.end('Email or Password is incorrect');
-                return
+            if (!new inputFormat().validatetext255requried(req.body.password)) {
+                throw 400;
             }
-        } 
-        catch ( error ) {
-            console.log( error );
+        } catch {
+            throw 400;
         }
     }
-    /** rejeccts requests that are not POST */
-    else if (req.method != 'POST') {
-        res.statusCode = 405;
-        res.end('Error');
+    catch (error) {
+        apiErrorHandler(error, res);
         return
     }
-    /** rejects requests that are empty */
-    else if (!req.body) {
-        res.statusCode = 405;
-        res.end('Error');
+
+    /** deconstructs request body */
+    const { email, password } = req.body;
+
+    try {
+        /** connects to mysql database and queries it */
+        const result = await executeQuery({
+            query: 'SELECT id, email, password FROM account WHERE email=?',
+            values: [email],
+        });
+
+        /** if row exists in database and password is verified */
+        if ((result[0] !== undefined) && (await argon2.verify(result[0].password, password))) {
+            /** generates jwt token */
+            const jwtToken = await generateJWT(email);
+            // Calling our pure function using the `res` object, it will add the `set-cookie` header
+            setCookie(res, 'token', jwtToken);
+            res.redirect(307, ('/account/' + result[0].id));
+        }
+        else {
+            res.statusCode = 401;
+            res.redirect('/login');
+            res.end('Email or Password is incorrect');
+            return
+        }
+    } 
+    catch ( error ) {
+        res.status(500).json({ message: 'internal server error' })
+        res.redirect('/login');
         return
-    };
+    }
 };
 
 export default LoginHandler;

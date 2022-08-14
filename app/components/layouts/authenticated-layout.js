@@ -1,10 +1,13 @@
 import NavItem from "../nav-items";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import useSWR from "swr";
+import fetcher from "../../utils/swr/swr-fetcher";
 
 {/**Define logout button component */ }
 const Layout = ({ children }) => {
     const router = useRouter()
+    const id = router.query.id
 
     const handleLogout = async () => {
         const response = await fetch('/api/logout');
@@ -13,6 +16,8 @@ const Layout = ({ children }) => {
             router.push('/');
         }
     }
+
+    const { data: user, error: userError, mutate: userMutate } = useSWR(`/api/${id}/account`, fetcher);
 
     return (
         <div className='flex flex-row h-screen w-screen text-slate-400 bg-slate-900'>
@@ -44,7 +49,7 @@ const Layout = ({ children }) => {
                     <Link href='/account'>
                         <div className='cursor-pointer flex flex-row justify-center items-center h-12 mr-3 hover:text-slate-200 duration-150 ease-in-out'>
                             <div className='h-12 w-12 mx-3 rounded-full' />
-                            <p className='mx-3'>Username</p>
+                            <p className='mx-3'>{ user? user[0].email : ''}</p>
                         </div>
                     </Link>
                     <div 
