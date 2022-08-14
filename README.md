@@ -67,6 +67,7 @@ Open [https://localhost:](https://localhost) with your browser to see the result
 * [Edit Todos API](api-documentation/edit-todos.md)
 * [Check Todos API](api-documentation/check-todos.md)
 * [Delete Todos API](api-documentation/delete-todos.md)
+* [Delete Done Todos API](api-documentation/delete-done-todos.md)
 
 #### Notes
 
