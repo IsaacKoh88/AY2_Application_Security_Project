@@ -48,7 +48,8 @@ const LoginHandler = async (
             const jwtToken = await generateJWT(email);
             // Calling our pure function using the `res` object, it will add the `set-cookie` header
             setCookie(res, 'token', jwtToken);
-            res.redirect(307, ('/account/' + result[0].id));
+            res.status(200)
+            res.redirect('/account/' + result[0].id);
             return
         }
         else {
