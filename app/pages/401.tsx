@@ -3,7 +3,6 @@ import { Fragment } from 'react'
 import Head from 'next/head'
 import Navbar from '../components/navbar'
 import Link from 'next/link'
-import Image from 'next/image'
 
 const Error401: NextPage = () => {
     return (
@@ -18,7 +17,9 @@ const Error401: NextPage = () => {
                 <div className='container flex justify-center items-center flex-grow'>
                     <div className='flex flex-row justify-start items-start h-fit w-[80%] bg-white rounded-2xl p-5 mb-8'>
                         <div className='relative h-full w-[30%] p-5 mb-8'>
-                            <Image src='/401.png' layout='fill' alt='401 Error' />
+                            <picture>
+                                <img src='/401.png'></img>
+                            </picture>
                         </div>
                         <div>
                             <div className='w-fit p-5 text-5xl'>

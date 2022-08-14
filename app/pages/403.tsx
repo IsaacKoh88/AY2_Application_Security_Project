@@ -5,7 +5,6 @@ import Navbar from '../components/navbar'
 import Link from 'next/link'
 import executeQuery from '../utils/connections/db';
 import * as jose from 'jose';
-import Image from 'next/image'
 
 type ErrorProps = {
     id: string;
@@ -32,10 +31,10 @@ export async function getServerSideProps(context:any) {
                     .then(value => {return(value['payload']['email'])});
 
         /** get the id using email in JWT */
-        const result = await executeQuery({
+        const result = JSON.parse(JSON.stringify(await executeQuery({
             query: 'CALL selectId_Email(?)',
             values: [email],
-        });
+        })));
 
         try {
             return{
@@ -45,7 +44,12 @@ export async function getServerSideProps(context:any) {
             }
         } 
         catch (error) {
-            console.log(error)
+            return {
+                redirect: {
+                    destination: '/401',
+                    permanent: false,
+                },
+            }
         }  
     } 
     
@@ -73,7 +77,9 @@ const Error403: NextPage<ErrorProps> = (props) => {
                 <div className='container flex justify-center items-center flex-grow'>
                     <div className='flex flex-row justify-start items-start h-fit w-[80%] bg-white rounded-2xl p-5 mb-8'>
                         <div className='block h-fit w-[40%]  p-5 mb-8'>
-                            <Image src='/403.png' layout='fill' alt='403 Error' />
+                            <picture>
+                                <img src='/403.png'></img>
+                            </picture>
                         </div>
                         <div>
                             <div className='w-fit p-5 text-5xl'>
