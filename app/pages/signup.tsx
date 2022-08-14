@@ -111,8 +111,41 @@ const Signup: NextPage = () => {
         if (length === 0)  {
             setPasswordLength('w-0')
         }
+        else if(length === 1){
+            setPasswordLength('w-1/12')
+        }
+        else if(length === 2){
+            setPasswordLength('w-2/12')
+        }
+        else if(length === 3){
+            setPasswordLength('w-3/12')
+        }
+        else if(length === 4){
+            setPasswordLength('w-4/12')
+        }
+        else if(length === 5){
+            setPasswordLength('w-5/12')
+        }
+        else if(length === 6){
+            setPasswordLength('w-6/12')
+        }
+        else if(length === 7){
+            setPasswordLength('w-7/12')
+        }
+        else if(length === 8){
+            setPasswordLength('w-8/12')
+        }
+        else if(length === 9){
+            setPasswordLength('w-9/12')
+        }
+        else if(length === 10){
+            setPasswordLength('w-10/12')
+        }
+        else if(length === 11){
+            setPasswordLength('w-11/12')
+        }
         else{
-            setPasswordLength('w-'+length+'/12')
+            setPasswordLength('w-12/12')
         }
 
         const testResult  = zxcvbn(password);
