@@ -27,8 +27,8 @@ export default async function DeleteDoneTodos(
     try {
         /* delete checked todos from table */
         const result = JSON.parse(JSON.stringify(await executeQuery({
-            query: 'DELETE * FROM todo WHERE AccountID = ? AND Checked = 1',
-            values: [req.query.id],
+            query: 'DELETE FROM todo WHERE AccountID = ? AND Checked = ?',
+            values: [req.query.id, 1],
         })));
 
         res.status(200).json({ message: 'success' })
