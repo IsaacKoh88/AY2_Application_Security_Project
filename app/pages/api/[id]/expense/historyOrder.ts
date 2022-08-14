@@ -101,4 +101,5 @@ export default async function GetExpense(
     else{
         res.status(500).json({Result:[], totalExpense: totalExpense})
     }
+    res.status(200).json({Result: result[0], totalExpense: totalExpense})
 };
