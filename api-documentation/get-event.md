@@ -2,7 +2,7 @@
 
 ### Request
 
-`POST https://localhost/api/[id]/events/[date]`
+`GET https://localhost/api/[id]/events/[date]`
 
 #### Header Parameters
 

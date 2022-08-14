@@ -2,7 +2,7 @@
 
 ### Request
 
-`POST https://localhost/api/login`
+`GET https://localhost/api/login`
 
 #### Header Parameters
 
