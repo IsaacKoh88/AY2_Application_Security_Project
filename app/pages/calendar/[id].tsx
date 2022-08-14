@@ -191,6 +191,13 @@ const Calendar: NextPageWithLayout = () => {
         todosMutate();                          // update client todos data
     };
 
+    /** Handle delete all done to-do */
+    const handleDeleteTodoDone = async () => {
+        const response = await fetch('/api/'+id+'/todo/delete-done');
+
+        todosMutate();
+    }
+
     /** Handles date selection action */
     const handleSelectDate = (index: Dayjs) => {
         setSelectedDate(index);                 // update selected date state
@@ -330,12 +337,18 @@ const Calendar: NextPageWithLayout = () => {
                 {/** to-do list */}
                 <div className='flex flex-col justify-start items-center h-full w-2/5 px-6'>
                     <div className='flex flex-row justify-center items-center w-full mt-4 mb-2'>
-                        <div className='flex grow justify-center items-center ml-10'>
+                        <div 
+                            className='group cursor-pointer flex justify-center items-center hover:bg-slate-800 w-10 h-10 rounded-lg duration-150 ease-in-out'
+                            onClick={() => handleCreateTodoPopupAppear()}
+                        >
+                            <i className='gg-plus group-hover:text-white'></i>
+                        </div>
+                        <div className='flex grow justify-center items-center'>
                             <p className='cursor-default text-xl text-slate-200 font-bold'>To-do list</p>
                         </div>
                         <div 
                             className='group cursor-pointer flex justify-center items-center hover:bg-slate-800 w-10 h-10 rounded-lg duration-150 ease-in-out'
-                            onClick={() => handleCreateTodoPopupAppear()}
+                            onClick={() => handleDeleteTodoDone()}
                         >
                             <i className='gg-plus group-hover:text-white'></i>
                         </div>
