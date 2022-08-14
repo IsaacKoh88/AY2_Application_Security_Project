@@ -139,7 +139,8 @@ const Note: NextPageWithLayout<NoteProps> = (props) => {
         } else if (response.status === 400) {
             alert('Error 400: Request body format error.');
         } else if (response.status === 404) {
-            alert('Error 404: Category not found');
+            router.push('/notes')
+            alert('Error 404: Notes not found');
         }
     };
 
