@@ -4,6 +4,7 @@ const apiErrorHandler = (
     error: any,
     res: NextApiResponse
 ) => {
+    console.log(error)
     if (error === 400) {
         /** Request body incorrect format */
         return res.status(400).json({ message: 'Bad Request' })
