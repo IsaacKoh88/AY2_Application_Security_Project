@@ -93,9 +93,6 @@ const ChangePassword = ({ id }) => {
                 <meta name="viewport" content="initial-scale=1.0, width=device-width" />
             </Head>
 
-            <div className='flex flex-col justify-start items-center h-screen w-screen text-slate-400 bg-slate-900'>
-                <Navbar />
-
                 <div className='container flex justify-center items-center flex-grow'>
                     <div className='flex flex-row justify-start items-start h-fit w-[500px] bg-white rounded-2xl p-5 mb-8'>
 
@@ -125,9 +122,15 @@ const ChangePassword = ({ id }) => {
 
                     </div>
                 </div>
-
-            </div>
         </Fragment>
+    );
+};
+
+ChangePassword.getLayout = function getLayout(Calendar) {
+    return (
+        <Layout>
+            {Calendar}
+        </Layout>
     );
 };
 

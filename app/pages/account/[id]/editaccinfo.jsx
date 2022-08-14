@@ -111,9 +111,6 @@ const ChangePFP = ({ id }) => {
                 <meta name="viewport" content="initial-scale=1.0, width=device-width" />
             </Head>
 
-            <div className='flex flex-col justify-start items-center h-screen w-screen text-slate-400 bg-slate-900'>
-                <Navbar />
-
                 <div className='container flex justify-center items-center flex-grow'>
                     <div className='flex flex-col justify-start bg-slate-800 items-start h-fit w-[500px] bg-white rounded-2xl p-5 mb-8'>
                         <p className='text-lg text-slate-900 ml-0.5 mb-1 font-bold text-white'>New Profile Picture: </p>
@@ -150,9 +147,15 @@ const ChangePFP = ({ id }) => {
 
                     </div>
                 </div>
-
-            </div>
         </Fragment>
+    );
+};
+
+ChangePFP.getLayout = function getLayout(Calendar) {
+    return (
+        <Layout>
+            {Calendar}
+        </Layout>
     );
 };
 
