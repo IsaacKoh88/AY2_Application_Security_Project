@@ -52,12 +52,14 @@ const LoginHandler = async (
         }
         else {
             res.statusCode = 401;
+            res.redirect('/login');
             res.end('Email or Password is incorrect');
             return
         }
     } 
     catch ( error ) {
         res.status(500).json({ message: 'internal server error' })
+        res.redirect('/login');
         return
     }
 };
