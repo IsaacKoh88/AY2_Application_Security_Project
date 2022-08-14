@@ -433,8 +433,8 @@ const Budget: NextPageWithLayout<BudgetProps> = (props) => {
                             </div>
                     </div>
                     :
-                    <div className='flex flex-col grow justify-start items-center w-full'>                           
-                        <table className='w-full table-fixed text-center'>
+                    <div className='flex flex-col grow justify-start items-center w-full overflow-auto'>                           
+                        <table className='w-full table-fixed text-center '>
                             <tbody>
                                 <tr className='h-10'>
                                     <th className='text-slate-200 text-lg font-bold text-left pl-3'>
