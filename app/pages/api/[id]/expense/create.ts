@@ -56,7 +56,7 @@ export default async function CreateExpense(
             values: [req.query.id, date],
         })));
 
-        if (totalTodos[0][0]['COUNT(*)'] <= 100) {
+        if (totalTodos[0][0]['COUNT(*)'] <= 300) {
 
             var id = uuidv4();
             var idcheck = JSON.parse(JSON.stringify(await executeQuery({

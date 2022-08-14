@@ -50,14 +50,31 @@ export default async function EditExpense(
     const { accountID, id, expenseName, amount, date } = req.body;
 
     try {
-        /* update data in expense table */
-        const result = await executeQuery({
-            query: 'CALL updateExpense(?, ?, ?, ?, ?)',
-            values: [accountID, id, expenseName, amount, date],
-        });
+        const totalTodos = JSON.parse(JSON.stringify(await executeQuery({
+            query: 'CALL selectTotalExpenses(?, ?)',
+            values: [req.query.id, date],
+        })));
 
-        res.status(201).json({ message: 'success' })
-        return
+        if (totalTodos[0][0]['COUNT(*)'] <= 300) {
+
+            try {
+                /* update data in expense table */
+                const result = await executeQuery({
+                    query: 'CALL updateExpense(?, ?, ?, ?, ?)',
+                    values: [accountID, id, expenseName, amount, date],
+                });
+
+                res.status(201).json({ message: 'success' })
+                return
+            }
+            catch {
+                res.status(500).json({ message: 'Internal server error' })
+                return
+            }
+
+        } else {
+            res.status(409).json({ message: 'Too many expenses created for the selected month, please remove some before adding more' });
+        }
     }
     catch {
         res.status(500).json({ message: 'Internal server error' })

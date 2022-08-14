@@ -72,38 +72,53 @@ export default async function EditEvent(
 
     if (startDate < endDate) {
         try {
-            const idcheck = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'CALL selectCountEventID(?)',
-                values: [eventID],
+            const totalEvents = JSON.parse(JSON.stringify(await executeQuery({
+                query: 'CALL selectTotalEvents(?, ?)',
+                values: [req.query.id, date],
             })));
 
-            if (idcheck[0][0]['COUNT(*)'] === 1) {
-                /** check category null */
-                if (categoryId === 'None' || categoryId === '' || categoryId === 'null') {
-                    categoryId = null
-                }
-
+            if (totalEvents[0][0]['COUNT(*)'] <= 50) {
                 try {
-                    /* insert data into category table */
-                    const result = await executeQuery({
-                        query: 'CALL updateEvent(?, ?, ?, ?, ?, ?, ?, ?)',
-                        values: [req.query.id, eventID, eventName, date, startTime, endTime, description, categoryId],
-                    });
+                    const idcheck = JSON.parse(JSON.stringify(await executeQuery({
+                        query: 'CALL selectCountEventID(?)',
+                        values: [eventID],
+                    })));
 
-                    res.status(201).json({ message: 'success' })
-                    return
+                    if (idcheck[0][0]['COUNT(*)'] === 1) {
+                        /** check category null */
+                        if (categoryId === 'None' || categoryId === '' || categoryId === 'null') {
+                            categoryId = null
+                        }
+
+                        try {
+                            /* insert data into category table */
+                            const result = await executeQuery({
+                                query: 'CALL updateEvent(?, ?, ?, ?, ?, ?, ?, ?)',
+                                values: [req.query.id, eventID, eventName, date, startTime, endTime, description, categoryId],
+                            });
+
+                            res.status(201).json({ message: 'success' })
+                            return
+                        }
+                        catch {
+                            res.status(500).json({ message: 'Internal server error' })
+                            return
+                        }
+                    }
+                    /** event ID does not exist */
+                    else {
+                        res.status(404).json({ message: 'Event not found' });
+                    }
                 }
+                /** event ID does not exist */
                 catch {
                     res.status(500).json({ message: 'Internal server error' })
                     return
                 }
-            }
-            /** event ID does not exist */
-            else {
-                res.status(404).json({ message: 'Event not found' });
+            } else {
+                res.status(409).json({ message: 'You have reached the limit of 50 events that day, please remove some events before adding more' });
             }
         }
-        /** event ID does not exist */
         catch {
             res.status(500).json({ message: 'Internal server error' })
             return
