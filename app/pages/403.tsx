@@ -78,7 +78,7 @@ const Error403: NextPage<ErrorProps> = (props) => {
                     <div className='flex flex-row justify-start items-start h-fit w-[80%] bg-white rounded-2xl p-5 mb-8'>
                         <div className='block h-fit w-[40%]  p-5 mb-8'>
                             <picture>
-                                <img src='/403.png'></img>
+                                <img src='/403.png' alt='403'></img>
                             </picture>
                         </div>
                         <div>

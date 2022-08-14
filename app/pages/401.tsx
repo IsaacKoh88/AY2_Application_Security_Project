@@ -18,7 +18,7 @@ const Error401: NextPage = () => {
                     <div className='flex flex-row justify-start items-start h-fit w-[80%] bg-white rounded-2xl p-5 mb-8'>
                         <div className='relative h-full w-[30%] p-5 mb-8'>
                             <picture>
-                                <img src='/401.png'></img>
+                                <img src='/401.png' alt='401'></img>
                             </picture>
                         </div>
                         <div>
