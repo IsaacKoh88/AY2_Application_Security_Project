@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import executeQuery from '../../../../utils/connections/db';
 import authorisedValidator from '../../../../utils/api/authorised-validator';
+import postValidator from '../../../../utils/api/post-validator';
+import inputFormat from '../../../../utils/input-format';
 import apiErrorHandler from '../../../../utils/api/api-error-handler';
 import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
@@ -13,111 +15,126 @@ export default async function CreateEvent(
     req: NextApiRequest,
     res: NextApiResponse<Data>
 ) {
-    /* accepts only POST requests and non-empty requests */
-    if ((req.method == 'POST') && (req.body) && (req.cookies['token'])) {
+    try {
+        /** check user authorisation */
+        await authorisedValidator(req);
+
+        /** check if request is POST */
+        await postValidator(req);
+
+        /** validate if request params are correct */
+        if (!new inputFormat().validateuuid(req.query.id)) {
+            throw 400;
+        };
         try {
-            /** check user authorisation */
-            await authorisedValidator(req);
+            if (!new inputFormat().validatetext255requried(req.body.eventName)) {
+                throw 400;
+            }
+            if (!new inputFormat().validatetime(req.body.startTime)) {
+                throw 400;
+            }
+            if (!new inputFormat().validatetime(req.body.endTime)) {
+                throw 400;
+            }
+            if (!new inputFormat().validatetextblock(req.body.description)) {
+                throw 400;
+            }
+            if (!new inputFormat().validatedate(req.body.date)) {
+                throw 400;
+            }
+        } catch {
+            throw 400;
         }
-        catch (error) {
-            apiErrorHandler(error, res);
+    }
+    catch (error) {
+        apiErrorHandler(error, res);
+        return
+    }
+
+    /** deconstruct body data */
+    let { eventName, date, startTime, endTime, description, categoryId } = req.body;
+    if (typeof categoryId !== 'string') {
+        categoryId = JSON.stringify(categoryId);
+    }
+
+    const currentDate = new Date() 
+
+    const startDate = new Date(currentDate.getTime());
+    startDate.setHours(startTime.split(":")[0]);
+    startDate.setMinutes(startTime.split(":")[1]);
+    startDate.setSeconds(startTime.split(":")[2]);
+
+    const endDate = new Date(currentDate.getTime());
+    endDate.setHours(endTime.split(":")[0]);
+    endDate.setMinutes(endTime.split(":")[1]);
+    endDate.setSeconds(endTime.split(":")[2]);
+
+    if (startDate < endDate) {
+        try {
+            const totalEvents = JSON.parse(JSON.stringify(await executeQuery({
+                query: 'CALL selectTotalEvents(?, ?)',
+                values: [req.query.id, date],
+            })));
+
+            if (totalEvents[0][0]['COUNT(*)'] <= 50) {
+
+                var id = uuidv4();
+                var idcheck = JSON.parse(JSON.stringify(await executeQuery({
+                    query: 'CALL selectCountEventID(?)',
+                    values: [id],
+                })));
+                var totalCount = 1
+    
+                while (idcheck[0][0]['COUNT(*)'] == 1 && totalCount < 100) {              
+                    id = uuidv4()
+                    var idcheck = JSON.parse(JSON.stringify(await executeQuery({
+                        query: 'CALL selectCountEventID(?)',
+                        values: [id],
+                    })));
+                    totalCount += 1
+                }
+
+                if (totalCount >= 100) {
+                    res.status(500).json({message: 'Too many uuids checked, please try again'})
+                    return
+                }
+                else {
+                    /** check category null */
+                    if (categoryId === 'None' || categoryId === '' || categoryId === 'null') {
+                        /* insert data into calendar table */ 
+                        categoryId = null
+                    } 
+
+                    try {
+                        /* insert data into calendar table */ 
+                        const result = await executeQuery({
+                            query: 'CALL insertEventData(?, ?, ?, ?, ?, ?, ?, ?)',
+                            values: [req.query.id, id, eventName, date, startTime, endTime, description, categoryId],
+                        });
+            
+                        res.status(201).json({ message: 'success' })
+                        return
+                    }
+                    catch {
+                        res.status(500).json({ message: 'Internal server error' })
+                        return
+                    }
+                }
+            }
+            /** more than 50 events */
+            else {
+                res.status(409).json({ message: 'You have reached the limit of 50 events that day, please remove some events before adding more' });
+            }
+        }
+        /** unexpected error */
+        catch {
+            res.status(500).json({ message: 'Internal server error' })
             return
         }
-
-        try {
-            /** deconstruct body data */
-            let { eventName, date, startTime, endTime, description, categoryId} = req.body;
-            if (typeof categoryId !== 'string') {
-                categoryId = JSON.stringify(categoryId);
-            }
-
-            const timeregex = /^(2[0-3]|[01]?[0-9]):([0-5]?[0-9]):([0-5]?[0-9])$/
-
-            if ((eventName.length <= 255) && (moment(date, 'YYYY-MM-DD', true).isValid()) && (timeregex.test(startTime)) && (timeregex.test(endTime)) && (description.length <= 65535) && (categoryId.length === 36 || categoryId === 'None' || categoryId === '' || categoryId === 'null')) {
-                try {
-                    const totalEvents = JSON.parse(JSON.stringify(await executeQuery({
-                        query: 'CALL selectTotalEvents(?, ?)',
-                        values: [req.query.id, date],
-                    })));
-
-                    if (totalEvents[0][0]['COUNT(*)'] <= 50) {
-
-                        var id = uuidv4();
-                        var idcheck = JSON.parse(JSON.stringify(await executeQuery({
-                            query: 'CALL selectCountEventID(?)',
-                            values: [id],
-                        })));
-                        var totalCount = 1
-            
-                        while (idcheck[0][0]['COUNT(*)'] == 1 && totalCount < 100) {              
-                            id = uuidv4()
-                            var idcheck = JSON.parse(JSON.stringify(await executeQuery({
-                                query: 'CALL selectCountEventID(?)',
-                                values: [id],
-                            })));
-                            totalCount += 1
-                        }
-
-                        if (totalCount >= 100) {
-                            res.status(500).json({message: 'Too many uuids checked, please try again'})
-                            return
-                        }
-                        else {
-                            /** check category null */
-                            if (categoryId === 'None' || categoryId === '' || categoryId === 'null') {
-                                /* insert data into calendar table */ 
-                                categoryId = null
-                            } 
-                            /* insert data into calendar table */ 
-                            const result = await executeQuery({
-                                query: 'CALL insertEventData(?, ?, ?, ?, ?, ?, ?, ?)',
-                                values: [req.query.id, id, eventName, date, startTime, endTime, description, categoryId],
-                            });
-                
-                            res.status(201).json({ message: 'success' })
-                            return
-                        }
-                    }
-                    /** more than 50 events */
-                    else {
-                        res.statusCode = 400;
-                        res.end('You have reached the limit of 50 events that day, please remove some events before adding more');
-                    }
-                }
-                /** unexpected error */
-                catch {
-                    res.statusCode = 500;
-                    res.end('Unexpected Error');
-                }
-            } 
-            /** if request body components do not fit requirements */
-            else {
-                res.statusCode = 400;
-                res.end('Request format error');
-            }
-        } 
-        /** if request body components do not fit requirements */
-        catch {
-            res.statusCode = 400;
-            res.end('Request format error');
-        }
-    }
-    /* rejects requests that are not POST */
-    else if (req.method !== 'POST') {
-        res.statusCode = 405;
-        res.end('Error');
-        return
-    }
+    } 
     /** if request body components do not fit requirements */
-    else if (!req.body) {
-        res.statusCode = 400;
-        res.end('Request format error');
-        return
-    }
-    /** if user is not authenticated */
-    else if (!req.cookies['token']) {
-        res.statusCode = 401;
-        res.end('Unauthorised');
+    else {
+        res.status(400).json({ message: 'Bad Request' });
         return
     }
 }

@@ -20,7 +20,7 @@ export default async function GetEvent(
         /** check user authorisation */
         await authorisedValidator(req);
 
-        /** check if request is POST */
+        /** check if request is GET */
         await getValidator(req);
 
         /** validate if request params are correct */

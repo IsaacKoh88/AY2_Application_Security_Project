@@ -7,7 +7,6 @@ class inputFormat {
     emailinput: RegExp;
     text36requiredinput: RegExp;
     colorinput: RegExp;
-    daterequiredinput: RegExp;
     timerequiredinput: RegExp;
     amountrequiredinput: RegExp;
 
@@ -18,7 +17,6 @@ class inputFormat {
         this.emailinput = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,                                       // does not yet validate for email max length
         this.text36requiredinput = /^[a-zA-Z0-9._ \t]{1,36}$/,
         this.colorinput = /^(red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)$/,
-        this.daterequiredinput = /^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/,
         this.timerequiredinput = /^(2[0-3]|[01]?[0-9]):([0-5]?[0-9]):([0-5]?[0-9])$/,
         this.amountrequiredinput = /^\d{1,63}(\.\d{1,2})?$/
     };
@@ -73,11 +71,7 @@ class inputFormat {
 
     validatedate(data: any) {
         if (typeof data === 'string') {
-            if (this.daterequiredinput.test(data)) {
-                return moment(data, 'YYYY-MM-DD', true).isValid()
-            } else {
-                return false;
-            }
+            return moment(data, 'YYYY-MM-DD', true).isValid()
         } else {
             return false;
         };
