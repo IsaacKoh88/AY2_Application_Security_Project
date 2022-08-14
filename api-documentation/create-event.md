@@ -34,7 +34,7 @@
 | 200 | Successful create event request |
 | 400 | Unsuccessful request, request parameters does not fit requirements above |
 | 401 | Unsuccessful request, JWT token invalid |
-| 403 | Unsuccessful request, not authorised to request change of event controlled by another user |
-| 405 | Unsuccessful signup request, request did not use `POST` method |
-| 429 | Unsuccessful signup request, too many requests from IP, thus rate limited |
-| 500 | Unsuccessful signup request, internal server issue (likely due to error in mysql connection) |
+| 403 | Unsuccessful request, not authorised to create event under another user |
+| 405 | Unsuccessful request, request did not use `POST` method |
+| 429 | Unsuccessful request, too many requests from IP, thus rate limited |
+| 500 | Unsuccessful request, internal server issue (likely due to error in mysql connection) |

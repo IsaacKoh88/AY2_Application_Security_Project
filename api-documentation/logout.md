@@ -15,8 +15,8 @@
 | Response Status | Response Meaning |
 |-|-|
 | 200 | Successful logout request, removes JWT token from client, blacklists JWT token, redirects to https://localhost/ |
-| 400 | Unsuccessful signup request, request parameters does not fit requirements above |
-| 401 | Unsuccessful signup request, JWT token invalid |
-| 405 | Unsuccessful signup request, request did not use `GET` method |
-| 429 | Unsuccessful signup request, too many requests from IP, thus rate limited |
-| 500 | Unsuccessful signup request, internal server issue (likely due to error in mysql connection) |
+| 400 | Unsuccessful logout request, request parameters does not fit requirements above |
+| 401 | Unsuccessful logout request, JWT token invalid |
+| 405 | Unsuccessful logout request, request did not use `GET` method |
+| 429 | Unsuccessful logout request, too many requests from IP, thus rate limited |
+| 500 | Unsuccessful logout request, internal server issue (likely due to error in mysql connection) |
