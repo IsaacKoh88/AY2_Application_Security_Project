@@ -27,8 +27,6 @@ services:
       DB_USER: app
       DB_PASSWORD: V6m#4&hE896O5I7he=ropR4mls2=t7+swibodi=Re!8acrU+8afr8StUFeR_0?ad
       DB_NAME: appsecdb
-      REDIS_HOST: redis-server
-      REDIS_PORT: 6379
     depends_on:
       - mysql-server
       - redis-server

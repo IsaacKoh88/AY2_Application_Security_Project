@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import authorisedValidator from '../../utils/api/authorised-validator';
 import getValidator from '../../utils/api/get-validator';
+import setCookie from '../../utils/api/set-cookie';
 import inputFormat from '../../utils/input-format';
 import apiErrorHandler from '../../utils/api/api-error-handler';
 import redisClient from '../../utils/connections/redis';
@@ -38,7 +39,10 @@ const LogoutHandler = async (
                     }
                 );
             })
-            res.status(200).json({ message: 'success' })
+
+            setCookie(res, 'token', 'delete', { maxAge: 0 });;
+            res.status(200)
+            res.redirect('/login')
             return
         } else {
             res.status(400).json({ message: 'bad request' })
