@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import executeQuery from '../../../../utils/connections/db'
 import authorisedValidator from '../../../../utils/api/authorised-validator';
+import postValidator from '../../../../utils/api/post-validator';
+import inputFormat from '../../../../utils/input-format';
 import apiErrorHandler from '../../../../utils/api/api-error-handler';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -12,81 +14,87 @@ export default async function CreateExpense(
     req: NextApiRequest,
     res: NextApiResponse<Data>
 ) {
-    /* accepts only POST requests and non-empty requests */
-    if ((req.method == 'POST') && (req.body) && (req.cookies['token'])) {
+    try {
+        /** check user authorisation */
+        await authorisedValidator(req);
+
+        /** check if request is POST */
+        await postValidator(req);
+
+        /** validate if request params are correct */
+        if (!new inputFormat().validateuuid(req.query.id)) {
+            throw 400;
+        };
         try {
-            /** check user authorisation */
-            await authorisedValidator(req);
+            if (!new inputFormat().validateuuid(req.body.accountID)) {
+                throw 400;
+            }
+            if (!new inputFormat().validatetext255requried(req.body.expenseName)) {
+                throw 400;
+            }
+            if (!new inputFormat().validateamount(req.body.amount)) {
+                throw 400;
+            }
+            if (!new inputFormat().validatedate(req.body.date)) {
+                throw 400;
+            }
+        } catch {
+            throw 400;
         }
-        catch (error) {
-            apiErrorHandler(error, res);
-            return
-        }
+    }
+    catch (error) {
+        apiErrorHandler(error, res);
+        return
+    }
 
-        /** deconstruct body data */
-        const { accountID, expenseName, amount, date } = req.body;
+    /** deconstruct body data */
+    const { accountID, expenseName, amount, date } = req.body;
 
-        /* validate input */
-        const dateregex = /([1-2]?[0][8-9]?[0-9]?[0-9])-(0[0-9]|1[0-2])-(0[1-9]|[1-2]?[0-9]|3[0-1])/
-        if (accountID === '' || accountID.length !== 36 || expenseName === '' || expenseName.length >= 255 || amount <= 0 || date === '' || dateregex.test(date)===false){
-            res.statusCode = 400;
-            res.end('Request format error');
-            return
-        }
+    try {
+        const totalTodos = JSON.parse(JSON.stringify(await executeQuery({
+            query: 'CALL selectTotalExpenses(?, ?)',
+            values: [req.query.id, date],
+        })));
 
-        try {
-            const totalTodos = JSON.parse(JSON.stringify(await executeQuery({
-                query: 'CALL selectTotalExpenses(?, ?)',
-                values: [req.query.id, date],
+        if (totalTodos[0][0]['COUNT(*)'] <= 100) {
+
+            var id = uuidv4();
+            var idcheck = JSON.parse(JSON.stringify(await executeQuery({
+                query: 'CALL selectCountExpenseID(?)',
+                values: [id],
             })));
+            var totalCount = 1
 
-            if (totalTodos[0][0]['COUNT(*)'] <= 100) {
-
-                var id = uuidv4();
+            while (idcheck[0][0]['COUNT(*)'] == 1 && totalCount < 100) {              
+                id = uuidv4()
                 var idcheck = JSON.parse(JSON.stringify(await executeQuery({
                     query: 'CALL selectCountExpenseID(?)',
                     values: [id],
                 })));
-                var totalCount = 1
-
-                while (idcheck[0][0]['COUNT(*)'] == 1 && totalCount < 100) {              
-                    id = uuidv4()
-                    var idcheck = JSON.parse(JSON.stringify(await executeQuery({
-                        query: 'CALL selectCountExpenseID(?)',
-                        values: [id],
-                    })));
-                    totalCount += 1
-                }
-                if (totalCount >= 100) {
-                    res.status(500).json({message: 'Too many uuids checked, please try again'})
-                    return
-                }
-                else {
-                    /* insert data into expense table */
-                    const result = await executeQuery({
-                        query: 'CALL insertExpenseData(?, ?, ?, ?, ?)',
-                        values: [accountID, id, expenseName, amount, date],
-                    });
-
-                    res.status(201).json({ message: 'success' })
-                    return
-                }
+                totalCount += 1
+            }
+            if (totalCount >= 100) {
+                res.status(500).json({message: 'Too many uuids checked, please try again'})
+                return
             }
             else {
-                res.statusCode = 400;
-                res.end('Too many expenses created for the selected month, please remove some before adding more');
+                /* insert data into expense table */
+                const result = await executeQuery({
+                    query: 'CALL insertExpenseData(?, ?, ?, ?, ?)',
+                    values: [accountID, id, expenseName, amount, date],
+                });
+
+                res.status(201).json({ message: 'success' })
+                return
             }
         }
-        /** unexpected error */
-        catch {
-            res.statusCode = 500;
-            res.end('Unexpected Error');
+        else {
+            res.status(409).json({ message: 'Too many expenses created for the selected month, please remove some before adding more' });
         }
     }
-    /* rejects requests that are empty */
-    else if (!req.body) {
-        res.statusCode = 405;
-        res.end('Error');
+    /** unexpected error */
+    catch {
+        res.status(500).json({ message: 'Internal server error' })
         return
     }
 }
