@@ -49,11 +49,11 @@ const LoginHandler = async (
             // Calling our pure function using the `res` object, it will add the `set-cookie` header
             setCookie(res, 'token', jwtToken);
             res.redirect(307, ('/account/' + result[0].id));
+            return
         }
         else {
-            res.statusCode = 401;
+            res.status(401).json({ message: 'Incorrect credentials' });
             res.redirect('/login');
-            res.end('Email or Password is incorrect');
             return
         }
     } 
