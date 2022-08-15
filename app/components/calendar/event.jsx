@@ -63,7 +63,7 @@ const Event = ({ id, event, categories, editEvent, success }) => {
             }
         );
 
-        if (response.status === 201) {
+        if (response.status === 200) {
             success();
         } else if (response.status === 400) {
             alert('Error 400: Request body format error.');
